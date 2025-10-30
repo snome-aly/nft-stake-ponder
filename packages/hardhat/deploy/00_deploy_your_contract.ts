@@ -3,42 +3,42 @@ import { DeployFunction } from "hardhat-deploy/types";
 import { Contract } from "ethers";
 
 /**
- * Deploys a contract named "YourContract" using the deployer account and
- * constructor arguments set to the deployer address
+ * 使用部署者账户部署名为 "YourContract" 的合约，
+ * 构造函数参数设置为部署者地址
  *
- * @param hre HardhatRuntimeEnvironment object.
+ * @param hre HardhatRuntimeEnvironment 对象。
  */
 const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   /*
-    On localhost, the deployer account is the one that comes with Hardhat, which is already funded.
+    在本地环境，部署者账户是 Hardhat 自带的账户，已经预先充值。
 
-    When deploying to live networks (e.g `yarn deploy --network sepolia`), the deployer account
-    should have sufficient balance to pay for the gas fees for contract creation.
+    当部署到真实网络（例如 `yarn deploy --network sepolia`）时，部署者账户
+    应该有足够余额支付合约创建的燃气费用。
 
-    You can generate a random account with `yarn generate` or `yarn account:import` to import your
-    existing PK which will fill DEPLOYER_PRIVATE_KEY_ENCRYPTED in the .env file (then used on hardhat.config.ts)
-    You can run the `yarn account` command to check your balance in every network.
+    你可以使用 `yarn generate` 生成一个随机账户，或者使用 `yarn account:import` 导入你的
+    已有私钥，这会填充 .env 文件中的 DEPLOYER_PRIVATE_KEY_ENCRYPTED（然后在 hardhat.config.ts 中使用）
+    你可以运行 `yarn account` 命令查看你在每个网络的余额。
   */
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
 
   await deploy("YourContract", {
     from: deployer,
-    // Contract constructor arguments
+    // 合约构造函数参数
     args: [deployer],
     log: true,
-    // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
-    // automatically mining the contract deployment transaction. There is no effect on live networks.
+    // autoMine: 可以传递给 deploy 函数以加快本地网络上的部署过程，
+    // 通过自动挖矿合约部署交易。对真实网络无效。
     autoMine: true,
   });
 
-  // Get the deployed contract to interact with it after deploying.
+  // 获取已部署的合约以便在部署后进行交互。
   const yourContract = await hre.ethers.getContract<Contract>("YourContract", deployer);
-  console.log("👋 Initial greeting:", await yourContract.greeting());
+  console.log("👋 初始问候语:", await yourContract.greeting());
 };
 
 export default deployYourContract;
 
-// Tags are useful if you have multiple deploy files and only want to run one of them.
-// e.g. yarn deploy --tags YourContract
+// 标签在有多个部署文件时非常有用，可以只运行其中一个。
+// 例如：yarn deploy --tags YourContract
 deployYourContract.tags = ["YourContract"];
