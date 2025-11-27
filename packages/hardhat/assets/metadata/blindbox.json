@@ -1,0 +1,11 @@
+{
+  "name": "Blind Box NFT #{id}",
+  "description": "一个密封的神秘盒子。开启以发现其真正的稀有度！",
+  "image": "ipfs://__BLIND_BOX_CID__/blindbox.png",
+  "attributes": [
+    {
+      "trait_type": "Rarity",
+      "value": "Unrevealed"
+    }
+  ]
+}

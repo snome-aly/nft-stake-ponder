@@ -1,0 +1,11 @@
+{
+  "name": "Epic NFT #{id}",
+  "description": "Forged in cosmic fire, wielded by the chosen.",
+  "image": "ipfs://__EPIC_CID__/epic.png",
+  "attributes": [
+    {
+      "trait_type": "Rarity",
+      "value": "Epic"
+    }
+  ]
+}

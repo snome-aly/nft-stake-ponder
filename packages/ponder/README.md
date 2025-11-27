@@ -1,35 +1,35 @@
-# SE-2 Ponder Extension
+# SE-2 Ponder 扩展
 
-This extension allows to use Ponder (https://ponder.sh/) for event indexing on an SE-2 dapp.
+此扩展允许在 SE-2 dApp 中使用 Ponder (https://ponder.sh/) 进行事件索引。
 
-Ponder is an open-source framework for blockchain application backends. With Ponder, you can rapidly build & deploy an API that serves custom data from smart contracts on any EVM blockchain.
+Ponder 是一个用于区块链应用后端的开源框架。使用 Ponder，您可以快速构建和部署 API，从任何 EVM 区块链上的智能合约中提供自定义数据。
 
-## Config
+## 配置
 
-Ponder config (`packages/ponder/ponder.config.ts`) is set automatically from the deployed contracts and using the first blockchain network setup at `packages/nextjs/scaffold.config.ts`.
+Ponder 配置文件 (`packages/ponder/ponder.config.ts`) 会自动从已部署的合约中设置，并使用 `packages/nextjs/scaffold.config.ts` 中配置的第一个区块链网络。
 
-## Design your schema
+## 设计您的数据模型（Schema）
 
-You can define your Ponder data schema on the file at `packages/ponder/ponder.schema.ts` following the Ponder documentation (https://ponder.sh/docs/schema).
+您可以在 `packages/ponder/ponder.schema.ts` 文件中定义 Ponder 数据模型，请参考 Ponder 官方文档 (https://ponder.sh/docs/schema)。
 
-## Indexing data
+## 索引数据
 
-You can index events by adding files to `packages/ponder/src/` (https://ponder.sh/docs/indexing/write-to-the-database)
+您可以通过在 `packages/ponder/src/` 目录中添加文件来索引事件 (https://ponder.sh/docs/indexing/write-to-the-database)。
 
-## Start the development server
+## 启动开发服务器
 
-Run `yarn ponder:dev` to start the Ponder development server, for indexing and serving the GraphQL API endpoint at http://localhost:42069
+运行 `yarn ponder:dev` 来启动 Ponder 开发服务器，用于索引数据并在 http://localhost:42069 提供 GraphQL API 端点服务。
 
-## Query the GraphQL API
+## 查询 GraphQL API
 
-With the dev server running, open http://localhost:42069 in your browser to use the GraphiQL interface. GraphiQL is a useful tool for exploring your schema and testing queries during development. (https://ponder.sh/docs/query/graphql)
+在开发服务器运行时，在浏览器中打开 http://localhost:42069 以使用 GraphiQL 界面。GraphiQL 是一个有用的工具，可以在开发过程中探索您的数据模型和测试查询 (https://ponder.sh/docs/query/graphql)。
 
-You can query data on a page using `@tanstack/react-query`. Check the code at `packages/nextjs/app/greetings/page.ts` to get the greetings updates data and show it.
+您可以使用 `@tanstack/react-query` 在页面中查询数据。请查看 `packages/nextjs/app/greetings/page.ts` 中的代码示例，了解如何获取和显示问候语更新数据。
 
-## Deploy
+## 部署
 
-To deploy the Ponder indexer please refer to the Ponder Deploy documentation https://ponder.sh/docs/production/deploy
+要部署 Ponder 索引器，请参考 Ponder 部署文档 https://ponder.sh/docs/production/deploy
 
-At **Settings** -> **Deploy** -> you must set **Custom Start Command** to `yarn ponder:start`.
+在 **Settings（设置）** -> **Deploy（部署）** -> 您必须将 **Custom Start Command（自定义启动命令）** 设置为 `yarn ponder:start`。
 
-And then you have to set up the `NEXT_PUBLIC_PONDER_URL` env variable on your SE-2 dapp to use the deployed ponder indexer.
+然后，您需要在 SE-2 dApp 中设置 `NEXT_PUBLIC_PONDER_URL` 环境变量，以使用已部署的 Ponder 索引器。

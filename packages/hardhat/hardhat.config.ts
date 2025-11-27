@@ -12,6 +12,7 @@ import "solidity-coverage"; // 代码覆盖率测试
 import "@nomicfoundation/hardhat-verify"; // 合约验证（Etherscan 等）
 import "hardhat-deploy"; // 增强的合约部署系统
 import "hardhat-deploy-ethers"; // hardhat-deploy 与 ethers 的集成
+import "hardhat-contract-sizer"; // 合约大小检查
 
 import { task } from "hardhat/config";
 import generateTsAbis from "./scripts/generateTsAbis";
@@ -44,6 +45,7 @@ const config: HardhatUserConfig = {
             runs: 200, // 优化运行次数：200 适合部署后频繁调用的合约
             // 详细说明: https://docs.soliditylang.org/en/latest/using-the-compiler.html#optimizer-options
           },
+          viaIR: process.env.COVERAGE !== "true", // 通过 Yul IR 编译，解决 "Stack too deep" 问题 (coverage 时禁用)
           // 其他可选的编译器设置（已注释）
           // viaIR: false, // 通过 Yul IR 编译（实验性，可能减少字节码大小）
           // evmVersion: "paris", // EVM 版本: homestead, tangerineWhistle, spuriousDragon, byzantium, constantinople, petersburg, istanbul, berlin, london, paris, shanghai
@@ -89,13 +91,18 @@ const config: HardhatUserConfig = {
       // 或者使用具体地址
       // mainnet: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
     },
-    // 可以定义更多命名账户
-    // tokenOwner: {
-    //   default: 1, // 默认使用账户索引 1
-    // },
-    // feeCollector: {
-    //   default: 2,
-    // },
+    operator: {
+      default: 1, // 默认使用账户索引 1 作为操作员
+      // 生产环境使用具体地址
+      // mainnet: "0x...",
+      // sepolia: "0x...",
+    },
+    pauser: {
+      default: 2, // 默认使用账户索引 2 作为安全员
+      // 生产环境使用具体地址
+      // mainnet: "0x...",
+      // sepolia: "0x...",
+    },
   },
 
   // ========== 自定义路径配置 ==========
@@ -143,14 +150,14 @@ const config: HardhatUserConfig = {
   // },
 
   // ========== 合约大小检查 ==========
-  // contractSizer: {
-  //   alphaSort: true, // 按字母顺序排序
-  //   disambiguatePaths: false, // 消除路径歧义
-  //   runOnCompile: true, // 编译时自动运行
-  //   strict: true, // 超过大小限制时抛出错误
-  //   only: [], // 仅检查特定合约
-  //   except: [], // 排除特定合约
-  // },
+  contractSizer: {
+    alphaSort: true, // 按字母顺序排序
+    disambiguatePaths: false, // 消除路径歧义
+    runOnCompile: false, // 编译时自动运行 (设为 false 避免每次都显示)
+    strict: true, // 超过大小限制时抛出错误
+    only: [], // 仅检查特定合约
+    except: [], // 排除特定合约
+  },
 
   // ========== Dodoc 文档生成 ==========
   // dodoc: {
@@ -173,7 +180,7 @@ const config: HardhatUserConfig = {
       },
       // 其他可选的 Hardhat 网络配置
       // chainId: 31337, // 链 ID（默认 31337）
-      // gas: "auto", // gas 限制
+      gas: process.env.COVERAGE === "true" ? 0xfffffffffff : 30000000, // coverage 时使用超大 gas 限制
       // gasPrice: "auto", // gas 价格
       // initialBaseFeePerGas: 0, // 初始 base fee（EIP-1559）
       // accounts: { // 账户配置
@@ -185,7 +192,8 @@ const config: HardhatUserConfig = {
       //   auto: true, // 自动挖矿（每笔交易自动打包）
       //   interval: 0, // 手动挖矿时的区块间隔（毫秒）
       // },
-      // allowUnlimitedContractSize: false, // 允许超过 24KB 的合约（仅用于测试）
+      allowUnlimitedContractSize: true, // 允许超过 24KB 的合约（用于 coverage 测试）
+      blockGasLimit: process.env.COVERAGE === "true" ? 0xfffffffffff : 30000000, // coverage 时使用超大区块 gas 限制
       // blockGasLimit: 30000000, // 区块 gas 限制
       // throwOnTransactionFailures: true, // 交易失败时抛出异常
       // throwOnCallFailures: true, // 调用失败时抛出异常

@@ -1,0 +1,134 @@
+   ▲ Next.js 15.2.5
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+
+Failed to compile.
+
+./app/home/_components/BlindBoxShowcase.tsx
+81:15  Warning: Replace `·className="glass-card·rounded-2xl·p-8·border-neon-blue·animate-slide-in·tilt-3d"·style={{·animationDelay:·"0.2s"·}}` with `⏎············className="glass-card·rounded-2xl·p-8·border-neon-blue·animate-slide-in·tilt-3d"⏎············style={{·animationDelay:·"0.2s"·}}⏎··········`  prettier/prettier
+
+./app/home/_components/HeroSection.tsx
+27:9  Error: 'progress' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+62:111  Warning: Delete `⏎·············`  prettier/prettier
+112:30  Warning: Replace `·totalMinted={totalMinted}·maxSupply={MAX_SUPPLY}·mintPrice={MINT_PRICE}·isRevealed={isRevealed}` with `⏎············totalMinted={totalMinted}⏎············maxSupply={MAX_SUPPLY}⏎············mintPrice={MINT_PRICE}⏎············isRevealed={isRevealed}⏎·········`  prettier/prettier
+
+./app/home/_components/LiveActivity.tsx
+55:50  Warning: Replace `<MintFeedItem·key={`${mint.transactionHash}-${index}`}·mint={mint}·index={index}·/>` with `(⏎··················<MintFeedItem·key={`${mint.transactionHash}-${index}`}·mint={mint}·index={index}·/>⏎················)`  prettier/prettier
+
+./app/home/_components/RevealProcess.tsx
+115:72  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+149:32  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./app/home/_components/StakingArchitecture.tsx
+8:86  Warning: Replace `⏎············🏗️·Multi-Contract·Architecture⏎··········` with `🏗️·Multi-Contract·Architecture`  prettier/prettier
+149:82  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+188:117  Warning: Delete `⏎·················`  prettier/prettier
+
+./app/home/_components/StatsDashboard.tsx
+23:9  Error: 'remaining' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./app/home/page.tsx
+3:8  Warning: Delete `type·{·NextPage·}·from·"next";⏎import·`  prettier/prettier
+10:61  Warning: Insert `";⏎import·type·{·NextPage·}·from·"next`  prettier/prettier
+
+./components/Footer.tsx
+2:9  Warning: Insert `·Logo·}·from·"./Header/Logo";⏎import·{`  prettier/prettier
+5:3  Error: 'CurrencyDollarIcon' is defined but never used.  @typescript-eslint/no-unused-vars
+6:3  Error: 'DocumentTextIcon' is defined but never used.  @typescript-eslint/no-unused-vars
+9:36  Warning: Delete `";⏎import·{·Logo·}·from·"./Header/Logo`  prettier/prettier
+
+./components/Header/CustomConnectButton.tsx
+97:29  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+114:64  Warning: Replace `⏎························{formatBalance(account.balanceFormatted)}⏎······················` with `{formatBalance(account.balanceFormatted)}`  prettier/prettier
+117:63  Warning: Replace `⏎························{account.balanceSymbol·||·"ETH"}⏎······················` with `{account.balanceSymbol·||·"ETH"}`  prettier/prettier
+131:64  Warning: Replace `⏎························{account.displayName}⏎······················` with `{account.displayName}`  prettier/prettier
+
+./components/Header/Header.tsx
+5:9  Warning: Insert `·CustomConnectButton·}·from·"./CustomConnectButton";⏎import·{·Logo·}·from·"./Logo";⏎import·{·MobileNavLink,·NavLink·}·from·"./NavLink";⏎import·{`  prettier/prettier
+13:36  Warning: Delete `";⏎import·{·CustomConnectButton·}·from·"./CustomConnectButton";⏎import·{·Logo·}·from·"./Logo";⏎import·{·MobileNavLink,·NavLink·}·from·"./NavLink`  prettier/prettier
+
+./components/Header/Logo.tsx
+38:106  Warning: Replace `⏎··········BB·NFT⏎········` with `BB·NFT`  prettier/prettier
+
+./components/ScaffoldEthAppWithProviders.tsx
+65:28  Warning: Replace `⏎··········avatar={BlockieAvatar}⏎··········theme={mounted·?·customTheme·:·lightTheme()}⏎········` with `·avatar={BlockieAvatar}·theme={mounted·?·customTheme·:·lightTheme()}`  prettier/prettier
+
+./components/scaffold-eth/Address/Address.tsx
+103:26  Warning: Delete `···········`  prettier/prettier
+104:33  Warning: Delete `····`  prettier/prettier
+105:29  Warning: Delete `·······`  prettier/prettier
+106:62  Warning: Delete `·`  prettier/prettier
+107:30  Warning: Delete `······`  prettier/prettier
+168:17  Warning: Delete `·`  prettier/prettier
+170:49  Warning: Delete `·`  prettier/prettier
+176:45  Warning: Delete `·`  prettier/prettier
+179:29  Warning: Delete `·`  prettier/prettier
+180:23  Warning: Delete `········`  prettier/prettier
+208:57  Warning: Delete `·`  prettier/prettier
+254:31  Warning: Delete `·`  prettier/prettier
+
+./components/scaffold-eth/Address/AddressLinkWrapper.tsx
+9:30  Warning: Delete `··········`  prettier/prettier
+10:33  Warning: Delete `·······`  prettier/prettier
+11:36  Warning: Delete `···`  prettier/prettier
+
+./components/scaffold-eth/Faucet.tsx
+53:50  Warning: Delete `·····················`  prettier/prettier
+54:68  Warning: Delete `···`  prettier/prettier
+55:70  Warning: Delete `·`  prettier/prettier
+56:50  Warning: Delete `····················`  prettier/prettier
+108:53  Warning: Delete `·`  prettier/prettier
+177:26  Warning: Replace `⏎················placeholder="发送金额"⏎················value={sendValue}⏎················onChange={value·=>·setSendValue(value)}⏎·············` with `·placeholder="发送金额"·value={sendValue}·onChange={value·=>·setSendValue(value)}`  prettier/prettier
+184:22  Warning: Replace `⏎················className="h-10·btn·btn-primary·btn-sm·px-2·rounded-full"⏎················onClick={sendETH}⏎················disabled={loading}⏎··············` with `·className="h-10·btn·btn-primary·btn-sm·px-2·rounded-full"·onClick={sendETH}·disabled={loading}`  prettier/prettier
+
+./components/scaffold-eth/FaucetButton.tsx
+86:40  Warning: Delete `·`  prettier/prettier
+110:20  Warning: Delete `·`  prettier/prettier
+114:27  Warning: Delete `·`  prettier/prettier
+120:27  Warning: Delete `·`  prettier/prettier
+
+./components/scaffold-eth/Input/IntegerInput.tsx
+60:29  Warning: Delete `·····`  prettier/prettier
+
+./components/scaffold-eth/Input/utils.ts
+6:13  Warning: Delete `·······················`  prettier/prettier
+8:18  Warning: Delete `··················`  prettier/prettier
+9:25  Warning: Delete `···········`  prettier/prettier
+10:22  Warning: Delete `·············`  prettier/prettier
+
+./components/scaffold-eth/RainbowKitCustomConnectButton/AddressInfoDropdown.tsx
+30:21  Warning: Delete `·····························`  prettier/prettier
+31:49  Warning: Delete `·`  prettier/prettier
+32:24  Warning: Delete `··························`  prettier/prettier
+33:23  Warning: Delete `···························`  prettier/prettier
+61:43  Warning: Delete `·`  prettier/prettier
+62:39  Warning: Delete `·····`  prettier/prettier
+79:33  Warning: Delete `·`  prettier/prettier
+80:50  Warning: Delete `·`  prettier/prettier
+160:45  Warning: Delete `·`  prettier/prettier
+
+./components/scaffold-eth/RainbowKitCustomConnectButton/AddressQRCodeModal.tsx
+9:25  Warning: Delete `·`  prettier/prettier
+10:19  Warning: Delete `······`  prettier/prettier
+60:33  Warning: Delete `·············`  prettier/prettier
+61:38  Warning: Delete `········`  prettier/prettier
+62:35  Warning: Delete `··········`  prettier/prettier
+
+./components/scaffold-eth/RainbowKitCustomConnectButton/NetworkOptions.tsx
+14:21  Warning: Delete `·`  prettier/prettier
+35:45  Warning: Delete `·`  prettier/prettier
+36:35  Warning: Delete `···········`  prettier/prettier
+37:40  Warning: Delete `·····`  prettier/prettier
+60:26  Warning: Delete `{"·"}⏎···············`  prettier/prettier
+
+./components/scaffold-eth/RainbowKitCustomConnectButton/RevealBurnerPKModal.tsx
+32:60  Warning: Delete `·`  prettier/prettier
+101:47  Warning: Delete `·`  prettier/prettier
+
+./components/scaffold-eth/RainbowKitCustomConnectButton/index.tsx
+84:55  Warning: Delete `·`  prettier/prettier
+85:50  Warning: Delete `·····`  prettier/prettier
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules

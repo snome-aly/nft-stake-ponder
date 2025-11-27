@@ -1,0 +1,11 @@
+{
+  "name": "Legendary NFT #{id}",
+  "description": "Few exist, none forget. The crown of any collection.",
+  "image": "ipfs://__LEGENDARY_CID__/legendary.png",
+  "attributes": [
+    {
+      "trait_type": "Rarity",
+      "value": "Legendary"
+    }
+  ]
+}

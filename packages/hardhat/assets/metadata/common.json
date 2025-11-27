@@ -1,0 +1,11 @@
+{
+  "name": "Common NFT #{id}",
+  "description": "Widely seen, yet essential to the realm.",
+  "image": "ipfs://__COMMON_CID__/common.png",
+  "attributes": [
+    {
+      "trait_type": "Rarity",
+      "value": "Common"
+    }
+  ]
+}

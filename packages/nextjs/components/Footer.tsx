@@ -1,80 +1,205 @@
-import React from "react";
 import Link from "next/link";
-import { hardhat } from "viem/chains";
-import { CurrencyDollarIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { HeartIcon } from "@heroicons/react/24/outline";
-import { SwitchTheme } from "~~/components/SwitchTheme";
-import { BuidlGuidlLogo } from "~~/components/assets/BuidlGuidlLogo";
-import { Faucet } from "~~/components/scaffold-eth";
-import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
-import { useGlobalState } from "~~/services/store/store";
+import { Logo } from "./Header/Logo";
+import { ChatBubbleLeftRightIcon, CommandLineIcon, GlobeAltIcon, HeartIcon } from "@heroicons/react/24/outline";
 
 /**
- * Site footer
+ * Footer 底部组件
+ *
+ * 包含：
+ * - 品牌信息和描述
+ * - 社交媒体链接
+ * - 快速导航链接
+ * - 项目信息
+ * - 资源和文档
+ * - 技术栈展示
+ * - 版权信息
  */
 export const Footer = () => {
-  const nativeCurrencyPrice = useGlobalState(state => state.nativeCurrency.price);
-  const { targetNetwork } = useTargetNetwork();
-  const isLocalNetwork = targetNetwork.id === hardhat.id;
+  const currentYear = new Date().getFullYear();
 
   return (
-    <div className="min-h-0 py-5 px-1 mb-11 lg:mb-0">
-      <div>
-        <div className="fixed flex justify-between items-center w-full z-10 p-4 bottom-0 left-0 pointer-events-none">
-          <div className="flex flex-col md:flex-row gap-2 pointer-events-auto">
-            {nativeCurrencyPrice > 0 && (
-              <div>
-                <div className="btn btn-primary btn-sm font-normal gap-1 cursor-auto">
-                  <CurrencyDollarIcon className="h-4 w-4" />
-                  <span>{nativeCurrencyPrice.toFixed(2)}</span>
-                </div>
-              </div>
-            )}
-            {isLocalNetwork && (
-              <>
-                <Faucet />
-                <Link href="/blockexplorer" passHref className="btn btn-primary btn-sm font-normal gap-1">
-                  <MagnifyingGlassIcon className="h-4 w-4" />
-                  <span>Block Explorer</span>
-                </Link>
-              </>
-            )}
+    <footer className="bg-gray-900 border-t border-white/10 relative overflow-hidden">
+      {/* 背景装饰 */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-50"></div>
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+        {/* 主要内容区域 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 mb-8">
+          {/* 品牌信息 - 占 4 列 */}
+          <div className="lg:col-span-4 space-y-4">
+            <div className="flex items-center space-x-3">
+              <Logo />
+            </div>
+
+            <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
+              Discover the mystery of blind box NFTs with transparent rarity distribution and sustainable staking
+              rewards. Join the future of gamified DeFi.
+            </p>
+
+            {/* 社交媒体链接 */}
+            <div className="flex space-x-3">
+              <SocialLink href="https://twitter.com" label="Twitter" icon={<GlobeAltIcon className="w-5 h-5" />} />
+              <SocialLink
+                href="https://discord.com"
+                label="Discord"
+                icon={<ChatBubbleLeftRightIcon className="w-5 h-5" />}
+              />
+              <SocialLink href="https://github.com" label="GitHub" icon={<CommandLineIcon className="w-5 h-5" />} />
+              <SocialLink href="https://t.me" label="Telegram" icon={<ChatBubbleLeftRightIcon className="w-5 h-5" />} />
+            </div>
           </div>
-          <SwitchTheme className={`pointer-events-auto ${isLocalNetwork ? "self-end md:self-auto" : ""}`} />
+
+          {/* 链接区域 - 占 8 列 */}
+          <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-3 gap-6">
+            {/* 快速链接 */}
+            <div>
+              <h4 className="text-white font-semibold mb-4 flex items-center text-sm">
+                <span className="w-1 h-3 bg-purple-500 rounded-full mr-2"></span>
+                Quick Links
+              </h4>
+              <ul className="space-y-2">
+                <FooterLink href="/mint">Mint NFT</FooterLink>
+                <FooterLink href="/my-nfts">My Collection</FooterLink>
+                <FooterLink href="/stake">Staking</FooterLink>
+                <FooterLink href="/stats">Statistics</FooterLink>
+              </ul>
+            </div>
+
+            {/* 项目信息 */}
+            <div>
+              <h4 className="text-white font-semibold mb-4 flex items-center text-sm">
+                <span className="w-1 h-3 bg-pink-500 rounded-full mr-2"></span>
+                Project
+              </h4>
+              <ul className="space-y-2">
+                <FooterLink href="/about">About Us</FooterLink>
+                <FooterLink href="/docs">Documentation</FooterLink>
+                <FooterLink href="https://github.com" external>
+                  GitHub
+                </FooterLink>
+                <FooterLink href="/faq">FAQ</FooterLink>
+              </ul>
+            </div>
+
+            {/* 资源 */}
+            <div>
+              <h4 className="text-white font-semibold mb-4 flex items-center text-sm">
+                <span className="w-1 h-3 bg-blue-500 rounded-full mr-2"></span>
+                Resources
+              </h4>
+              <ul className="space-y-2">
+                <FooterLink href="/guide">Beginner Guide</FooterLink>
+                <FooterLink href="/terms">Terms of Service</FooterLink>
+                <FooterLink href="/privacy">Privacy Policy</FooterLink>
+                <FooterLink href="/support">Support</FooterLink>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* 技术栈展示 */}
+        <div className="border-t border-white/5 pt-6 mb-6">
+          <div className="flex flex-col items-center justify-center">
+            <h4 className="text-gray-500 text-[10px] uppercase tracking-wider mb-3 font-medium">
+              Built with Modern Tech
+            </h4>
+            <div className="flex flex-wrap justify-center items-center gap-2 opacity-70 hover:opacity-100 transition-opacity duration-300">
+              <TechBadge name="Ethereum" />
+              <TechBadge name="Solidity" />
+              <TechBadge name="Hardhat" />
+              <span className="text-gray-700 text-xs">|</span>
+              <TechBadge name="Next.js" />
+              <TechBadge name="RainbowKit" />
+              <TechBadge name="Wagmi" />
+              <span className="text-gray-700 text-xs">|</span>
+              <TechBadge name="Ponder" />
+              <TechBadge name="TailwindCSS" />
+            </div>
+          </div>
+        </div>
+
+        {/* 底部版权信息 */}
+        <div className="border-t border-white/5 pt-6">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="text-gray-500 text-xs">© {currentYear} BlindBox NFT. All rights reserved.</div>
+
+            <div className="flex items-center gap-2 text-xs text-gray-500">
+              <span>Made with</span>
+              <HeartIcon className="w-3 h-3 text-red-500 animate-pulse" />
+              <span>using</span>
+              <a
+                href="https://scaffoldeth.io"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-purple-400 hover:text-purple-300 transition-colors font-medium"
+              >
+                Scaffold-ETH 2
+              </a>
+            </div>
+          </div>
         </div>
       </div>
-      <div className="w-full">
-        <ul className="menu menu-horizontal w-full">
-          <div className="flex justify-center items-center gap-2 text-sm w-full">
-            <div className="text-center">
-              <a href="https://github.com/scaffold-eth/se-2" target="_blank" rel="noreferrer" className="link">
-                Fork me
-              </a>
-            </div>
-            <span>·</span>
-            <div className="flex justify-center items-center gap-2">
-              <p className="m-0 text-center">
-                Built with <HeartIcon className="inline-block h-4 w-4" /> at
-              </p>
-              <a
-                className="flex justify-center items-center gap-1"
-                href="https://buidlguidl.com/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <BuidlGuidlLogo className="w-3 h-5 pb-1" />
-                <span className="link">BuidlGuidl</span>
-              </a>
-            </div>
-            <span>·</span>
-            <div className="text-center">
-              <a href="https://t.me/joinchat/KByvmRe5wkR-8F_zz6AjpA" target="_blank" rel="noreferrer" className="link">
-                Support
-              </a>
-            </div>
-          </div>
-        </ul>
-      </div>
-    </div>
+    </footer>
   );
 };
+
+/**
+ * Footer 链接组件
+ */
+function FooterLink({
+  href,
+  children,
+  external = false,
+}: {
+  href: string;
+  children: React.ReactNode;
+  external?: boolean;
+}) {
+  const className = "text-gray-400 hover:text-white hover:translate-x-1 transition-all duration-200 text-sm block";
+
+  if (external) {
+    return (
+      <li>
+        <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
+          {children}
+        </a>
+      </li>
+    );
+  }
+
+  return (
+    <li>
+      <Link href={href} className={className}>
+        {children}
+      </Link>
+    </li>
+  );
+}
+
+/**
+ * 社交媒体链接组件
+ */
+function SocialLink({ href, label, icon }: { href: string; label: string; icon: React.ReactNode }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="w-10 h-10 bg-white/5 hover:bg-purple-600/20 hover:text-purple-400 text-gray-400 rounded-xl flex items-center justify-center transition-all duration-300 hover:-translate-y-1 border border-white/5 hover:border-purple-500/30"
+      aria-label={label}
+    >
+      {icon}
+    </a>
+  );
+}
+
+/**
+ * 技术栈徽章组件
+ */
+function TechBadge({ name }: { name: string }) {
+  return (
+    <span className="px-2.5 py-1 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-gray-200 text-xs rounded-md transition-colors duration-200 border border-white/5">
+      {name}
+    </span>
+  );
+}

@@ -41,4 +41,11 @@ export default defineConfig([
       ],
     },
   },
+  // 为测试文件添加特殊规则
+  {
+    files: ["test/**/*.ts"],
+    rules: {
+      "@typescript-eslint/no-unused-expressions": "off", // 允许 Chai 断言
+    },
+  },
 ]);

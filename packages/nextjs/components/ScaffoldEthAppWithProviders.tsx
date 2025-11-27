@@ -20,7 +20,7 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
     <>
       <div className={`flex flex-col min-h-screen `}>
         <Header />
-        <main className="relative flex flex-col flex-1">{children}</main>
+        <main className="relative flex flex-col flex-1 pt-16">{children}</main>
         <Footer />
       </div>
       <Toaster />
@@ -45,14 +45,25 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
     setMounted(true);
   }, []);
 
+  // 自定义 RainbowKit 主题 - 使用紫色-粉色主题色
+  const customTheme = isDarkMode
+    ? darkTheme({
+        accentColor: "#a855f7", // 紫色-600
+        accentColorForeground: "white",
+        borderRadius: "large",
+        overlayBlur: "small",
+      })
+    : lightTheme({
+        accentColor: "#9333ea", // 紫色-700
+        accentColorForeground: "white",
+        borderRadius: "large",
+      });
+
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider
-          avatar={BlockieAvatar}
-          theme={mounted ? (isDarkMode ? darkTheme() : lightTheme()) : lightTheme()}
-        >
-          <ProgressBar height="3px" color="#2299dd" />
+        <RainbowKitProvider avatar={BlockieAvatar} theme={mounted ? customTheme : lightTheme()}>
+          <ProgressBar height="3px" color="#a855f7" />
           <ScaffoldEthApp>{children}</ScaffoldEthApp>
         </RainbowKitProvider>
       </QueryClientProvider>

@@ -1,28 +1,87 @@
 {
   "compilerOptions": {
+    // 编译目标：指定编译后的 JavaScript 版本为 ES2020
+    // ES2020 支持可选链 (?.)、空值合并 (??) 等现代特性
     "target": "es2020",
+
+    // 编译时引入的类型库
+    // - dom: 浏览器 DOM API (document, window 等)
+    // - dom.iterable: DOM 集合的迭代器支持 (NodeList, HTMLCollection)
+    // - esnext: 最新的 ECMAScript 特性
     "lib": ["dom", "dom.iterable", "esnext"],
+
+    // 允许编译 JavaScript 文件（.js, .jsx）
+    // Next.js 项目中可能混用 JS 和 TS 文件
     "allowJs": true,
+
+    // 跳过对第三方库声明文件（.d.ts）的类型检查
+    // 可以加快编译速度，避免第三方库的类型错误影响项目
     "skipLibCheck": true,
+
+    // 启用所有严格类型检查选项
+    // 包括 noImplicitAny, strictNullChecks, strictFunctionTypes 等
     "strict": true,
+
+    // 强制文件名大小写一致
+    // 防止在不同操作系统（Windows/Linux/macOS）间出现问题
     "forceConsistentCasingInFileNames": true,
+
+    // 不生成编译输出文件
+    // Next.js 使用自己的构建系统，TypeScript 只用于类型检查
     "noEmit": true,
+
+    // 启用 ES 模块与 CommonJS 模块的互操作性
+    // 允许使用 import 导入 CommonJS 模块（如 import React from 'react'）
     "esModuleInterop": true,
+
+    // 模块系统：使用最新的 ES 模块标准
+    // 支持 import/export 语法
     "module": "esnext",
+
+    // 模块解析策略：使用打包工具（Bundler）模式
+    // 适用于 Webpack、Vite、Next.js 等现代打包工具
+    // 支持无扩展名导入和 package.json 的 exports 字段
     "moduleResolution": "Bundler",
+
+    // 允许导入 JSON 文件作为模块
+    // 例如：import config from './config.json'
     "resolveJsonModule": true,
+
+    // 确保每个文件都可以独立编译
+    // 必须开启，因为 Next.js 使用 Babel/SWC 进行单文件转译
     "isolatedModules": true,
+
+    // JSX 处理方式：保留原始 JSX 语法
+    // 让 Next.js 的编译器（SWC）来处理 JSX 转换
     "jsx": "preserve",
+
+    // 启用增量编译
+    // 将上次编译信息存储到 .tsbuildinfo 文件，加快后续编译速度
     "incremental": true,
+
+    // 路径别名映射
+    // "~~/*" 映射到当前目录，可以使用 ~~/components 代替 ./components
+    // 避免深层级的相对路径（如 ../../../components）
     "paths": {
       "~~/*": ["./*"]
     },
+
+    // TypeScript 插件
+    // Next.js 插件提供类型检查和智能提示支持
     "plugins": [
       {
         "name": "next"
       }
     ]
   },
+
+  // 需要编译的文件
+  // - next-env.d.ts: Next.js 环境类型声明
+  // - **/*.ts, **/*.tsx: 所有 TypeScript 和 TSX 文件
+  // - .next/types/**/*.ts: Next.js 生成的类型文件（如路由类型）
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+
+  // 排除不需要编译的目录
+  // node_modules: 第三方依赖包，已经编译过
   "exclude": ["node_modules"]
 }

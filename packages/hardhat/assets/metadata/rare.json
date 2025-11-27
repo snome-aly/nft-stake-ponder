@@ -1,0 +1,11 @@
+{
+  "name": "Rare NFT #{id}",
+  "description": "A gleaming rarity that catches every eye.",
+  "image": "ipfs://__RARE_CID__/rare.png",
+  "attributes": [
+    {
+      "trait_type": "Rarity",
+      "value": "Rare"
+    }
+  ]
+}
