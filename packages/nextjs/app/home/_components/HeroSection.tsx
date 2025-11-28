@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { RectangleStackIcon } from "@heroicons/react/24/outline";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
 export function HeroSection() {
@@ -49,7 +50,7 @@ export function HeroSection() {
           <div className="mb-8 mt-4">
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6">
               <span className="block bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 bg-clip-text">
-                🎁 Mystical
+                🎁 <span className="text-transparent">Mystical</span>
               </span>
               <span className="block bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                 Blind Box NFT
@@ -101,9 +102,10 @@ export function HeroSection() {
 
             <button
               onClick={() => router.push("/my-nfts")}
-              className="px-8 py-4 border-2 border-purple-400/50 hover:border-purple-400 text-purple-400 hover:text-white hover:bg-purple-400/10 font-bold text-lg rounded-xl transform hover:scale-105 transition-all duration-300"
+              className="px-8 py-4 border-2 border-purple-400/50 hover:border-purple-400 text-purple-400 hover:text-white hover:bg-purple-400/10 font-bold text-lg rounded-xl transform hover:scale-105 transition-all duration-300 flex items-center gap-2"
             >
-              🖼️ My Collection
+              <RectangleStackIcon className="w-6 h-6" />
+              My Collection
             </button>
           </div>
 

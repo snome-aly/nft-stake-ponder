@@ -50,7 +50,7 @@ const rarityData = [
     percentage: 5,
     multiplier: "3.0x",
     multiplierValue: 30000,
-    textClass: "text-gradient-gold",
+    textClass: "text-yellow-400",
     description: "5% chance - Triple rewards!",
     cardClass: "bg-gradient-to-br from-yellow-900/30 to-orange-900/30",
     borderClass: "border-neon-gold",

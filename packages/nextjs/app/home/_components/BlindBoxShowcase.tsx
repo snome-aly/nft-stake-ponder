@@ -52,10 +52,10 @@ export function BlindBoxShowcase() {
   "description": "A mysterious blind box...",
   "image": "ipfs://Qmd2S...S1cKk",
   "attributes": [
-    {
-      "trait_type": "Status",
-      "value": "Unrevealed"
-    }
+    { "trait_type": "Rarity",           "value": "???" },
+    { "trait_type": "Reward Multiplier","value": "???" },
+    { "trait_type": "Multiplier Value", "value": "???" },
+    { "trait_type": "Status",           "value": "Unrevealed" }
   ]
 }`}
               </pre>
@@ -111,25 +111,13 @@ export function BlindBoxShowcase() {
               <pre className="text-green-300 overflow-x-auto text-xs leading-relaxed">
                 {`{
   "name": "Stakable NFT #42",
-  "description": "A stakable NFT with Legendary rarity...",
+  "description": "A Legendary stakable NFT!",
   "image": "ipfs://QmZH...sjtf",
   "attributes": [
-    {
-      "trait_type": "Rarity",
-      "value": "Legendary"
-    },
-    {
-      "trait_type": "Reward Multiplier",
-      "value": "3x"
-    },
-    {
-      "trait_type": "Multiplier Value",
-      "value": 30000
-    },
-    {
-      "trait_type": "Status",
-      "value": "Revealed"
-    }
+    { "trait_type": "Rarity",           "value": "Legendary" },
+    { "trait_type": "Reward Multiplier","value": "3x" },
+    { "trait_type": "Multiplier Value", "value": 30000 },
+    { "trait_type": "Status",           "value": "Revealed" }
   ]
 }`}
               </pre>
@@ -158,25 +146,25 @@ export function BlindBoxShowcase() {
             <h3 className="text-2xl font-bold text-white mb-4 text-center text-gradient-purple">
               🎲 VRF-Based Fair Reveal
             </h3>
-            <div className="space-y-4 text-gray-300">
-              <div className="flex items-start space-x-3">
-                <div className="text-purple-400 font-bold mt-1">When?</div>
-                <p className="flex-1">Only after all 100 NFTs are minted (sellout)</p>
+            <div className="space-y-3 text-gray-300">
+              <div className="grid grid-cols-[5rem_1fr] gap-x-4 items-baseline">
+                <div className="text-purple-400 font-bold">When?</div>
+                <p>Only after all 100 NFTs are minted (sellout)</p>
               </div>
-              <div className="flex items-start space-x-3">
-                <div className="text-purple-400 font-bold mt-1">Who?</div>
-                <p className="flex-1">
+              <div className="grid grid-cols-[5rem_1fr] gap-x-4 items-baseline">
+                <div className="text-purple-400 font-bold">Who?</div>
+                <p>
                   Admin triggers reveal using <code className="terminal-glow px-2 py-1 rounded text-xs">reveal()</code>{" "}
                   function
                 </p>
               </div>
-              <div className="flex items-start space-x-3">
-                <div className="text-purple-400 font-bold mt-1">How?</div>
-                <p className="flex-1">Random offset calculated via VRF (Verifiable Random Function)</p>
+              <div className="grid grid-cols-[5rem_1fr] gap-x-4 items-baseline">
+                <div className="text-purple-400 font-bold">How?</div>
+                <p>Random offset calculated via VRF (Verifiable Random Function)</p>
               </div>
-              <div className="flex items-start space-x-3">
-                <div className="text-purple-400 font-bold mt-1">Result:</div>
-                <p className="flex-1">All 100 NFTs reveal simultaneously with fair rarity distribution</p>
+              <div className="grid grid-cols-[5rem_1fr] gap-x-4 items-baseline">
+                <div className="text-purple-400 font-bold">Result?</div>
+                <p>All 100 NFTs reveal simultaneously with fair rarity distribution</p>
               </div>
             </div>
 

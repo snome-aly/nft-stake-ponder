@@ -86,29 +86,24 @@ const nextConfig: NextConfig = {
   // trailingSlash: false,
 
   // ============================================
-  // 图片优化配置（可选，已注释）
+  // 图片优化配置
   // ============================================
 
-  // images: {
-  //   // 允许的外部图片域名
-  //   remotePatterns: [
-  //     {
-  //       protocol: 'https',
-  //       hostname: '**.example.com',
-  //       port: '',
-  //       pathname: '/images/**',
-  //     },
-  //   ],
-  //   // 图片尺寸配置
-  //   deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-  //   imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-  //   // 支持的图片格式
-  //   formats: ['image/webp', 'image/avif'],
-  //   // 图片缓存时间（秒）
-  //   minimumCacheTTL: 60,
-  //   // 关闭图片优化
-  //   unoptimized: false,
-  // },
+  images: {
+    // 允许的外部图片域名
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "gateway.pinata.cloud",
+        pathname: "/ipfs/**",
+      },
+      {
+        protocol: "https",
+        hostname: "ipfs.io",
+        pathname: "/ipfs/**",
+      },
+    ],
+  },
 
   // ============================================
   // 环境变量配置（可选，已注释）

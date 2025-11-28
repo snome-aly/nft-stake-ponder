@@ -57,7 +57,7 @@ export function RevealProcess() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6">🎯 Complete User Journey</h2>
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-700 max-w-3xl mx-auto whitespace-nowrap">
             From minting to staking in 6 transparent steps. Understand the full process before you begin.
           </p>
         </div>
@@ -95,7 +95,7 @@ export function RevealProcess() {
             <div className="grid md:grid-cols-2 gap-6">
               <div className="bg-black/30 rounded-xl p-6">
                 <h4 className="text-purple-400 font-semibold mb-3">How VRF Works</h4>
-                <ol className="space-y-2 text-sm text-gray-300">
+                <ol className="space-y-2 text-sm text-gray-200">
                   <li>
                     1. Admin calls <code className="bg-black/50 px-1 rounded">reveal()</code> after sellout
                   </li>
@@ -113,7 +113,7 @@ export function RevealProcess() {
 
               <div className="bg-black/30 rounded-xl p-6">
                 <h4 className="text-pink-400 font-semibold mb-3">Why It&apos;s Fair</h4>
-                <ul className="space-y-2 text-sm text-gray-300">
+                <ul className="space-y-2 text-sm text-gray-200">
                   <li>✅ Rarity pool shuffled off-chain before deployment</li>
                   <li>✅ Random offset prevents prediction</li>
                   <li>✅ All 100 NFTs revealed simultaneously</li>
@@ -124,12 +124,13 @@ export function RevealProcess() {
             </div>
 
             <div className="mt-6 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-              <p className="text-sm text-gray-300 leading-relaxed">
+              <p className="text-sm text-gray-200 leading-relaxed">
                 <span className="text-yellow-400 font-semibold">⚠️ Current Implementation:</span> Using{" "}
                 <code className="bg-black/50 px-1 rounded">
                   keccak256(block.timestamp, block.prevrandao, msg.sender, totalMinted)
                 </code>{" "}
-                for demo. Production will integrate <strong>Chainlink VRF</strong> for cryptographic randomness.
+                for demo. Production will integrate <strong className="text-green-400">Chainlink VRF</strong> for
+                cryptographic randomness.
               </p>
             </div>
           </div>
@@ -143,7 +144,7 @@ export function RevealProcess() {
           >
             🚀 Start Minting Now
           </button>
-          <p className="text-gray-400 mt-4 text-sm">
+          <p className="text-gray-300 mt-4 text-sm">
             New to Web3?{" "}
             <a href="/guide" className="text-purple-400 hover:text-purple-300 underline">
               Read our beginner&apos;s guide
@@ -170,9 +171,7 @@ function StepCard({ step, layout }: { step: (typeof steps)[0]; layout: "vertical
             <span className="text-3xl">{step.icon}</span>
           </div>
           <h3 className="text-white font-bold text-sm mb-2 text-center">{step.title}</h3>
-          <p className="text-gray-400">
-            Wait for the Chainlink VRF to generate a random number. This ensures the NFT&apos;s rarity is truly random.
-          </p>
+          <p className="text-gray-200 text-xs leading-relaxed">{step.description}</p>
           <div className="mt-3 pt-3 border-t border-gray-700">
             <span className="text-xs text-purple-400 block text-center">{step.status}</span>
           </div>
@@ -193,8 +192,8 @@ function StepCard({ step, layout }: { step: (typeof steps)[0]; layout: "vertical
           <span className="text-2xl">{step.icon}</span>
           <h3 className="text-white font-bold">{step.title}</h3>
         </div>
-        <p className="text-gray-300 text-sm mb-2">{step.description}</p>
-        <p className="text-gray-500 text-xs mb-2">{step.details}</p>
+        <p className="text-gray-200 text-sm mb-2">{step.description}</p>
+        <p className="text-gray-400 text-xs mb-2">{step.details}</p>
         <span className="inline-block text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded">{step.status}</span>
       </div>
     </div>
