@@ -43,12 +43,12 @@ export function HeroSection() {
         🌟
       </div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 select-none">
         <div className="text-center max-w-5xl mx-auto">
           {/* 主标题 */}
-          <div className="mb-8">
+          <div className="mb-8 mt-4">
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6">
-              <span className="block bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 bg-clip-text">
                 🎁 Mystical
               </span>
               <span className="block bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
@@ -116,7 +116,7 @@ export function HeroSection() {
           />
 
           {/* 核心特性展示 */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto mt-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto mt-12 mb-4">
             <FeatureCard icon="🎲" title="Blind Box Mystery" description="Every mint is unrevealed until sellout" />
             <FeatureCard icon="🔒" title="Batch Reveal" description="Fair VRF-based reveal after 100/100 minted" />
             <FeatureCard icon="💎" title="Rarity Rewards" description="Legendary NFTs earn 3x staking rewards" />

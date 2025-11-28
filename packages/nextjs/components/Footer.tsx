@@ -109,11 +109,13 @@ export const Footer = () => {
               <TechBadge name="Hardhat" />
               <span className="text-gray-700 text-xs">|</span>
               <TechBadge name="Next.js" />
+              <TechBadge name="TailwindCSS" />
+              <TechBadge name="Daisyui" />
+              <span className="text-gray-700 text-xs">|</span>
               <TechBadge name="RainbowKit" />
               <TechBadge name="Wagmi" />
               <span className="text-gray-700 text-xs">|</span>
               <TechBadge name="Ponder" />
-              <TechBadge name="TailwindCSS" />
             </div>
           </div>
         </div>

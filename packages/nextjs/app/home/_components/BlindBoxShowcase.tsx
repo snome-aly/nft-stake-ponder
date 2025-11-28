@@ -2,12 +2,12 @@
 
 export function BlindBoxShowcase() {
   return (
-    <section className="py-20 bg-black relative overflow-hidden">
+    <section className="py-12 bg-black relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-16 animate-slide-in-up">
+        <div className="text-center mb-10 animate-slide-in-up">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6 text-gradient-purple">
             🎁 How Blind Boxes Work
           </h2>
@@ -17,9 +17,9 @@ export function BlindBoxShowcase() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
           {/* Unrevealed State Card */}
-          <div className="glass-card rounded-2xl p-8 border-neon-gold animate-slide-in tilt-3d">
+          <div className="glass-card rounded-2xl p-5 border-neon-gold animate-slide-in tilt-3d">
             <div className="text-center mb-6">
               <span className="inline-flex items-center space-x-2 glass-medium text-yellow-400 px-4 py-2 rounded-full border-neon-gold mb-4">
                 <span>🔒</span>
@@ -30,9 +30,9 @@ export function BlindBoxShowcase() {
 
             {/* Blind Box Visual */}
             <div className="mb-6 flex justify-center">
-              <div className="w-64 h-64 bg-gradient-to-br from-gray-700 to-gray-900 rounded-xl flex items-center justify-center border-4 border-gray-600 relative overflow-hidden group tilt-3d animate-scale-pulse">
+              <div className="w-48 h-48 bg-gradient-to-br from-gray-700 to-gray-900 rounded-xl flex items-center justify-center border-4 border-gray-600 relative overflow-hidden group tilt-3d animate-scale-pulse">
                 <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 to-pink-600/20 animate-pulse"></div>
-                <span className="text-8xl relative z-10 group-hover:scale-125 transition-transform duration-300">
+                <span className="text-6xl relative z-10 group-hover:scale-125 transition-transform duration-300">
                   🎁
                 </span>
               </div>
@@ -79,7 +79,7 @@ export function BlindBoxShowcase() {
 
           {/* Revealed State Card */}
           <div
-            className="glass-card rounded-2xl p-8 border-neon-blue animate-slide-in tilt-3d"
+            className="glass-card rounded-2xl p-5 border-neon-blue animate-slide-in tilt-3d"
             style={{ animationDelay: "0.2s" }}
           >
             <div className="text-center mb-6">
@@ -92,9 +92,9 @@ export function BlindBoxShowcase() {
 
             {/* Revealed NFT Visual */}
             <div className="mb-6 flex justify-center">
-              <div className="w-64 h-64 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl flex items-center justify-center border-4 border-yellow-400 relative overflow-hidden group tilt-3d animate-glow-gold">
+              <div className="w-48 h-48 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl flex items-center justify-center border-4 border-yellow-400 relative overflow-hidden group tilt-3d animate-glow-gold">
                 <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/30 to-orange-500/30 animate-pulse"></div>
-                <span className="text-8xl relative z-10 group-hover:scale-125 group-hover:rotate-12 transition-all duration-300">
+                <span className="text-6xl relative z-10 group-hover:scale-125 group-hover:rotate-12 transition-all duration-300">
                   🌟
                 </span>
               </div>
@@ -153,8 +153,8 @@ export function BlindBoxShowcase() {
         </div>
 
         {/* VRF Explanation */}
-        <div className="mt-16 max-w-3xl mx-auto animate-slide-in-up" style={{ animationDelay: "0.4s" }}>
-          <div className="glass-card rounded-2xl p-8 border-neon-purple">
+        <div className="mt-10 max-w-3xl mx-auto animate-slide-in-up" style={{ animationDelay: "0.4s" }}>
+          <div className="glass-card rounded-2xl p-6 border-neon-purple">
             <h3 className="text-2xl font-bold text-white mb-4 text-center text-gradient-purple">
               🎲 VRF-Based Fair Reveal
             </h3>
