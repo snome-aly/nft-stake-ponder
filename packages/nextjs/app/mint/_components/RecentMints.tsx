@@ -46,7 +46,7 @@ export function RecentMints() {
         <div className="space-y-1.5">
           {recentMints.map((event, index) => (
             <div
-              key={`${event.log.transactionHash}-${index}`}
+              key={`${event.transactionHash}-${index}`}
               className="flex items-center justify-between p-2.5 glass-dark rounded-lg hover:bg-white/5 transition-all animate-slide-in"
               style={{ animationDelay: `${index * 0.05}s` }}
             >
@@ -65,9 +65,7 @@ export function RecentMints() {
                 <span className="text-white font-bold text-sm">
                   {Number(event.args.quantity)} NFT{Number(event.args.quantity) > 1 ? "s" : ""}
                 </span>
-                <p className="text-gray-500 text-xs">
-                  {event.log.blockNumber ? formatTime(Date.now() / 1000) : "Pending"}
-                </p>
+                <p className="text-gray-500 text-xs">{event.blockNumber ? formatTime(Date.now() / 1000) : "Pending"}</p>
               </div>
             </div>
           ))}
