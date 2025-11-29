@@ -1,7 +1,7 @@
 import { wagmiConnectors } from "./wagmiConnectors";
 import { Chain, createClient, fallback, http } from "viem";
 import { hardhat, mainnet } from "viem/chains";
-import { createConfig } from "wagmi";
+import { cookieStorage, createConfig, createStorage } from "wagmi";
 import scaffoldConfig, { DEFAULT_ALCHEMY_API_KEY, ScaffoldConfig } from "~~/scaffold.config";
 import { getAlchemyHttpUrl } from "~~/utils/scaffold-eth";
 
@@ -74,6 +74,14 @@ export const wagmiConfig = createConfig({
    * 对于 Next.js 应用这是必需的
    */
   ssr: true,
+
+  /**
+   * 使用 cookie 存储连接状态
+   * 这样服务端也能读取到连接状态，避免 hydration 闪烁
+   */
+  storage: createStorage({
+    storage: cookieStorage,
+  }),
 
   /**
    * 客户端配置函数

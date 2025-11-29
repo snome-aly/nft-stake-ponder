@@ -27,7 +27,7 @@ type NavLink = {
 const navLinks: NavLink[] = [
   {
     label: "Home",
-    href: "/",
+    href: "/home",
     icon: <HomeIcon className="w-5 h-5" />,
   },
   {
