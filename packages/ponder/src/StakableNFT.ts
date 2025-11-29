@@ -155,8 +155,8 @@ ponder.on("StakableNFT:RevealCompleted", async ({ event, context }) => {
 
     // 从合约读取该索引的稀有度
     const rarity = await context.client.readContract({
-      abi: context.contracts.StakableNFT.abi,
-      address: context.contracts.StakableNFT.address,
+      abi: context.contracts.StakableNFT!.abi,
+      address: context.contracts.StakableNFT!.address,
       functionName: "rarityPool",
       args: [BigInt(rarityIndex)],
     });
