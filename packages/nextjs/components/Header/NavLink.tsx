@@ -9,35 +9,39 @@ import Link from "next/link";
  * - active 状态：紫色背景 + 底部边框
  * - 悬停效果：背景变暗，文字变白
  * - 平滑过渡动画
+ * - iconOnly 模式：只显示图标，节省空间
  */
 export const NavLink = ({
   href,
   children,
   active = false,
   icon,
+  iconOnly = false,
 }: {
   href: string;
   children: React.ReactNode;
   active?: boolean;
   icon?: React.ReactNode;
+  iconOnly?: boolean;
 }) => {
   return (
     <Link
       href={href}
-      className={`group flex items-center px-4 py-2 rounded-xl font-medium transition-all duration-300 ease-out ${
+      className={`group flex items-center ${iconOnly ? "p-2" : "px-4 py-2"} rounded-xl font-medium transition-all duration-300 ease-out ${
         active
           ? "bg-purple-600/20 text-purple-400 shadow-[0_0_20px_rgba(147,51,234,0.3)] border border-purple-500/30"
           : "text-gray-400 hover:text-white hover:bg-white/5 hover:scale-105"
       }`}
+      title={iconOnly ? String(children) : undefined}
     >
       {icon && (
         <span
-          className={`mr-0.5 transition-transform duration-300 group-hover:rotate-12 ${active ? "text-purple-400" : "text-gray-500 group-hover:text-purple-400"}`}
+          className={`${iconOnly ? "" : "mr-0.5"} transition-transform duration-300 group-hover:rotate-12 ${active ? "text-purple-400" : "text-gray-500 group-hover:text-purple-400"}`}
         >
           {icon}
         </span>
       )}
-      {children}
+      {!iconOnly && <span suppressHydrationWarning>{children}</span>}
     </Link>
   );
 };

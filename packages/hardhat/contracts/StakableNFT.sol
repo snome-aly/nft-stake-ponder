@@ -16,8 +16,10 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
+import "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
-contract StakableNFT is ERC721, ERC721Pausable, AccessControl, ReentrancyGuard {
+contract StakableNFT is ERC721, ERC721Pausable, AccessControl, ReentrancyGuard, EIP712 {
     bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 
@@ -55,6 +57,15 @@ contract StakableNFT is ERC721, ERC721Pausable, AccessControl, ReentrancyGuard {
     // 稀有度奖励倍率 (基数 10000，例如 10000 = 1x, 20000 = 2x)
     mapping(Rarity => uint256) public rewardMultiplier;
 
+    // ============ EIP-4494 (ERC721 Permit) ============
+
+    // Permit nonces
+    mapping(address => uint256) private _nonces;
+
+    // Permit type hash
+    bytes32 private constant PERMIT_TYPEHASH =
+        keccak256("Permit(address spender,uint256 tokenId,uint256 nonce,uint256 deadline)");
+
     // ============ 事件 ============
     event NFTMinted(address indexed to, uint256 startTokenId, uint256 quantity);
     event RarityPoolSet(uint256 poolSize);
@@ -63,7 +74,7 @@ contract StakableNFT is ERC721, ERC721Pausable, AccessControl, ReentrancyGuard {
     event RewardMultiplierUpdated(Rarity indexed rarity, uint256 oldMultiplier, uint256 newMultiplier);
     event Withdrawn(address indexed recipient, uint256 amount);
 
-    constructor() ERC721("Stakable NFT", "SNFT") {
+    constructor() ERC721("Stakable NFT", "SNFT") EIP712("Stakable NFT", "1") {
         rarityImages[Rarity.Common] = "ipfs://QmY7A1WYkzBxgvYXwDwbY35bntWEeYi6kmph52UcpQTHFp";
         rarityImages[Rarity.Rare] = "ipfs://QmYbvQvfFrKbxLwr3ZX4pigAZJbTB7zCpykGmuoWoZTf9p";
         rarityImages[Rarity.Epic] = "ipfs://Qmdg4TcyiPpuxUJpDTsnJSGfEsjLzASekNrtCyWQZqWDW6";
@@ -402,5 +413,76 @@ contract StakableNFT is ERC721, ERC721Pausable, AccessControl, ReentrancyGuard {
 
     function unpause() external onlyRole(PAUSER_ROLE) {
         _unpause();
+    }
+
+    // ============ EIP-4494 (ERC721 Permit) 实现 ============
+
+    /**
+     * @notice 获取账户的当前 nonce
+     * @param owner 账户地址
+     * @return 当前 nonce
+     */
+    function nonces(address owner) public view returns (uint256) {
+        return _nonces[owner];
+    }
+
+    /**
+     * @notice 获取 EIP-712 域分隔符
+     * @return 域分隔符
+     */
+    function DOMAIN_SEPARATOR() external view returns (bytes32) {
+        return _domainSeparatorV4();
+    }
+
+    /**
+     * @notice ERC721 Permit 函数 - 支持 gasless approval
+     * @param spender 被授权者地址
+     * @param tokenId NFT ID
+     * @param deadline 签名过期时间
+     * @param v 签名参数 v
+     * @param r 签名参数 r
+     * @param s 签名参数 s
+     * @dev
+     * - 用户离线签名授权信息
+     * - 任何人可以提交签名完成授权（用户无需支付 gas）
+     * - 签名必须在 deadline 之前有效
+     * - 每个签名只能使用一次（通过 nonce 防止重放攻击）
+     *
+     * 使用示例（前端）：
+     * ```typescript
+     * const signature = await signer._signTypedData(domain, types, value);
+     * const { v, r, s } = ethers.utils.splitSignature(signature);
+     * await stakingPool.stakeWithPermit(tokenId, deadline, v, r, s);
+     * ```
+     */
+    function permit(
+        address spender,
+        uint256 tokenId,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external {
+        require(block.timestamp <= deadline, "Permit expired");
+
+        address owner = ownerOf(tokenId);
+        require(spender != owner, "Approval to current owner");
+
+        // 构建 EIP-712 结构化数据哈希
+        bytes32 structHash = keccak256(
+            abi.encode(PERMIT_TYPEHASH, spender, tokenId, _nonces[owner], deadline)
+        );
+
+        bytes32 hash = _hashTypedDataV4(structHash);
+
+        // 恢复签名者地址
+        address signer = ECDSA.recover(hash, v, r, s);
+        require(signer == owner, "Invalid signature");
+
+        // 增加 nonce（防止重放攻击）
+        _nonces[owner]++;
+
+        // 执行授权
+        _approve(spender, tokenId, owner);
     }
 }

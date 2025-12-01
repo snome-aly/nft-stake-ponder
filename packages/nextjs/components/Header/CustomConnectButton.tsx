@@ -2,6 +2,7 @@
 
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { useBalance, useAccount } from "wagmi";
 
 /**
  * 格式化余额显示
@@ -37,6 +38,17 @@ const formatBalance = (balance: string | undefined): string => {
  * - 账户按钮（带 "Account:" 标签）
  */
 export const CustomConnectButton = () => {
+  const { address } = useAccount();
+
+  // 使用 wagmi 的 useBalance hook 获取余额
+  // React Query 会自动管理缓存和更新
+  const { data: balanceData } = useBalance({
+    address: address,
+    query: {
+      enabled: !!address,
+    },
+  });
+
   return (
     <ConnectButton.Custom>
       {({ account, chain, openAccountModal, openChainModal, openConnectModal, mounted }) => {
@@ -111,8 +123,12 @@ export const CustomConnectButton = () => {
                   <div className="flex items-center justify-between sm:justify-start space-x-2 px-3 py-2 bg-gray-800/50 border border-gray-700 rounded-lg">
                     <span className="text-gray-400 text-sm sm:hidden">Balance:</span>
                     <div className="flex items-center space-x-2">
-                      <span className="text-white font-medium">{formatBalance(account.balanceFormatted)}</span>
-                      <span className="text-gray-400 text-sm">{account.balanceSymbol || "ETH"}</span>
+                      <span className="text-white font-medium">
+                        {balanceData ? formatBalance(
+                          (Number(balanceData.value) / Math.pow(10, balanceData.decimals)).toString()
+                        ) : "0"}
+                      </span>
+                      <span className="text-gray-400 text-sm">{balanceData?.symbol || "ETH"}</span>
                     </div>
                   </div>
 

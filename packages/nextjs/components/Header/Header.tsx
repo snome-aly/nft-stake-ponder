@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { usePathname } from "next/navigation";
+import { useAccount } from "wagmi";
 import { CustomConnectButton } from "./CustomConnectButton";
 import { Logo } from "./Logo";
 import { MobileNavLink, NavLink } from "./NavLink";
@@ -13,7 +14,10 @@ import {
   LockClosedIcon,
   PhotoIcon,
   XMarkIcon,
+  WrenchScrewdriverIcon,
 } from "@heroicons/react/24/outline";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+import { ADMIN_ROLE } from "~~/constants/roles";
 
 /**
  * Header 导航链接配置
@@ -24,37 +28,56 @@ type NavLink = {
   icon: React.ReactNode;
 };
 
-const navLinks: NavLink[] = [
-  {
-    label: "Home",
-    href: "/home",
-    icon: <HomeIcon className="w-5 h-5" />,
-  },
-  {
-    label: "Mint",
-    href: "/mint",
-    icon: <CubeTransparentIcon className="w-5 h-5" />,
-  },
-  {
-    label: "My NFTs",
-    href: "/my-nfts",
-    icon: <PhotoIcon className="w-5 h-5" />,
-  },
-  {
-    label: "Stake",
-    href: "/stake",
-    icon: <LockClosedIcon className="w-5 h-5" />,
-  },
-  {
-    label: "Stats",
-    href: "/stats",
-    icon: <ChartBarIcon className="w-5 h-5" />,
-  },
-];
-
 export const Header = () => {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { address } = useAccount();
+
+  // 检查是否为管理员
+  const { data: isAdmin } = useScaffoldReadContract({
+    contractName: "StakableNFT",
+    functionName: "hasRole",
+    args: [ADMIN_ROLE, address],
+  });
+
+  // 基础导航链接
+  const baseNavLinks: NavLink[] = [
+    {
+      label: "Home",
+      href: "/home",
+      icon: <HomeIcon className="w-5 h-5" />,
+    },
+    {
+      label: "Mint",
+      href: "/mint",
+      icon: <CubeTransparentIcon className="w-5 h-5" />,
+    },
+    {
+      label: "My NFTs",
+      href: "/my-nfts",
+      icon: <PhotoIcon className="w-5 h-5" />,
+    },
+    {
+      label: "Stake",
+      href: "/stake",
+      icon: <LockClosedIcon className="w-5 h-5" />,
+    },
+    {
+      label: "Stats",
+      href: "/stats",
+      icon: <ChartBarIcon className="w-5 h-5" />,
+    },
+  ];
+
+  // 管理员链接
+  const adminLink: NavLink = {
+    label: "Admin",
+    href: "/admin",
+    icon: <WrenchScrewdriverIcon className="w-5 h-5" />,
+  };
+
+  // 根据权限动态添加管理员链接
+  const navLinks = isAdmin ? [...baseNavLinks, adminLink] : baseNavLinks;
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-md border-b border-white/10 shadow-lg transition-all duration-300">
@@ -68,7 +91,13 @@ export const Header = () => {
           {/* 桌面端导航菜单 - 靠左跟随 Logo */}
           <nav className="hidden md:flex items-center space-x-2">
             {navLinks.map(link => (
-              <NavLink key={link.href} href={link.href} active={pathname === link.href} icon={link.icon}>
+              <NavLink
+                key={link.href}
+                href={link.href}
+                active={pathname === link.href}
+                icon={link.icon}
+                iconOnly={link.href === "/admin"}
+              >
                 {link.label}
               </NavLink>
             ))}

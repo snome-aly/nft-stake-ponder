@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { gql, request } from "graphql-request";
 import { useScaffoldWatchContractEvent } from "~~/hooks/scaffold-eth";
 
 interface MintEvent {
@@ -11,10 +13,67 @@ interface MintEvent {
   timestamp: number;
 }
 
+const PONDER_URL = process.env.NEXT_PUBLIC_PONDER_URL || "http://localhost:42069";
+
+// 查询最近的 mint 事件
+const fetchRecentMints = async () => {
+  const query = gql`
+    query RecentMints {
+      nfts(orderBy: "mintedAt", orderDirection: "desc", limit: 20) {
+        items {
+          tokenId
+          owner
+          mintedBy
+          mintedAt
+        }
+      }
+    }
+  `;
+  const data = await request<any>(PONDER_URL, query);
+  return data.nfts.items;
+};
+
 export function LiveActivity() {
   const [recentMints, setRecentMints] = useState<MintEvent[]>([]);
 
-  // Listen to NFTMinted events
+  // 查询历史 mint 记录
+  const { data: historicalMints } = useQuery({
+    queryKey: ["recentMints"],
+    queryFn: fetchRecentMints,
+    refetchInterval: 10000, // 每 10 秒刷新
+  });
+
+  // 将 Ponder 数据转换为 MintEvent 格式
+  useEffect(() => {
+    if (historicalMints && historicalMints.length > 0) {
+      // 按 mintedBy 分组，找出每次 mint 交易
+      const mintGroups = new Map<string, any[]>();
+
+      historicalMints.forEach((nft: any) => {
+        const key = `${nft.mintedBy}-${nft.mintedAt}`;
+        if (!mintGroups.has(key)) {
+          mintGroups.set(key, []);
+        }
+        mintGroups.get(key)!.push(nft);
+      });
+
+      // 转换为 MintEvent 格式
+      const events: MintEvent[] = Array.from(mintGroups.values()).map(group => {
+        const sorted = group.sort((a, b) => a.tokenId - b.tokenId);
+        return {
+          transactionHash: "", // Ponder 数据中没有 txHash，可以留空
+          owner: sorted[0].mintedBy,
+          startTokenId: BigInt(sorted[0].tokenId),
+          quantity: BigInt(sorted.length),
+          timestamp: sorted[0].mintedAt * 1000, // 转换为毫秒
+        };
+      });
+
+      setRecentMints(events);
+    }
+  }, [historicalMints]);
+
+  // 监听实时 mint 事件
   useScaffoldWatchContractEvent({
     contractName: "StakableNFT",
     eventName: "NFTMinted",

@@ -99,12 +99,12 @@ export function useDeployedContractInfo<TContractName extends ContractName>(
         }
 
         // 获取合约地址的字节码
-        const code = await publicClient.getBytecode({
+        const code = await publicClient.getCode({
           address: deployedContract.address,
         });
 
-        // 如果字节码是 `0x`，说明该地址没有部署合约
-        if (code === "0x") {
+        // 如果字节码是 `0x`、空字符串或 undefined，说明该地址没有部署合约
+        if (!code || code === "0x") {
           setStatus(ContractCodeStatus.NOT_FOUND);
           return;
         }

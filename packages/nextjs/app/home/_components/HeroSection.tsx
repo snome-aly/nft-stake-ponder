@@ -2,10 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { RectangleStackIcon } from "@heroicons/react/24/outline";
+import { useAccount } from "wagmi";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
 export function HeroSection() {
   const router = useRouter();
+  const { address, isConnected } = useAccount();
 
   // 读取关键状态
   const { data: totalMinted } = useScaffoldReadContract({
@@ -23,9 +25,37 @@ export function HeroSection() {
     functionName: "rarityPoolSet",
   });
 
+  const { data: userMinted } = useScaffoldReadContract({
+    contractName: "StakableNFT",
+    functionName: "mintedCount",
+    args: [address],
+  });
+
   const MAX_SUPPLY = 100;
+  const MAX_PER_ADDRESS = 20;
   const MINT_PRICE = "1 ETH";
   // const progress = totalMinted ? Number((totalMinted * 100n) / BigInt(MAX_SUPPLY)) : 0;
+
+  // 计算状态
+  const userCurrentMinted = userMinted !== undefined ? Number(userMinted) : 0;
+  const isSoldOut = totalMinted === BigInt(MAX_SUPPLY);
+  const isUserMaxReached = isConnected && userCurrentMinted >= MAX_PER_ADDRESS;
+
+  // 按钮状态
+  const getMintButtonState = () => {
+    if (!rarityPoolSet) {
+      return { text: "⚠️ Not Active", disabled: true };
+    }
+    if (isSoldOut) {
+      return { text: "✅ Sold Out", disabled: true };
+    }
+    if (isUserMaxReached) {
+      return { text: `✅ Max Reached (${userCurrentMinted}/20)`, disabled: true };
+    }
+    return { text: "🎲 Mint Blind Box", disabled: false };
+  };
+
+  const mintButtonState = getMintButtonState();
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
@@ -89,13 +119,11 @@ export function HeroSection() {
           {/* CTA 按钮组 */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <button
-              onClick={() => router.push("/mint")}
-              disabled={!rarityPoolSet || totalMinted === BigInt(MAX_SUPPLY)}
+              onClick={() => !mintButtonState.disabled && router.push("/mint")}
+              disabled={mintButtonState.disabled}
               className="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold text-lg rounded-xl transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-purple-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 overflow-hidden"
             >
-              <span className="relative z-10 flex items-center gap-2">
-                {totalMinted === BigInt(MAX_SUPPLY) ? "✅ Sold Out" : "🎲 Mint Blind Box"}
-              </span>
+              <span className="relative z-10 flex items-center gap-2">{mintButtonState.text}</span>
               <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
               <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:animate-shimmer"></div>
             </button>

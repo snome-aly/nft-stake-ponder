@@ -1,5 +1,8 @@
 "use client";
 
+import { useAccount } from "wagmi";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+
 const steps = [
   {
     number: 1,
@@ -52,12 +55,68 @@ const steps = [
 ];
 
 export function RevealProcess() {
+  const { address, isConnected } = useAccount();
+
+  // 读取合约状态
+  const { data: totalMinted } = useScaffoldReadContract({
+    contractName: "StakableNFT",
+    functionName: "totalMinted",
+  });
+
+  const { data: userMinted } = useScaffoldReadContract({
+    contractName: "StakableNFT",
+    functionName: "mintedCount",
+    args: [address],
+  });
+
+  // 常量
+  const maxSupply = 100;
+  const maxPerAddress = 20;
+
+  // 计算状态
+  const currentMinted = totalMinted !== undefined ? Number(totalMinted) : 0;
+  const userCurrentMinted = userMinted !== undefined ? Number(userMinted) : 0;
+  const isSoldOut = currentMinted >= maxSupply;
+  const isUserMaxReached = userCurrentMinted >= maxPerAddress;
+
+  // 按钮状态
+  const getButtonState = () => {
+    if (!isConnected) {
+      return {
+        text: "🔗 Connect Wallet to Mint",
+        disabled: false,
+        className: "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700",
+      };
+    }
+    if (isSoldOut) {
+      return {
+        text: "🔥 Sold Out",
+        disabled: true,
+        className: "bg-gray-600 cursor-not-allowed",
+      };
+    }
+    if (isUserMaxReached) {
+      return {
+        text: `✅ Max Reached (${userCurrentMinted}/20)`,
+        disabled: true,
+        className: "bg-yellow-600 cursor-not-allowed",
+      };
+    }
+    return {
+      text: `🚀 Start Minting Now (${userCurrentMinted}/20)`,
+      disabled: false,
+      className: "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700",
+    };
+  };
+
+  const buttonState = getButtonState();
+
   return (
     <section className="py-20 bg-gradient-to-br from-purple-900/20 to-blue-900/20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6">🎯 Complete User Journey</h2>
-          <p className="text-xl text-gray-700 max-w-3xl mx-auto whitespace-nowrap">
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto whitespace-nowrap">
             From minting to staking in 6 transparent steps. Understand the full process before you begin.
           </p>
         </div>
@@ -139,10 +198,11 @@ export function RevealProcess() {
         {/* CTA */}
         <div className="text-center mt-12">
           <button
-            onClick={() => (window.location.href = "/mint")}
-            className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold text-lg rounded-xl transform hover:scale-105 transition-all duration-300 shadow-xl"
+            onClick={() => !buttonState.disabled && (window.location.href = "/mint")}
+            disabled={buttonState.disabled}
+            className={`px-8 py-4 text-white font-bold text-lg rounded-xl transform hover:scale-105 transition-all duration-300 shadow-xl ${buttonState.className}`}
           >
-            🚀 Start Minting Now
+            {buttonState.text}
           </button>
           <p className="text-gray-300 mt-4 text-sm">
             New to Web3?{" "}

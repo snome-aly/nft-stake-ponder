@@ -1,13 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { parseEther } from "viem";
-import { useAccount } from "wagmi";
+import { useAccount, useWaitForTransactionReceipt } from "wagmi";
+import { useQueryClient } from "@tanstack/react-query";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
 export function MintCard() {
   const { address, isConnected } = useAccount();
   const [quantity, setQuantity] = useState(1);
+  const [txHash, setTxHash] = useState<`0x${string}` | undefined>();
+  const queryClient = useQueryClient();
 
   // 读取合约状态
   const { data: totalMinted } = useScaffoldReadContract({
@@ -27,7 +30,25 @@ export function MintCard() {
   });
 
   // 写入合约
-  const { writeContractAsync, isPending } = useScaffoldWriteContract("StakableNFT");
+  const { writeContractAsync, isPending } = useScaffoldWriteContract({
+    contractName: "StakableNFT",
+  });
+
+  // ✅ 等待交易确认（只在有 txHash 时才监听）
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash: txHash,
+    query: {
+      enabled: !!txHash,  // 显式控制：只在有 hash 时才启用
+    },
+  });
+
+  // ✅ 交易确认后自动刷新余额
+  useEffect(() => {
+    if (isConfirmed && txHash) {
+      queryClient.invalidateQueries({ queryKey: ["balance", { address }] });
+      setTxHash(undefined); // 清除 hash，避免重复刷新
+    }
+  }, [isConfirmed, txHash, queryClient, address]);
 
   // 常量
   const maxSupply = 100;
@@ -53,17 +74,35 @@ export function MintCard() {
     if (quantity < maxCanMint) setQuantity(quantity + 1);
   };
 
+  // 数量输入处理
+  const handleQuantityChange = (value: string) => {
+    const numValue = parseInt(value);
+    if (isNaN(numValue) || numValue < 1) {
+      setQuantity(1);
+    } else if (numValue > maxCanMint) {
+      setQuantity(maxCanMint);
+    } else {
+      setQuantity(numValue);
+    }
+  };
+
   // Mint 操作
   const handleMint = async () => {
     if (!isConnected || isPending || isSoldOut || isMaxReached) return;
 
     try {
-      await writeContractAsync({
+      // 发送交易，获取交易 hash
+      const hash = await writeContractAsync({
         functionName: "mint",
         args: [BigInt(quantity)],
         value: parseEther(String(totalPrice)),
       });
+
+      // ✅ 保存交易 hash，触发 useWaitForTransactionReceipt 监听
+      setTxHash(hash);
       setQuantity(1);
+
+      // 🔥 不再立即刷新余额！等待交易确认后自动刷新
     } catch (error) {
       console.error("Mint failed:", error);
     }
@@ -79,7 +118,19 @@ export function MintCard() {
         text: (
           <span className="flex items-center justify-center space-x-2">
             <span className="animate-spin">⏳</span>
-            <span>Minting...</span>
+            <span>Sending...</span>
+          </span>
+        ),
+        disabled: true,
+        className: "bg-purple-600 cursor-wait",
+      };
+    }
+    if (isConfirming) {
+      return {
+        text: (
+          <span className="flex items-center justify-center space-x-2">
+            <span className="animate-spin">⏳</span>
+            <span>Confirming...</span>
           </span>
         ),
         disabled: true,
@@ -144,7 +195,14 @@ export function MintCard() {
             >
               -
             </button>
-            <span className="text-xl font-bold text-white w-10 text-center">{quantity}</span>
+            <input
+              type="text"
+              min="1"
+              max={maxCanMint}
+              value={quantity}
+              onChange={(e) => handleQuantityChange(e.target.value)}
+              className="w-10 text-center bg-transparent text-white text-xl font-bold outline-none border-0 focus:ring-0"
+            />
             <button
               onClick={handleIncrease}
               disabled={quantity >= maxCanMint}
