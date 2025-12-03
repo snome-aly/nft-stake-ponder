@@ -1,23 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import { useAccount } from "wagmi";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { gql, request } from "graphql-request";
-import { useScaffoldReadContract, useScaffoldEventHistory } from "~~/hooks/scaffold-eth";
-import { useClaimReward, useBatchClaimReward, useUnstake } from "~~/hooks/useStaking";
-import { FullPageLoading } from "~~/components/LoadingComponents";
-import { EmptyState } from "~~/components/EmptyState";
-import deployedContracts from "~~/contracts/deployedContracts";
-import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
-import { getContract } from "viem";
-import { usePublicClient } from "wagmi";
 import Link from "next/link";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getContract } from "viem";
+import { useAccount, usePublicClient } from "wagmi";
+import { ConnectWalletPrompt } from "~~/components/ConnectWalletPrompt";
+import { EmptyState } from "~~/components/EmptyState";
+import { FullPageLoading } from "~~/components/LoadingComponents";
+import deployedContracts from "~~/contracts/deployedContracts";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import { useNFTMetadata } from "~~/hooks/useNFTMetadata";
+import { usePonderStakedNFTs, useRefreshPonderData } from "~~/hooks/usePonder";
+import { useBatchClaimReward, useClaimReward, useUnstake } from "~~/hooks/useStaking";
 import { convertIpfsToHttp } from "~~/utils/staking";
-
-const PONDER_URL = process.env.NEXT_PUBLIC_PONDER_URL || "http://localhost:42069";
 
 type StakedNFT = {
   tokenId: number;
@@ -28,16 +26,6 @@ type StakedNFT = {
   rarity: number | null;
   rewardMultiplier: number;
 };
-
-function ConnectWalletPrompt() {
-  return (
-    <EmptyState
-      icon="🔐"
-      title="Connect Your Wallet"
-      message="Please connect your wallet to view your staked NFTs and manage rewards."
-    />
-  );
-}
 
 function NoStakedNFTs() {
   return (
@@ -74,64 +62,20 @@ function PageContent() {
   const stakingPoolAddress = contracts?.NFTStakingPool?.address;
   const nftAddress = contracts?.StakableNFT?.address;
 
-  // Step 1: Get user's staked NFTs with stakedAt from Ponder activeStake table
-  const { data: activeStakesData, isLoading: isLoadingActiveStakes } = useQuery({
-    queryKey: ["userActiveStakes", address],
-    queryFn: async () => {
-      if (!address) return [];
+  // === 使用 Ponder 获取质押NFT数据 ===
+  const { data: stakedNFTsFromPonder, isLoading: isPonderLoading } = usePonderStakedNFTs(address);
+  const refreshPonderData = useRefreshPonderData(address);
 
-      const query = gql`
-        query UserActiveStakes($user: String!) {
-          activeStakes(where: { user: $user }, orderBy: "stakedAt", orderDirection: "desc") {
-            items {
-              tokenId
-              stakedAt
-            }
-          }
-        }
-      `;
+  // 从Ponder数据中提取tokenIds
+  const tokenIds = useMemo(() => {
+    return (stakedNFTsFromPonder || []).map(nft => nft.tokenId);
+  }, [stakedNFTsFromPonder]);
 
-      const data = await request<any>(PONDER_URL, query, {
-        user: address.toLowerCase(),
-      });
-
-      return data.activeStakes.items;
-    },
-    enabled: !!address && isConnected,
-    refetchInterval: 10000,
-  });
-
-  const tokenIds = (activeStakesData || []).map((stake: any) => stake.tokenId);
-
-  // Step 2: Get NFT metadata (rarity) from Ponder nfts table
-  const { data: nftsMetadata, isLoading: isLoadingMetadata } = useQuery({
-    queryKey: ["stakedNFTsMetadata", tokenIds],
-    queryFn: async () => {
-      if (!tokenIds || tokenIds.length === 0) return [];
-
-      const query = gql`
-        query NFTsByTokenIds($tokenIds: [Int!]!) {
-          nfts(where: { tokenId_in: $tokenIds }) {
-            items {
-              tokenId
-              rarity
-            }
-          }
-        }
-      `;
-
-      const data = await request<any>(PONDER_URL, query, { tokenIds });
-      return data.nfts.items;
-    },
-    enabled: tokenIds.length > 0,
-    refetchInterval: 10000,
-  });
-
-  // Step 3: Get real-time data from contract (pendingReward, rewardMultiplier)
+  // 获取合约实时数据（pending reward等）
   const { data: stakedNFTs, isLoading: isLoadingContractData } = useQuery({
-    queryKey: ["stakedNFTsContract", tokenIds],
+    queryKey: ["stakedNFTsWithRewards", tokenIds, address],
     queryFn: async () => {
-      if (!publicClient || !stakingPoolAddress || !nftAddress || !tokenIds || tokenIds.length === 0) {
+      if (!publicClient || !stakingPoolAddress || !nftAddress || tokenIds.length === 0) {
         return [];
       }
 
@@ -147,32 +91,28 @@ function PageContent() {
         client: publicClient,
       });
 
-      // Create lookup maps for efficient access
-      const stakeTimeMap = new Map(
-        (activeStakesData || []).map((stake: any) => [stake.tokenId, stake.stakedAt])
-      );
-      const rarityMap = new Map(
-        (nftsMetadata || []).map((nft: any) => [nft.tokenId, nft.rarity])
+      // 从Ponder数据创建查找表
+      const ponderDataMap = new Map(
+        (stakedNFTsFromPonder || []).map(nft => [nft.tokenId, { rarity: nft.rarity, stakedAt: nft.stakedAt }]),
       );
 
       const results = await Promise.all(
-        tokenIds.map(async (tokenId: number) => {
+        tokenIds.map(async tokenId => {
           const [stakeInfo, pendingReward, multiplier] = await Promise.all([
             stakingPool.read.getStakeInfo([BigInt(tokenId)]),
             stakingPool.read.calculatePendingReward([BigInt(tokenId)]),
             nftContract.read.getTokenRewardMultiplier([BigInt(tokenId)]),
           ]);
 
-          // Type assertion for stakeInfo tuple
-          const [owner, _stakedAt, lastClaimTime] = stakeInfo as readonly [string, bigint, bigint];
+          const ponderData = ponderDataMap.get(tokenId);
 
           return {
             tokenId,
-            owner: owner as `0x${string}`,
-            stakedAt: BigInt(stakeTimeMap.get(tokenId) || Number(_stakedAt)),
-            lastClaimTime,
+            owner: stakeInfo.owner as `0x${string}`,
+            stakedAt: BigInt(ponderData?.stakedAt || stakeInfo.stakedAt),
+            lastClaimTime: stakeInfo.lastClaimTime,
             pendingReward,
-            rarity: rarityMap.get(tokenId) ?? null,
+            rarity: ponderData?.rarity ?? null,
             rewardMultiplier: Number(multiplier),
           } as StakedNFT;
         }),
@@ -180,52 +120,16 @@ function PageContent() {
 
       return results;
     },
-    enabled:
-      !!publicClient &&
-      !!stakingPoolAddress &&
-      !!nftAddress &&
-      tokenIds.length > 0 &&
-      !!activeStakesData &&
-      !!nftsMetadata,
-    refetchInterval: 2000, // Update pending rewards every 2 seconds
+    enabled: !!publicClient && !!stakingPoolAddress && !!nftAddress && tokenIds.length > 0,
+    refetchInterval: 2000, // 每2秒更新pending rewards
   });
-
-  // Listen for events
-  const { data: claimEvents } = useScaffoldEventHistory({
-    contractName: "NFTStakingPool",
-    eventName: "RewardClaimed",
-    watch: true,
-    filters: { user: address },
-  });
-
-  const { data: unstakeEvents } = useScaffoldEventHistory({
-    contractName: "NFTStakingPool",
-    eventName: "Unstaked",
-    watch: true,
-    filters: { user: address },
-  });
-
-  // Auto-refresh on events
-  useEffect(() => {
-    if (claimEvents && claimEvents.length > 0) {
-      queryClient.invalidateQueries({ queryKey: ["stakedNFTsContract"] });
-    }
-  }, [claimEvents, queryClient]);
-
-  useEffect(() => {
-    if (unstakeEvents && unstakeEvents.length > 0) {
-      queryClient.invalidateQueries({ queryKey: ["userActiveStakes"] });
-      queryClient.invalidateQueries({ queryKey: ["stakedNFTsMetadata"] });
-      queryClient.invalidateQueries({ queryKey: ["stakedNFTsContract"] });
-    }
-  }, [unstakeEvents, queryClient]);
 
   // Calculate totals
   const totalPendingReward = stakedNFTs?.reduce((sum, nft) => sum + nft.pendingReward, 0n) || 0n;
   const totalStaked = stakedNFTs?.length || 0;
 
   // Combine loading states
-  const isLoading = isLoadingActiveStakes || isLoadingMetadata || isLoadingContractData;
+  const isLoading = isPonderLoading || isLoadingContractData;
 
   // Selection handlers
   const handleSelectNFT = (tokenId: number) => {
@@ -245,10 +149,27 @@ function PageContent() {
     try {
       await handleBatchClaim(selectedNFTs);
       setSelectedNFTs([]);
-      setTimeout(() => queryClient.invalidateQueries({ queryKey: ["stakedNFTsContract"] }), 2000);
+      setTimeout(() => {
+        refreshPonderData();
+        queryClient.invalidateQueries({ queryKey: ["stakedNFTsWithRewards"] });
+      }, 2000);
     } catch (error) {
       console.error("Batch claim failed:", error);
     }
+  };
+
+  const handleClaimSuccess = () => {
+    setTimeout(() => {
+      refreshPonderData();
+      queryClient.invalidateQueries({ queryKey: ["stakedNFTsWithRewards"] });
+    }, 2000);
+  };
+
+  const handleUnstakeSuccess = () => {
+    setTimeout(() => {
+      refreshPonderData();
+      queryClient.invalidateQueries({ queryKey: ["stakedNFTsWithRewards"] });
+    }, 2000);
   };
 
   // Loading states
@@ -257,7 +178,7 @@ function PageContent() {
   }
 
   if (!isConnected) {
-    return <ConnectWalletPrompt />;
+    return <ConnectWalletPrompt message="Please connect your wallet to view your staked NFTs and manage rewards." />;
   }
 
   if (isLoading) {
@@ -335,15 +256,11 @@ function PageContent() {
             onSelect={() => handleSelectNFT(nft.tokenId)}
             onClaim={async () => {
               await handleClaim(nft.tokenId);
-              setTimeout(() => queryClient.invalidateQueries({ queryKey: ["stakedNFTsContract"] }), 2000);
+              handleClaimSuccess();
             }}
             onUnstake={async () => {
               await handleUnstake(nft.tokenId);
-              setTimeout(() => {
-                queryClient.invalidateQueries({ queryKey: ["userActiveStakes"] });
-                queryClient.invalidateQueries({ queryKey: ["stakedNFTsMetadata"] });
-                queryClient.invalidateQueries({ queryKey: ["stakedNFTsContract"] });
-              }, 2000);
+              handleUnstakeSuccess();
             }}
             isProcessing={isClaimProcessing || isUnstakeProcessing}
           />
@@ -404,9 +321,7 @@ function StakedNFTCard({
         isSelected ? "ring-2 ring-cyan-500 border-cyan-500" : "border-cyan-500/30"
       }`}
     >
-      <div
-        className={`aspect-square bg-gradient-to-br ${RARITY_GRADIENTS[rarityIndex]} relative overflow-hidden`}
-      >
+      <div className={`aspect-square bg-gradient-to-br ${RARITY_GRADIENTS[rarityIndex]} relative overflow-hidden`}>
         {imageUrl ? (
           <>
             <Image

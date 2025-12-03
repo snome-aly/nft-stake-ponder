@@ -4,7 +4,6 @@ import { MintCard } from "./_components/MintCard";
 import { MintHero } from "./_components/MintHero";
 import { MintProgress } from "./_components/MintProgress";
 import { NFTCarousel } from "./_components/NFTCarousel";
-import { RarityInfo } from "./_components/RarityInfo";
 import { RecentMints } from "./_components/RecentMints";
 
 export default function MintPage() {
@@ -27,11 +26,6 @@ export default function MintPage() {
           {/* Progress */}
           <div className="max-w-4xl mx-auto mb-8">
             <MintProgress />
-          </div>
-
-          {/* Rarity Info */}
-          <div className="max-w-6xl mx-auto mb-8">
-            <RarityInfo />
           </div>
 
           {/* Recent Mints */}

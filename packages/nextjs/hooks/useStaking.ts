@@ -2,18 +2,15 @@
  * 质押 NFT 的自定义 Hook
  * 处理 approve + stake 的完整流程
  */
-
 import { useState } from "react";
-import { useWaitForTransactionReceipt, usePublicClient } from "wagmi";
-import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
-import { notification } from "~~/utils/scaffold-eth";
 import { getContract } from "viem";
+import { usePublicClient } from "wagmi";
 import deployedContracts from "~~/contracts/deployedContracts";
+import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
+import { notification } from "~~/utils/scaffold-eth";
 
 export function useStakeNFT() {
-  const [approveHash, setApproveHash] = useState<`0x${string}` | undefined>();
-  const [stakeHash, setStakeHash] = useState<`0x${string}` | undefined>();
   const [isProcessing, setIsProcessing] = useState(false);
 
   const { targetNetwork } = useTargetNetwork();
@@ -25,14 +22,6 @@ export function useStakeNFT() {
 
   const { writeContractAsync: stakeNFT } = useScaffoldWriteContract({
     contractName: "NFTStakingPool",
-  });
-
-  const { isLoading: isApproving, isSuccess: isApproved } = useWaitForTransactionReceipt({
-    hash: approveHash,
-  });
-
-  const { isLoading: isStaking, isSuccess: isStaked } = useWaitForTransactionReceipt({
-    hash: stakeHash,
   });
 
   const handleStake = async (tokenId: number) => {
@@ -63,14 +52,17 @@ export function useStakeNFT() {
       if (!isApprovedForStaking) {
         notification.info("Step 1/2: Approving NFT...");
 
-        const hash = await approveNFT({
+        const approveHash = await approveNFT({
           functionName: "approve",
           args: [stakingPoolAddress as `0x${string}`, BigInt(tokenId)],
         });
-        setApproveHash(hash);
+
+        if (!approveHash) {
+          throw new Error("Failed to get approval transaction hash");
+        }
 
         // Wait for approval confirmation
-        await publicClient?.waitForTransactionReceipt({ hash });
+        await publicClient.waitForTransactionReceipt({ hash: approveHash });
 
         notification.success("NFT approved successfully!");
       }
@@ -78,18 +70,21 @@ export function useStakeNFT() {
       // Step 3: Stake NFT
       notification.info("Step 2/2: Staking NFT...");
 
-      const hash = await stakeNFT({
+      const stakeHash = await stakeNFT({
         functionName: "stake",
         args: [BigInt(tokenId)],
       });
-      setStakeHash(hash);
+
+      if (!stakeHash) {
+        throw new Error("Failed to get stake transaction hash");
+      }
 
       // Wait for stake confirmation
-      await publicClient?.waitForTransactionReceipt({ hash });
+      await publicClient.waitForTransactionReceipt({ hash: stakeHash });
 
       notification.success(`Successfully staked NFT #${tokenId}!`);
 
-      return hash;
+      return stakeHash;
     } catch (error: any) {
       console.error("Stake failed:", error);
 
@@ -114,10 +109,7 @@ export function useStakeNFT() {
 
   return {
     handleStake,
-    isApproving,
-    isStaking,
     isProcessing,
-    isSuccess: isApproved && isStaked,
   };
 }
 
@@ -126,8 +118,6 @@ export function useStakeNFT() {
  * 使用 setApprovalForAll + batchStake
  */
 export function useBatchStake() {
-  const [, setApprovalHash] = useState<`0x${string}` | undefined>();
-  const [, setBatchStakeHash] = useState<`0x${string}` | undefined>();
   const [isProcessing, setIsProcessing] = useState(false);
 
   const { targetNetwork } = useTargetNetwork();
@@ -176,13 +166,16 @@ export function useBatchStake() {
       if (!isApprovedForAll) {
         notification.info("Step 1/2: Approving all NFTs...");
 
-        const hash = await approveAll({
+        const approvalHash = await approveAll({
           functionName: "setApprovalForAll",
           args: [stakingPoolAddress as `0x${string}`, true],
         });
-        setApprovalHash(hash);
 
-        await publicClient?.waitForTransactionReceipt({ hash });
+        if (!approvalHash) {
+          throw new Error("Failed to get approval transaction hash");
+        }
+
+        await publicClient.waitForTransactionReceipt({ hash: approvalHash });
 
         notification.success("All NFTs approved!");
       }
@@ -190,17 +183,20 @@ export function useBatchStake() {
       // Step 3: Batch stake
       notification.info(`Step 2/2: Staking ${tokenIds.length} NFTs...`);
 
-      const hash = await batchStake({
+      const batchStakeHash = await batchStake({
         functionName: "batchStake",
         args: [tokenIds.map(id => BigInt(id))],
       });
-      setBatchStakeHash(hash);
 
-      await publicClient?.waitForTransactionReceipt({ hash });
+      if (!batchStakeHash) {
+        throw new Error("Failed to get batch stake transaction hash");
+      }
+
+      await publicClient.waitForTransactionReceipt({ hash: batchStakeHash });
 
       notification.success(`Successfully staked ${tokenIds.length} NFTs!`);
 
-      return hash;
+      return batchStakeHash;
     } catch (error: any) {
       console.error("Batch stake failed:", error);
       notification.error("Batch staking failed. Please try again.");
@@ -220,7 +216,6 @@ export function useBatchStake() {
  * 领取奖励的自定义 Hook
  */
 export function useClaimReward() {
-  const [, setClaimHash] = useState<`0x${string}` | undefined>();
   const [isProcessing, setIsProcessing] = useState(false);
 
   const { targetNetwork } = useTargetNetwork();
@@ -234,19 +229,26 @@ export function useClaimReward() {
     try {
       setIsProcessing(true);
 
+      if (!publicClient) {
+        throw new Error("Public client not found");
+      }
+
       notification.info("Claiming reward...");
 
-      const hash = await claimReward({
+      const claimHash = await claimReward({
         functionName: "claimReward",
         args: [BigInt(tokenId)],
       });
-      setClaimHash(hash);
 
-      await publicClient?.waitForTransactionReceipt({ hash });
+      if (!claimHash) {
+        throw new Error("Failed to get claim transaction hash");
+      }
+
+      await publicClient.waitForTransactionReceipt({ hash: claimHash });
 
       notification.success(`Successfully claimed reward for NFT #${tokenId}!`);
 
-      return hash;
+      return claimHash;
     } catch (error: any) {
       console.error("Claim failed:", error);
 
@@ -274,7 +276,6 @@ export function useClaimReward() {
  * 批量领取奖励的自定义 Hook
  */
 export function useBatchClaimReward() {
-  const [, setBatchClaimHash] = useState<`0x${string}` | undefined>();
   const [isProcessing, setIsProcessing] = useState(false);
 
   const { targetNetwork } = useTargetNetwork();
@@ -293,19 +294,26 @@ export function useBatchClaimReward() {
 
       setIsProcessing(true);
 
+      if (!publicClient) {
+        throw new Error("Public client not found");
+      }
+
       notification.info(`Claiming rewards for ${tokenIds.length} NFTs...`);
 
-      const hash = await batchClaimReward({
+      const batchClaimHash = await batchClaimReward({
         functionName: "batchClaimReward",
         args: [tokenIds.map(id => BigInt(id))],
       });
-      setBatchClaimHash(hash);
 
-      await publicClient?.waitForTransactionReceipt({ hash });
+      if (!batchClaimHash) {
+        throw new Error("Failed to get batch claim transaction hash");
+      }
+
+      await publicClient.waitForTransactionReceipt({ hash: batchClaimHash });
 
       notification.success(`Successfully claimed rewards from ${tokenIds.length} NFTs!`);
 
-      return hash;
+      return batchClaimHash;
     } catch (error: any) {
       console.error("Batch claim failed:", error);
       notification.error("Batch claim failed. Please try again.");
@@ -325,7 +333,6 @@ export function useBatchClaimReward() {
  * 解押 NFT 的自定义 Hook
  */
 export function useUnstake() {
-  const [, setUnstakeHash] = useState<`0x${string}` | undefined>();
   const [isProcessing, setIsProcessing] = useState(false);
 
   const { targetNetwork } = useTargetNetwork();
@@ -339,19 +346,26 @@ export function useUnstake() {
     try {
       setIsProcessing(true);
 
+      if (!publicClient) {
+        throw new Error("Public client not found");
+      }
+
       notification.info("Unstaking NFT...");
 
-      const hash = await unstake({
+      const unstakeHash = await unstake({
         functionName: "unstake",
         args: [BigInt(tokenId)],
       });
-      setUnstakeHash(hash);
 
-      await publicClient?.waitForTransactionReceipt({ hash });
+      if (!unstakeHash) {
+        throw new Error("Failed to get unstake transaction hash");
+      }
+
+      await publicClient.waitForTransactionReceipt({ hash: unstakeHash });
 
       notification.success(`Successfully unstaked NFT #${tokenId} and claimed rewards!`);
 
-      return hash;
+      return unstakeHash;
     } catch (error: any) {
       console.error("Unstake failed:", error);
 

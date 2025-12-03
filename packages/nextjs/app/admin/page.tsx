@@ -2,15 +2,16 @@
 
 import { formatEther } from "viem";
 import { useAccount, useBalance } from "wagmi";
+import { ConnectWalletPrompt } from "~~/components/ConnectWalletPrompt";
+import { ADMIN_ROLE, OPERATOR_ROLE } from "~~/constants/roles";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
-import { ADMIN_ROLE, OPERATOR_ROLE } from "~~/constants/roles";
 
 export default function AdminPage() {
   const { address, isConnected } = useAccount();
 
   // 获取合约信息
-  const { data: deployedContractData } = useDeployedContractInfo({contractName: "StakableNFT"});
+  const { data: deployedContractData } = useDeployedContractInfo({ contractName: "StakableNFT" });
 
   // 读取合约状态
   const { data: totalMinted } = useScaffoldReadContract({
@@ -114,11 +115,7 @@ export default function AdminPage() {
   if (!isConnected) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-8xl mb-6">🔐</div>
-          <h2 className="text-3xl font-bold text-white mb-4">Admin Panel</h2>
-          <p className="text-gray-400 mb-6">Please connect your wallet to access admin functions</p>
-        </div>
+        <ConnectWalletPrompt title="Admin Panel" message="Please connect your wallet to access admin functions" />
       </div>
     );
   }
@@ -155,18 +152,8 @@ export default function AdminPage() {
 
             {/* Status Overview */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-              <StatCard
-                icon="🎁"
-                label="Total Minted"
-                value={`${currentMinted}/${MAX_SUPPLY}`}
-                color="cyan"
-              />
-              <StatCard
-                icon="💰"
-                label="Contract Balance"
-                value={`${Number(balance).toFixed(4)} ETH`}
-                color="green"
-              />
+              <StatCard icon="🎁" label="Total Minted" value={`${currentMinted}/${MAX_SUPPLY}`} color="cyan" />
+              <StatCard icon="💰" label="Contract Balance" value={`${Number(balance).toFixed(4)} ETH`} color="green" />
               <StatCard
                 icon={isRevealed ? "✅" : "🔒"}
                 label="Reveal Status"
@@ -246,7 +233,9 @@ export default function AdminPage() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Recipient:</span>
-                      <span className="text-white text-sm">Your Wallet ({address?.slice(0, 6)}...{address?.slice(-4)})</span>
+                      <span className="text-white text-sm">
+                        Your Wallet ({address?.slice(0, 6)}...{address?.slice(-4)})
+                      </span>
                     </div>
                   </div>
 
@@ -265,7 +254,11 @@ export default function AdminPage() {
                         : "bg-gray-600 text-gray-400 cursor-not-allowed"
                     }`}
                   >
-                    {isWithdrawPending ? "⏳ Withdrawing..." : Number(balance) > 0 ? `💸 Withdraw All (${balance} ETH)` : "❌ No Balance"}
+                    {isWithdrawPending
+                      ? "⏳ Withdrawing..."
+                      : Number(balance) > 0
+                        ? `💸 Withdraw All (${balance} ETH)`
+                        : "❌ No Balance"}
                   </button>
                 </div>
               </ActionCard>
@@ -327,7 +320,9 @@ function StatCard({ icon, label, value, color }: { icon: string; label: string; 
     <div className="glass-card rounded-2xl p-6 border border-gray-700">
       <div className="text-4xl mb-3">{icon}</div>
       <p className="text-gray-400 text-sm mb-2">{label}</p>
-      <p className={`text-2xl font-bold bg-gradient-to-r ${colorClasses[color as keyof typeof colorClasses]} bg-clip-text text-transparent`}>
+      <p
+        className={`text-2xl font-bold bg-gradient-to-r ${colorClasses[color as keyof typeof colorClasses]} bg-clip-text text-transparent`}
+      >
         {value}
       </p>
     </div>

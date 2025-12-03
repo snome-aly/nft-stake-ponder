@@ -1,49 +1,23 @@
-/**
- * Enhanced NFT Card Component with Staking Functionality
- *
- * Features:
- * - Displays staking status (Available/Staked)
- * - Shows pending rewards for staked NFTs
- * - Single-click staking with approve + stake flow
- * - Batch selection mode support
- * - Visual feedback during transactions
- */
-
 "use client";
 
 import Image from "next/image";
 import Link from "next/link";
-import { Address } from "~~/components/scaffold-eth";
+import { StakingLoading } from "./StakingLoading";
 import { LoadingSpinner } from "~~/components/LoadingComponents";
+import { Address } from "~~/components/scaffold-eth";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 import { useNFTMetadata } from "~~/hooks/useNFTMetadata";
+import { type NFTWithStakeStatus } from "~~/hooks/usePonder";
 import { useStakeNFT } from "~~/hooks/useStaking";
-import { formatStakingDuration, formatReward, convertIpfsToHttp } from "~~/utils/staking";
-import { StakingLoading } from "./StakingLoading";
-
-type NFT = {
-  id: string;
-  tokenId: number;
-  owner: `0x${string}`;
-  rarity: number | null;
-  isRevealed: boolean;
-  mintedAt: number;
-  mintedBy: `0x${string}`;
-};
-
-type EnhancedNFT = NFT & {
-  isStaked?: boolean;
-  pendingReward?: bigint;
-  stakedAt?: bigint;
-};
+import { convertIpfsToHttp } from "~~/utils/staking";
 
 interface NFTCardProps {
-  nft: EnhancedNFT;
+  nft: NFTWithStakeStatus;
   priority?: boolean;
   isSelectable?: boolean;
   isSelected?: boolean;
   onSelect?: () => void;
-  onStakeSuccess?: () => void;
+  onStakeSuccess?: (tokenId: number) => void;
 }
 
 const RARITY_CONFIG = {
@@ -58,7 +32,7 @@ const RARITY_CONFIG = {
   },
 } as const;
 
-export function EnhancedNFTCard({
+export function NFTCard({
   nft,
   priority = false,
   isSelectable = false,
@@ -73,32 +47,23 @@ export function EnhancedNFTCard({
     contractName: "StakableNFT",
     functionName: "getTokenRewardMultiplier",
     args: [BigInt(nft.tokenId)],
+    watch: false, // 倍率不会改变，禁用监听
   });
 
   const { data: tokenURI } = useScaffoldReadContract({
     contractName: "StakableNFT",
     functionName: "tokenURI",
     args: [BigInt(nft.tokenId)],
+    watch: false, // URI 不会改变，禁用监听
   });
 
   const { imageUrl } = useNFTMetadata(tokenURI);
   const { handleStake, isProcessing } = useStakeNFT();
 
-  // Poll pending reward for staked NFTs
-  const { data: freshPendingReward } = useScaffoldReadContract({
-    contractName: "NFTStakingPool",
-    functionName: "calculatePendingReward",
-    args: [BigInt(nft.tokenId)],
-    watch: nft.isStaked, // Only watch if staked
-  });
-
-  // Use fresh pending reward if available, otherwise use cached value
-  const pendingReward = freshPendingReward !== undefined ? freshPendingReward : nft.pendingReward || 0n;
-
   const handleStakeClick = async () => {
     try {
       await handleStake(nft.tokenId);
-      onStakeSuccess?.();
+      onStakeSuccess?.(nft.tokenId);
     } catch (error) {
       console.error("Stake failed:", error);
     }
@@ -126,7 +91,6 @@ export function EnhancedNFTCard({
               className="object-cover group-hover:scale-105 transition-transform duration-300"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
-            {/* Gradient overlay on hover */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           </>
         ) : (
@@ -154,7 +118,7 @@ export function EnhancedNFTCard({
           <span className="text-white text-sm font-bold">#{nft.tokenId}</span>
         </div>
 
-        {/* Staking Status Badge */}
+        {/* Top Right Badge - Staked or Rarity */}
         {nft.isStaked ? (
           <div className="absolute top-3 right-3 px-3 py-1.5 glass-dark rounded-full backdrop-blur-md">
             <span className="text-green-400 text-xs font-medium flex items-center gap-1.5">
@@ -201,25 +165,6 @@ export function EnhancedNFTCard({
           )}
         </div>
 
-        {/* Pending Reward (Staked NFTs Only) */}
-        {nft.isStaked && (
-          <div className="mb-3 glass-dark rounded-lg p-3 border border-cyan-500/20">
-            <div className="flex items-center justify-between mb-1">
-              <p className="text-xs text-gray-400">Pending Reward</p>
-              <p className="text-xs text-cyan-400 animate-pulse">●</p>
-            </div>
-            <p className="text-cyan-400 font-bold text-xl">{formatReward(pendingReward)} RWRD</p>
-            {nft.stakedAt && (
-              <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-700">
-                <p className="text-xs text-gray-500">Staked {formatStakingDuration(Number(nft.stakedAt))}</p>
-                <p className="text-xs text-gray-500">
-                  ~{rewardMultiplier ? (Number(rewardMultiplier) / 10000).toFixed(1) : "1.0"} RWRD/day
-                </p>
-              </div>
-            )}
-          </div>
-        )}
-
         {/* Minted Info */}
         <div className="space-y-2 text-sm mb-3">
           <div className="flex justify-between">
@@ -239,13 +184,13 @@ export function EnhancedNFTCard({
               href="/stake"
               className="btn-secondary w-full text-center block py-2.5 rounded-lg font-medium transition-all hover:bg-purple-600"
             >
-              View Details →
+              View Detail →
             </Link>
           ) : nft.isRevealed ? (
             <button
               onClick={handleStakeClick}
               disabled={isProcessing}
-              className="btn-primary w-full py-2.5 rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-primary w-full py-2.5 rounded-lg font-medium transition-all hover:bg-cyan-600 hover:shadow-lg hover:shadow-cyan-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:shadow-none"
             >
               {isProcessing ? (
                 <span className="flex items-center justify-center gap-2">

@@ -1,34 +1,44 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { RectangleStackIcon } from "@heroicons/react/24/outline";
 import { useAccount } from "wagmi";
+import { RectangleStackIcon } from "@heroicons/react/24/outline";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
 export function HeroSection() {
   const router = useRouter();
   const { address, isConnected } = useAccount();
+  const [isMounted, setIsMounted] = useState(false);
 
-  // 读取关键状态
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // 读取关键状态 - 禁用自动刷新以减少 RPC 请求
   const { data: totalMinted } = useScaffoldReadContract({
     contractName: "StakableNFT",
     functionName: "totalMinted",
+    watch: false, // 禁用区块监听
   });
 
   const { data: isRevealed } = useScaffoldReadContract({
     contractName: "StakableNFT",
     functionName: "isRevealed",
+    watch: false,
   });
 
   const { data: rarityPoolSet } = useScaffoldReadContract({
     contractName: "StakableNFT",
     functionName: "rarityPoolSet",
+    watch: false,
   });
 
   const { data: userMinted } = useScaffoldReadContract({
     contractName: "StakableNFT",
     functionName: "mintedCount",
     args: [address],
+    watch: false,
   });
 
   const MAX_SUPPLY = 100;
@@ -59,27 +69,36 @@ export function HeroSection() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
-      {/* 浮动装饰元素 */}
-      <div className="absolute top-20 left-10 w-20 h-20 text-purple-400/20 animate-float text-6xl select-none">🎁</div>
-      <div
-        className="absolute bottom-20 right-10 w-16 h-16 text-pink-400/20 animate-float-slow text-5xl select-none"
-        style={{ animationDelay: "2s" }}
-      >
-        💎
-      </div>
-      <div
-        className="absolute top-40 right-20 w-24 h-24 text-blue-400/20 animate-float text-7xl select-none"
-        style={{ animationDelay: "4s" }}
-      >
-        🌟
-      </div>
+      {/* 浮动装饰元素 - 仅客户端渲染避免 hydration 问题 */}
+      {isMounted && (
+        <>
+          <div className="absolute top-20 left-10 w-20 h-20 text-purple-400/20 animate-float text-6xl select-none">
+            🎁
+          </div>
+          <div
+            className="absolute bottom-20 right-10 w-16 h-16 text-pink-400/20 animate-float-slow text-5xl select-none"
+            style={{ animationDelay: "2s" }}
+          >
+            💎
+          </div>
+          <div
+            className="absolute top-40 right-20 w-24 h-24 text-blue-400/20 animate-float text-7xl select-none"
+            style={{ animationDelay: "4s" }}
+          >
+            🌟
+          </div>
+        </>
+      )}
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 select-none">
         <div className="text-center max-w-5xl mx-auto">
           {/* 主标题 */}
           <div className="mb-8 mt-4">
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6">
-              <span className="block bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 bg-clip-text">
+              <span
+                className="block bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 bg-clip-text"
+                suppressHydrationWarning
+              >
                 🎁 <span className="text-transparent">Mystical</span>
               </span>
               <span className="block bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
@@ -97,13 +116,17 @@ export function HeroSection() {
           {/* 揭示状态指示器 */}
           {!rarityPoolSet && (
             <div className="mb-8 p-4 bg-yellow-500/20 border border-yellow-500/50 rounded-xl">
-              <p className="text-yellow-300 font-semibold">⚠️ Rarity Pool Setup Required — Minting Not Yet Active</p>
+              <p className="text-yellow-300 font-semibold">
+                <span suppressHydrationWarning>⚠️</span> Rarity Pool Setup Required — Minting Not Yet Active
+              </p>
             </div>
           )}
 
           {totalMinted === BigInt(MAX_SUPPLY) && !isRevealed && (
             <div className="mb-8 p-6 bg-purple-500/20 border-2 border-purple-500/50 rounded-xl animate-pulse">
-              <p className="text-purple-300 font-bold text-2xl">🎉 SOLD OUT! Awaiting Admin Reveal...</p>
+              <p className="text-purple-300 font-bold text-2xl">
+                <span suppressHydrationWarning>🎉</span> SOLD OUT! Awaiting Admin Reveal...
+              </p>
               <p className="text-gray-300 mt-2">
                 All 100 NFTs minted. Rarities will be revealed soon via VRF randomness!
               </p>
@@ -112,7 +135,9 @@ export function HeroSection() {
 
           {isRevealed && (
             <div className="mb-8 p-6 bg-green-500/20 border-2 border-green-500/50 rounded-xl">
-              <p className="text-green-300 font-bold text-2xl">✨ REVEALED! Check Your Rarity</p>
+              <p className="text-green-300 font-bold text-2xl">
+                <span suppressHydrationWarning>✨</span> REVEALED! Check Your Rarity
+              </p>
             </div>
           )}
 
@@ -123,7 +148,9 @@ export function HeroSection() {
               disabled={mintButtonState.disabled}
               className="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold text-lg rounded-xl transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-purple-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 overflow-hidden"
             >
-              <span className="relative z-10 flex items-center gap-2">{mintButtonState.text}</span>
+              <span className="relative z-10 flex items-center gap-2" suppressHydrationWarning>
+                {mintButtonState.text}
+              </span>
               <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
               <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:animate-shimmer"></div>
             </button>
@@ -216,12 +243,12 @@ function CollectionProgress({
         <div className="mt-4">
           {isRevealed ? (
             <span className="inline-flex items-center space-x-2 bg-green-500/20 text-green-400 px-4 py-2 rounded-full border border-green-500/50">
-              <span>✅</span>
+              <span suppressHydrationWarning>✅</span>
               <span className="font-semibold">Rarities Revealed</span>
             </span>
           ) : (
             <span className="inline-flex items-center space-x-2 bg-yellow-500/20 text-yellow-400 px-4 py-2 rounded-full border border-yellow-500/50">
-              <span>🔒</span>
+              <span suppressHydrationWarning>🔒</span>
               <span className="font-semibold">Blind Box State</span>
             </span>
           )}
@@ -234,7 +261,9 @@ function CollectionProgress({
 function FeatureCard({ icon, title, description }: { icon: string; title: string; description: string }) {
   return (
     <div className="bg-gray-800/30 backdrop-blur rounded-xl p-6 border border-gray-700/50 hover:border-purple-500/50 hover:bg-gray-800/50 transition-all duration-300">
-      <div className="text-4xl mb-4 text-center">{icon}</div>
+      <div className="text-4xl mb-4 text-center" suppressHydrationWarning>
+        {icon}
+      </div>
       <h3 className="text-white font-bold text-lg mb-2 text-center">{title}</h3>
       <p className="text-gray-400 text-sm text-center leading-relaxed">{description}</p>
     </div>

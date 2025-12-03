@@ -18,7 +18,7 @@ const scaffoldConfig = {
   // 第一个网络会在网络选择器中默认显示在最上方
   targetNetworks: [chains.hardhat, chains.sepolia, chains.mainnet],
   // The interval at which your front-end polls the RPC servers for new data (it has no effect if you only target the local network (default is 4000))
-  pollingInterval: 30000,
+  pollingInterval: 60000, // 60秒 - 降低轮询频率
   // This is ours Alchemy's default API key.
   // You can get your own at https://dashboard.alchemyapi.io
   // It's recommended to store it in an env variable:

@@ -1,118 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { gql, request } from "graphql-request";
-import { useAccount } from "wagmi";
-import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth";
-import { useBatchStake } from "~~/hooks/useStaking";
-import { EnhancedNFTCard } from "./_components/EnhancedNFTCard";
+import { useEffect, useMemo, useState } from "react";
 import { BatchModeControls } from "./_components/BatchModeControls";
 import { EnhancedStatsBar } from "./_components/EnhancedStatsBar";
-import { FullPageLoading } from "~~/components/LoadingComponents";
+import { NFTGrid } from "./_components/NFTGrid";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAccount } from "wagmi";
+import { ConnectWalletPrompt } from "~~/components/ConnectWalletPrompt";
 import { EmptyState } from "~~/components/EmptyState";
-import deployedContracts from "~~/contracts/deployedContracts";
-import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
-import { getContract } from "viem";
-import { usePublicClient } from "wagmi";
-
-type NFT = {
-  id: string;
-  tokenId: number;
-  owner: `0x${string}`;
-  rarity: number | null;
-  isRevealed: boolean;
-  mintedAt: number;
-  mintedBy: `0x${string}`;
-};
-
-type EnhancedNFT = NFT & {
-  isStaked: boolean;
-  pendingReward?: bigint;
-  stakedAt?: bigint;
-};
-
-type NFTsData = { nfts: { items: NFT[]; totalCount: number } };
-
-const PONDER_URL = process.env.NEXT_PUBLIC_PONDER_URL || "http://localhost:42069";
-
-// Query user's owned NFTs (in wallet) from Ponder
-const fetchOwnedNFTs = async (address: string) => {
-  const query = gql`
-    query UserOwnedNFTs($owner: String!) {
-      nfts(where: { owner: $owner }, orderBy: "tokenId", orderDirection: "asc") {
-        items {
-          id
-          tokenId
-          owner
-          rarity
-          isRevealed
-          mintedAt
-          mintedBy
-        }
-      }
-    }
-  `;
-  const data = await request<NFTsData>(PONDER_URL, query, {
-    owner: address.toLowerCase(),
-  });
-  return data.nfts.items;
-};
-
-// Query user's staked NFTs from activeStake table
-const fetchStakedNFTsWithDetails = async (address: string) => {
-  const query = gql`
-    query UserStakedNFTs($user: String!) {
-      activeStakes(where: { user: $user }, orderBy: "stakedAt", orderDirection: "desc") {
-        items {
-          tokenId
-          stakedAt
-          transactionHash
-        }
-      }
-    }
-  `;
-  const data = await request<any>(PONDER_URL, query, {
-    user: address.toLowerCase(),
-  });
-
-  if (!data.activeStakes?.items?.length) return [];
-
-  // Get NFT details for staked tokens
-  const tokenIds = data.activeStakes.items.map((stake: any) => stake.tokenId);
-  const nftsQuery = gql`
-    query NFTsByTokenIds($tokenIds: [Int!]!) {
-      nfts(where: { tokenId_in: $tokenIds }, orderBy: "tokenId", orderDirection: "asc") {
-        items {
-          id
-          tokenId
-          owner
-          rarity
-          isRevealed
-          mintedAt
-          mintedBy
-        }
-      }
-    }
-  `;
-  const nftsData = await request<NFTsData>(PONDER_URL, nftsQuery, { tokenIds });
-
-  // Merge NFT details with stake info
-  return nftsData.nfts.items.map(nft => ({
-    ...nft,
-    stakedAt: data.activeStakes.items.find((s: any) => s.tokenId === nft.tokenId)?.stakedAt,
-  }));
-};
-
-function ConnectWalletPrompt() {
-  return (
-    <div className="text-center py-16">
-      <div className="text-8xl mb-6">🔐</div>
-      <h3 className="text-2xl font-bold text-white mb-3">Connect Your Wallet</h3>
-      <p className="text-gray-400 mb-6 max-w-md mx-auto">Please connect your wallet to view your NFT collection.</p>
-    </div>
-  );
-}
+import { FullPageLoading } from "~~/components/LoadingComponents";
+import { usePonderUserAllNFTs } from "~~/hooks/usePonder";
+import { useBatchStake } from "~~/hooks/useStaking";
 
 function PageContent() {
   const [isMounted, setIsMounted] = useState(false);
@@ -120,122 +18,34 @@ function PageContent() {
   const [selectedNFTs, setSelectedNFTs] = useState<number[]>([]);
 
   const { address, isConnected, status } = useAccount();
-  const queryClient = useQueryClient();
-  const { targetNetwork } = useTargetNetwork();
-  const publicClient = usePublicClient({ chainId: targetNetwork.id });
   const { handleBatchStake, isProcessing: isBatchProcessing } = useBatchStake();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // Get contract addresses
-  const chainId = targetNetwork.id;
-  const contracts = deployedContracts[chainId as keyof typeof deployedContracts];
-  const stakingPoolAddress = contracts?.NFTStakingPool?.address;
+  const { data: allNFTs, isLoading, queryKey: userAllNFTs } = usePonderUserAllNFTs(address);
 
-  // Query 1: Get owned NFTs from Ponder (in wallet)
-  const { data: ownedNFTs, isLoading: isOwnedLoading } = useQuery({
-    queryKey: ["ownedNFTs", address],
-    queryFn: () => fetchOwnedNFTs(address!),
-    enabled: !!address && isConnected,
-    refetchInterval: 10000,
-  });
+  const availableNFTs = useMemo(() => {
+    return (allNFTs || []).filter(nft => !nft.isStaked && nft.isRevealed);
+  }, [allNFTs]);
 
-  // Query 2: Get staked NFTs from Ponder (with stakedAt)
-  const { data: stakedNFTsWithStakeTime, isLoading: isStakedLoading } = useQuery({
-    queryKey: ["stakedNFTs", address],
-    queryFn: () => fetchStakedNFTsWithDetails(address!),
-    enabled: !!address && isConnected,
-    refetchInterval: 10000,
-  });
+  const handleStakeSuccess = (tokenId: number) => {
+    // 乐观更新：交易已确认，立即更新本地缓存
+    // 不需要 invalidateQueries，因为数据已经是正确的
+    // 依赖 refetchInterval 自动更新（15秒后）
+    queryClient.setQueryData(userAllNFTs, (oldData: typeof allNFTs) => {
+      if (!oldData) return oldData;
 
-  // Merge owned and staked NFTs (avoid duplicates)
-  const allNFTsMap = new Map<number, NFT>();
-  (ownedNFTs || []).forEach(nft => allNFTsMap.set(nft.tokenId, nft));
-  (stakedNFTsWithStakeTime || []).forEach(nft => allNFTsMap.set(nft.tokenId, nft));
-  const allNFTs = Array.from(allNFTsMap.values()).sort((a, b) => a.tokenId - b.tokenId);
+      return oldData.map(nft =>
+        nft.tokenId === tokenId ? { ...nft, isStaked: true, stakedAt: Math.floor(Date.now() / 1000) } : nft,
+      );
+    });
+  };
 
-  // Create a map of staked token IDs for quick lookup
-  const stakedTokenIdsSet = new Set((stakedNFTsWithStakeTime || []).map(nft => nft.tokenId));
-  const stakedTokenIdsArray = Array.from(stakedTokenIdsSet);
-  const stakedTokenIdsBigInt = stakedTokenIdsArray.map(id => BigInt(id));
-
-  // Query: Get pending rewards for staked NFTs
-  const { data: pendingRewards } = useQuery({
-    queryKey: ["pendingRewards", Array.from(stakedTokenIdsSet)],
-    queryFn: async () => {
-      if (!publicClient || !stakingPoolAddress) return [];
-
-      const stakingPool = getContract({
-        address: stakingPoolAddress as `0x${string}`,
-        abi: contracts.NFTStakingPool.abi,
-        client: publicClient,
-      });
-
-      return Promise.all(stakedTokenIdsBigInt.map(id => stakingPool.read.calculatePendingReward([id])));
-    },
-    enabled: stakedTokenIdsBigInt.length > 0 && !!publicClient && !!stakingPoolAddress,
-    refetchInterval: 2000, // Update every 2 seconds
-  });
-
-  // Listen for staking events
-  const { data: stakeEvents } = useScaffoldEventHistory({
-    contractName: "NFTStakingPool",
-    eventName: "Staked",
-    watch: true,
-    filters: {
-      user: address,
-    },
-  });
-
-  const { data: unstakeEvents } = useScaffoldEventHistory({
-    contractName: "NFTStakingPool",
-    eventName: "Unstaked",
-    watch: true,
-    filters: {
-      user: address,
-    },
-  });
-
-  // Auto-refresh on events
-  useEffect(() => {
-    if (stakeEvents && stakeEvents.length > 0) {
-      queryClient.invalidateQueries({ queryKey: ["ownedNFTs"] });
-      queryClient.invalidateQueries({ queryKey: ["stakedNFTs"] });
-      queryClient.invalidateQueries({ queryKey: ["stakeInfos"] });
-      queryClient.invalidateQueries({ queryKey: ["pendingRewards"] });
-    }
-  }, [stakeEvents, queryClient]);
-
-  useEffect(() => {
-    if (unstakeEvents && unstakeEvents.length > 0) {
-      queryClient.invalidateQueries({ queryKey: ["ownedNFTs"] });
-      queryClient.invalidateQueries({ queryKey: ["stakedNFTs"] });
-      queryClient.invalidateQueries({ queryKey: ["stakeInfos"] });
-      queryClient.invalidateQueries({ queryKey: ["pendingRewards"] });
-    }
-  }, [unstakeEvents, queryClient]);
-
-  // Merge NFT data with staking status and rewards
-  const enhancedNFTs: EnhancedNFT[] = allNFTs.map(nft => {
-    const isStaked = stakedTokenIdsSet.has(nft.tokenId);
-    const stakedNFT = (stakedNFTsWithStakeTime || []).find(s => s.tokenId === nft.tokenId);
-    const stakedIndex = stakedTokenIdsArray.indexOf(nft.tokenId);
-
-    return {
-      ...nft,
-      isStaked,
-      pendingReward: stakedIndex >= 0 ? pendingRewards?.[stakedIndex] : undefined,
-      stakedAt: stakedNFT?.stakedAt ? BigInt(stakedNFT.stakedAt) : undefined,
-    };
-  });
-
-  // Batch selection handlers
   const handleSelectNFT = (tokenId: number) => {
-    setSelectedNFTs(prev =>
-      prev.includes(tokenId) ? prev.filter(id => id !== tokenId) : [...prev, tokenId],
-    );
+    setSelectedNFTs(prev => (prev.includes(tokenId) ? prev.filter(id => id !== tokenId) : [...prev, tokenId]));
   };
 
   const handleBatchStakeClick = async () => {
@@ -243,31 +53,27 @@ function PageContent() {
 
     try {
       await handleBatchStake(selectedNFTs, address as `0x${string}`);
+
+      // 乐观更新：立即更新所有选中的 NFT
+      queryClient.setQueryData(userAllNFTs, (oldData: typeof allNFTs) => {
+        if (!oldData) return oldData;
+
+        const now = Math.floor(Date.now() / 1000);
+        return oldData.map(nft =>
+          selectedNFTs.includes(nft.tokenId) ? { ...nft, isStaked: true, stakedAt: now } : nft,
+        );
+      });
+
       setSelectedNFTs([]);
       setIsBatchMode(false);
 
-      // Refresh data
-      setTimeout(() => {
-        queryClient.invalidateQueries({ queryKey: ["ownedNFTs"] });
-        queryClient.invalidateQueries({ queryKey: ["stakedNFTs"] });
-        queryClient.invalidateQueries({ queryKey: ["stakeInfos"] });
-      }, 2000);
+      // 不需要手动刷新，依赖 refetchInterval 自动更新
     } catch (error) {
       console.error("Batch stake failed:", error);
+      // 如果失败，立即刷新数据以恢复正确状态
+      queryClient.invalidateQueries({ queryKey: userAllNFTs });
     }
   };
-
-  const handleStakeSuccess = () => {
-    // Refresh data after single stake
-    setTimeout(() => {
-      queryClient.invalidateQueries({ queryKey: ["ownedNFTs"] });
-      queryClient.invalidateQueries({ queryKey: ["stakedNFTs"] });
-      queryClient.invalidateQueries({ queryKey: ["stakeInfos"] });
-    }, 2000);
-  };
-
-  const availableNFTs = enhancedNFTs.filter(nft => !nft.isStaked && nft.isRevealed);
-  const isLoading = isOwnedLoading || isStakedLoading;
 
   // Loading states
   if (!isMounted || status === "connecting" || status === "reconnecting") {
@@ -275,14 +81,14 @@ function PageContent() {
   }
 
   if (!isConnected) {
-    return <ConnectWalletPrompt />;
+    return <ConnectWalletPrompt message="Please connect your wallet to view your NFT collection." />;
   }
 
   if (isLoading) {
     return <FullPageLoading message="Fetching your NFTs..." />;
   }
 
-  if (allNFTs.length === 0) {
+  if (!allNFTs || allNFTs.length === 0) {
     return (
       <EmptyState
         icon="🎴"
@@ -296,7 +102,7 @@ function PageContent() {
 
   return (
     <>
-      <EnhancedStatsBar nfts={enhancedNFTs} />
+      <EnhancedStatsBar nfts={allNFTs} />
 
       <BatchModeControls
         isBatchMode={isBatchMode}
@@ -307,19 +113,13 @@ function PageContent() {
         isProcessing={isBatchProcessing}
       />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {enhancedNFTs.map((nft, index) => (
-          <EnhancedNFTCard
-            key={nft.id}
-            nft={nft}
-            priority={index < 4}
-            isSelectable={isBatchMode && !nft.isStaked && nft.isRevealed}
-            isSelected={selectedNFTs.includes(nft.tokenId)}
-            onSelect={() => handleSelectNFT(nft.tokenId)}
-            onStakeSuccess={handleStakeSuccess}
-          />
-        ))}
-      </div>
+      <NFTGrid
+        nfts={allNFTs}
+        isBatchMode={isBatchMode}
+        selectedNFTs={selectedNFTs}
+        onSelectNFT={handleSelectNFT}
+        onStakeSuccess={handleStakeSuccess}
+      />
     </>
   );
 }

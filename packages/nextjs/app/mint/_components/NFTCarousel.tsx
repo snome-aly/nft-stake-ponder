@@ -91,6 +91,7 @@ export function NFTCarousel() {
           fill
           className="object-cover transition-all duration-500"
           sizes="(max-width: 768px) 100vw, 50vw"
+          priority={true} // 轮播图在首屏，所有图片都设置为优先加载
         />
 
         {/* Rarity Badge */}

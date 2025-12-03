@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { parseEther } from "viem";
 import { useAccount, useWaitForTransactionReceipt } from "wagmi";
-import { useQueryClient } from "@tanstack/react-query";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
 export function MintCard() {
@@ -38,7 +38,7 @@ export function MintCard() {
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: txHash,
     query: {
-      enabled: !!txHash,  // 显式控制：只在有 hash 时才启用
+      enabled: !!txHash, // 显式控制：只在有 hash 时才启用
     },
   });
 
@@ -200,7 +200,7 @@ export function MintCard() {
               min="1"
               max={maxCanMint}
               value={quantity}
-              onChange={(e) => handleQuantityChange(e.target.value)}
+              onChange={e => handleQuantityChange(e.target.value)}
               className="w-10 text-center bg-transparent text-white text-xl font-bold outline-none border-0 focus:ring-0"
             />
             <button
@@ -244,6 +244,88 @@ export function MintCard() {
           </p>
         </div>
       )}
+
+      {/* Rarity Distribution */}
+      <div className="mt-4 pt-4 border-t border-gray-700">
+        <h3 className="text-sm font-bold text-white text-center mb-3">💎 Rarity Distribution</h3>
+
+        <div className="grid grid-cols-2 gap-2">
+          {[
+            {
+              name: "Common",
+              icon: "⚪",
+              count: 50,
+              percentage: "50%",
+              multiplier: "1.0x",
+              textClass: "text-gray-300",
+              borderClass: "border-gray-400/50",
+              bgClass: "bg-gray-500/10",
+            },
+            {
+              name: "Rare",
+              icon: "🔵",
+              count: 30,
+              percentage: "30%",
+              multiplier: "1.5x",
+              textClass: "text-blue-400",
+              borderClass: "border-blue-500/50",
+              bgClass: "bg-blue-500/10",
+            },
+            {
+              name: "Epic",
+              icon: "🟣",
+              count: 15,
+              percentage: "15%",
+              multiplier: "2.0x",
+              textClass: "text-purple-400",
+              borderClass: "border-purple-500/50",
+              bgClass: "bg-purple-500/10",
+            },
+            {
+              name: "Legendary",
+              icon: "🌟",
+              count: 5,
+              percentage: "5%",
+              multiplier: "3.0x",
+              textClass: "text-yellow-400",
+              borderClass: "border-yellow-500/50",
+              bgClass: "bg-yellow-500/10",
+            },
+          ].map(rarity => (
+            <div
+              key={rarity.name}
+              className={`glass-dark rounded-lg p-2 border ${rarity.borderClass} ${rarity.bgClass}`}
+            >
+              {/* Icon & Name */}
+              <div className="text-center mb-1.5">
+                <span className="text-xl block mb-0.5">{rarity.icon}</span>
+                <span className={`font-bold text-xs ${rarity.textClass}`}>{rarity.name}</span>
+              </div>
+
+              {/* Stats */}
+              <div className="space-y-0.5 text-xs">
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Count</span>
+                  <span className="text-white font-medium">{rarity.count}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Chance</span>
+                  <span className={rarity.textClass}>{rarity.percentage}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Multiplier</span>
+                  <span className={`font-bold ${rarity.textClass}`}>{rarity.multiplier}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Note */}
+        <p className="text-center text-gray-500 text-xs mt-2">
+          Higher rarity = Higher staking rewards. Rarity is randomly assigned after all 100 NFTs are minted.
+        </p>
+      </div>
     </div>
   );
 }

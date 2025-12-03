@@ -1,8 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useAccount, useBalance } from "wagmi";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import { useBalance, useAccount } from "wagmi";
 
 /**
  * 格式化余额显示
@@ -106,10 +107,14 @@ export const CustomConnectButton = () => {
                       {chain.hasIcon && (
                         <div className="w-5 h-5">
                           {chain.iconUrl && (
-                            <img
+                            <Image
                               alt={chain.name ?? "Chain icon"}
                               src={chain.iconUrl}
+                              width={20}
+                              height={20}
                               className="w-5 h-5 rounded-full"
+                              unoptimized
+                              priority
                             />
                           )}
                         </div>
@@ -124,9 +129,9 @@ export const CustomConnectButton = () => {
                     <span className="text-gray-400 text-sm sm:hidden">Balance:</span>
                     <div className="flex items-center space-x-2">
                       <span className="text-white font-medium">
-                        {balanceData ? formatBalance(
-                          (Number(balanceData.value) / Math.pow(10, balanceData.decimals)).toString()
-                        ) : "0"}
+                        {balanceData
+                          ? formatBalance((Number(balanceData.value) / Math.pow(10, balanceData.decimals)).toString())
+                          : "0"}
                       </span>
                       <span className="text-gray-400 text-sm">{balanceData?.symbol || "ETH"}</span>
                     </div>

@@ -75,7 +75,7 @@ export const useScaffoldReadContract = <
   // 从配置中提取 query 选项和 watch 选项
   const { query: queryOptions, watch, ...readContractConfig } = readConfig;
   // 默认启用 watch 模式（实时监听）
-  const defaultWatch = watch ?? true;
+  const defaultWatch = watch ?? false;
 
   // 调用 wagmi 的 useReadContract Hook
   const readContractHookRes = useReadContract({
