@@ -25,6 +25,8 @@ export type NFT = {
 export type ActiveStake = {
   tokenId: number;
   stakedAt: number;
+  lastClaimTime: number; // 新增：最后领取时间，用于计算 pending reward
+  rarity: number | null; // 新增：NFT 稀有度，用于计算奖励倍率
   transactionHash: string;
 };
 
@@ -107,6 +109,8 @@ export const fetchActiveStakes = async (address: string): Promise<ActiveStake[]>
         items {
           tokenId
           stakedAt
+          lastClaimTime
+          rarity
           transactionHash
         }
       }
@@ -120,8 +124,11 @@ export const fetchActiveStakes = async (address: string): Promise<ActiveStake[]>
 
 /**
  * 查询质押 NFT 的详细信息（NFT 元数据 + 质押信息）
+ * 包含所有前端计算 pending reward 需要的数据
  */
-export const fetchStakedNFTsWithDetails = async (address: string): Promise<(NFT & { stakedAt: number })[]> => {
+export const fetchStakedNFTsWithDetails = async (
+  address: string,
+): Promise<(NFT & { stakedAt: number; lastClaimTime: number; rarity: number | null })[]> => {
   const stakes = await fetchActiveStakes(address);
   if (stakes.length === 0) return [];
 
@@ -143,10 +150,15 @@ export const fetchStakedNFTsWithDetails = async (address: string): Promise<(NFT 
   `;
   const nftsData = await request<NFTsData>(PONDER_URL, nftsQuery, { tokenIds });
 
-  return nftsData.nfts.items.map(nft => ({
-    ...nft,
-    stakedAt: stakes.find(s => s.tokenId === nft.tokenId)?.stakedAt || 0,
-  }));
+  return nftsData.nfts.items.map(nft => {
+    const stake = stakes.find(s => s.tokenId === nft.tokenId)!;
+    return {
+      ...nft,
+      stakedAt: stake.stakedAt,
+      lastClaimTime: stake.lastClaimTime,
+      rarity: stake.rarity ?? nft.rarity, // 优先使用 stake 表的 rarity（更准确）
+    };
+  });
 };
 
 /**
@@ -233,13 +245,17 @@ export function usePonderOwnedNFTs(
 
 /**
  * Hook: 获取用户质押的 NFTs（含详细信息和质押时间）
+ * 返回包含 lastClaimTime 和 rarity 用于前端计算 pending reward
  *
  * @param address - 用户地址
  * @param options - react-query 配置选项
  */
 export function usePonderStakedNFTs(
   address?: string,
-  options?: Omit<UseQueryOptions<(NFT & { stakedAt: number })[], Error>, "queryKey" | "queryFn">,
+  options?: Omit<
+    UseQueryOptions<(NFT & { stakedAt: number; lastClaimTime: number; rarity: number | null })[], Error>,
+    "queryKey" | "queryFn"
+  >,
 ) {
   return useQuery({
     queryKey: ponderKeys.activeStakes(address),

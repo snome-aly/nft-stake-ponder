@@ -39,6 +39,8 @@ export const activeStake = onchainTable(
     user: t.hex().notNull(),
     tokenId: t.integer().notNull(),
     stakedAt: t.integer().notNull(), // 质押时间戳
+    lastClaimTime: t.integer().notNull(), // 最后领取奖励时间（用于计算 pending reward）
+    rarity: t.integer(), // NFT 稀有度（0-3，用于计算奖励倍率）
     transactionHash: t.hex().notNull(), // 质押交易哈希
   }),
   (table) => ({
@@ -53,7 +55,7 @@ export const activeStake = onchainTable(
 export const stakingStats = onchainTable("staking_stats", (t) => ({
   id: t.hex().primaryKey(), // 用户地址
   totalStaked: t.integer().notNull().default(0), // 当前质押数量
-  totalClaimed: t.bigint().notNull().default(0n), // 累计已领取奖励（wei）
-  totalEarned: t.bigint().notNull().default(0n), // 累计总收益（包括解押时的奖励）
+  totalClaimed: t.bigint().notNull().default(0n), // 累计已领取奖励（包括 claim 和 unstake 时的奖励）
+  totalEarned: t.bigint().notNull().default(0n), // 累计已领取奖励（与 totalClaimed 相同，保留用于兼容）
   lastUpdated: t.integer().notNull(), // 最后更新时间
 }));

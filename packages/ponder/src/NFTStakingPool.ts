@@ -12,7 +12,7 @@
  */
 
 import { ponder } from "ponder:registry";
-import { stakingEvent, stakingStats, activeStake } from "ponder:schema";
+import { stakingEvent, stakingStats, activeStake, nft } from "ponder:schema";
 
 /**
  * Staked Event Handler
@@ -28,6 +28,10 @@ import { stakingEvent, stakingStats, activeStake } from "ponder:schema";
 ponder.on("NFTStakingPool:Staked", async ({ event, context }) => {
   const { db } = context;
 
+  // 获取 NFT 的 rarity 信息
+  const nftData = await db.find(nft, { id: event.args.tokenId.toString() });
+  const rarityValue = nftData?.rarity ?? null;
+
   // Create event record for history timeline
   await db.insert(stakingEvent).values({
     id: `${event.transaction.hash}-${event.log.logIndex}`,
@@ -40,12 +44,14 @@ ponder.on("NFTStakingPool:Staked", async ({ event, context }) => {
     blockNumber: Number(event.block.number),
   });
 
-  // Insert into active stake table
+  // Insert into active stake table with lastClaimTime and rarity
   await db.insert(activeStake).values({
     id: `${event.args.user}-${event.args.tokenId}`,
     user: event.args.user,
     tokenId: Number(event.args.tokenId),
     stakedAt: Number(event.block.timestamp),
+    lastClaimTime: Number(event.block.timestamp), // 初始时等于 stakedAt
+    rarity: rarityValue,
     transactionHash: event.transaction.hash,
   });
 
@@ -76,7 +82,7 @@ ponder.on("NFTStakingPool:Staked", async ({ event, context }) => {
  * - Create StakingEvent record with reward amount
  * - Delete from activeStake table
  * - Decrement user's totalStaked counter
- * - Add reward to totalEarned
+ * - Add reward to both totalClaimed and totalEarned (unstake rewards are claimed rewards)
  */
 ponder.on("NFTStakingPool:Unstaked", async ({ event, context }) => {
   const { db } = context;
@@ -104,13 +110,14 @@ ponder.on("NFTStakingPool:Unstaked", async ({ event, context }) => {
     .values({
       id: event.args.user,
       totalStaked: 0, // Will be decremented below if user exists
-      totalClaimed: 0n,
+      totalClaimed: event.args.reward,
       totalEarned: event.args.reward,
       lastUpdated: Number(event.block.timestamp),
     })
     .onConflictDoUpdate((row) => ({
-      // Decrement totalStaked, add reward to totalEarned
+      // Decrement totalStaked, add reward to both totalClaimed and totalEarned
       totalStaked: Math.max(0, row.totalStaked - 1), // Prevent negative values
+      totalClaimed: row.totalClaimed + event.args.reward,
       totalEarned: row.totalEarned + event.args.reward,
       lastUpdated: Number(event.block.timestamp),
     }));
@@ -124,6 +131,7 @@ ponder.on("NFTStakingPool:Unstaked", async ({ event, context }) => {
  *
  * Actions:
  * - Create StakingEvent record with reward amount
+ * - Update lastClaimTime in activeStake table (重要：用于前端计算 pending reward)
  * - Add reward to both totalClaimed and totalEarned
  */
 ponder.on("NFTStakingPool:RewardClaimed", async ({ event, context }) => {
@@ -139,6 +147,13 @@ ponder.on("NFTStakingPool:RewardClaimed", async ({ event, context }) => {
     timestamp: Number(event.block.timestamp),
     transactionHash: event.transaction.hash,
     blockNumber: Number(event.block.number),
+  });
+
+  // Update lastClaimTime in activeStake table
+  await db.update(activeStake, {
+    id: `${event.args.user}-${event.args.tokenId}`,
+  }).set({
+    lastClaimTime: Number(event.block.timestamp),
   });
 
   // Update user statistics
