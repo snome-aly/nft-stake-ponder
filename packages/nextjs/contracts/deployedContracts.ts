@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     NFTStakingPool: {
-      address: "0xD84379CEae14AA33C123Af12424A37803F885889",
+      address: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
       abi: [
         {
           inputs: [
@@ -566,10 +566,10 @@ const deployedContracts = {
         transferOwnership: "@openzeppelin/contracts/access/Ownable.sol",
         paused: "@openzeppelin/contracts/utils/Pausable.sol",
       },
-      deployedOnBlock: 182,
+      deployedOnBlock: 8,
     },
     RewardToken: {
-      address: "0xBEc49fA140aCaA83533fB00A2BB19bDdd0290f25",
+      address: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
       abi: [
         {
           inputs: [],
@@ -1497,34 +1497,21 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {
-        allowance:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
-        approve:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
-        balanceOf:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
-        decimals:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        allowance: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        approve: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        balanceOf: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        decimals: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
         name: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
-        symbol:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
-        totalSupply:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
-        transfer:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
-        transferFrom:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        symbol: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        totalSupply: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        transfer: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        transferFrom: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
         burn: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol",
-        burnFrom:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol",
-        DOMAIN_SEPARATOR:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
-        eip712Domain:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
-        nonces:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
-        permit:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        burnFrom: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol",
+        DOMAIN_SEPARATOR: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        eip712Domain: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        nonces: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        permit: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
         DEFAULT_ADMIN_ROLE: "@openzeppelin/contracts/access/AccessControl.sol",
         getRoleAdmin: "@openzeppelin/contracts/access/AccessControl.sol",
         grantRole: "@openzeppelin/contracts/access/AccessControl.sol",
@@ -1533,10 +1520,10 @@ const deployedContracts = {
         revokeRole: "@openzeppelin/contracts/access/AccessControl.sol",
         supportsInterface: "@openzeppelin/contracts/access/AccessControl.sol",
       },
-      deployedOnBlock: 180,
+      deployedOnBlock: 6,
     },
     StakableNFT: {
-      address: "0xf4B146FbA71F41E0592668ffbF264F1D186b2Ca8",
+      address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
       abi: [
         {
           inputs: [],
@@ -2947,30 +2934,19 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {
-        approve:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol",
-        balanceOf:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol",
-        getApproved:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol",
-        isApprovedForAll:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol",
+        approve: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol",
+        balanceOf: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol",
+        getApproved: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol",
+        isApprovedForAll: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol",
         name: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol",
-        ownerOf:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol",
-        safeTransferFrom:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol",
-        setApprovalForAll:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol",
+        ownerOf: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol",
+        safeTransferFrom: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol",
+        setApprovalForAll: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol",
         supportsInterface: "@openzeppelin/contracts/access/AccessControl.sol",
-        symbol:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol",
-        tokenURI:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol",
-        transferFrom:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol",
-        paused:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol",
+        symbol: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol",
+        tokenURI: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol",
+        transferFrom: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol",
+        paused: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol",
         DEFAULT_ADMIN_ROLE: "@openzeppelin/contracts/access/AccessControl.sol",
         getRoleAdmin: "@openzeppelin/contracts/access/AccessControl.sol",
         grantRole: "@openzeppelin/contracts/access/AccessControl.sol",
@@ -2979,7 +2955,7 @@ const deployedContracts = {
         revokeRole: "@openzeppelin/contracts/access/AccessControl.sol",
         eip712Domain: "@openzeppelin/contracts/utils/cryptography/EIP712.sol",
       },
-      deployedOnBlock: 175,
+      deployedOnBlock: 1,
     },
   },
 } as const;
