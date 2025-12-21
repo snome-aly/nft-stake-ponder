@@ -1,0 +1,123 @@
+📍 Deploying to local network...
+Nothing to compile
+No need to generate any newer typings.
+
+🚀 开始部署 StakableNFT 合约...
+📝 部署者地址: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+👤 操作员地址: 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
+🛡️  安全员地址: 0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC
+deploying "StakableNFT" (tx: 0xe0444a81a09079375b6dd4bfc30a6996e97b5db22bff4e9ea25129fa1b1b5ea5)...: deployed at 0x68B1D87F95878fE05B998F19b66F4baba5De1aed with 3509088 gas
+✅ StakableNFT 新部署成功！
+📍 合约地址: 0x68B1D87F95878fE05B998F19b66F4baba5De1aed
+⛽ Gas 使用: 3509088
+
+⚙️  设置角色权限...
+🔑 授予 OPERATOR_ROLE 给 0x70997970C51812dc3A010C7d01b50e0d17dc79C8...
+✅ OPERATOR_ROLE 已授予
+🔑 授予 PAUSER_ROLE 给 0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC...
+✅ PAUSER_ROLE 已授予
+
+📊 合约状态:
+   最大供应量: 100
+   每地址最大铸造数: 20
+   铸造价格: 1.0 ETH
+   已铸造数量: 0
+   稀有度池是否已设置: false
+   是否已揭示: false
+
+🎉 部署完成！
+💡 下一步: 运行初始化配置脚本设置稀有度池
+
+⚙️  开始初始化 StakableNFT 配置...
+📍 合约地址: 0x68B1D87F95878fE05B998F19b66F4baba5De1aed
+👤 操作员地址: 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
+📊 稀有度池是否已设置: false
+
+🎲 生成稀有度池...
+📊 稀有度分布:
+   Common:    50 (预期: 50)
+   Rare:      30 (预期: 30)
+   Epic:      15 (预期: 15)
+   Legendary: 5 (预期: 5)
+
+📤 提交稀有度池到合约...
+⏳ 交易哈希: 0x1153e8bb90288290b9fd51258b49e6df643a21957b84b406e4c9d0bbed471e05
+⏳ 等待交易确认...
+✅ 稀有度池设置成功！
+
+🔍 验证: rarityPoolSet = true
+🔍 验证: rarityPool[0] = 0 (Common)
+
+💰 奖励倍率配置:
+   Common: 1.00x (10000)
+   Rare: 1.50x (15000)
+   Epic: 2.00x (20000)
+   Legendary: 3.00x (30000)
+
+🎉 初始化配置完成！
+💡 下一步:
+   1. 用户可以开始铸造 NFT (调用 mint 函数)
+   2. 等待所有 NFT 铸造完成后，管理员调用 reveal() 揭示稀有度
+
+⚙️  开始初始化 StakableNFT 配置...
+📍 合约地址: 0x68B1D87F95878fE05B998F19b66F4baba5De1aed
+👤 操作员地址: 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
+📊 稀有度池是否已设置: true
+✅ 稀有度池已设置，跳过初始化
+
+🪙 开始部署 RewardToken 合约...
+📝 部署者地址: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+deploying "RewardToken" (tx: 0xcb8aa2d174c280a41955ab7dbb0ad4caf3a09b9c3c60e89048940c23b062b875)...: deployed at 0x59b670e9fA9D0A427751Af201D676719a970857b with 2274722 gas
+✅ RewardToken 新部署成功！
+📍 合约地址: 0x59b670e9fA9D0A427751Af201D676719a970857b
+⛽ Gas 使用: 2274722
+
+📊 合约状态:
+   代币名称: Reward Token
+   代币符号: RWRD
+   代币精度: 18
+   总供应量: 0.0 RWRD
+   部署者是否为管理员: true
+   + 授予 Deployer MINTER_ROLE (用于测试/Bootstrap)...
+
+🎉 部署完成！
+💡 下一步: 部署 NFTStakingPool 合约并授予 MINTER_ROLE
+
+🏦 开始部署 NFTStakingPool 合约...
+📝 部署者地址: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+📍 StakableNFT 地址: 0x68B1D87F95878fE05B998F19b66F4baba5De1aed
+📍 RewardToken 地址: 0x59b670e9fA9D0A427751Af201D676719a970857b
+deploying "NFTStakingPool" (tx: 0x9340385bc43e83c7924da5be46e51d1949f3768d1112031d7e38bb0f7c85c145)...: deployed at 0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44 with 1288977 gas
+✅ NFTStakingPool 新部署成功！
+📍 合约地址: 0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44
+⛽ Gas 使用: 1288977
+
+🔑 授予 MINTER_ROLE...
+🔑 授予 MINTER_ROLE 给 NFTStakingPool (0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44)...
+✅ MINTER_ROLE 已授予
+
+📊 合约状态:
+An unexpected error occurred:
+
+Error: ERROR processing /Users/snome/defi/stake-projetc/nft-stake-ponder/packages/hardhat/deploy/04_deploy_staking_pool.ts:
+TypeError: stakingPool.BASE_REWARD_PER_SECOND is not a function
+    at Object.deployNFTStakingPool [as func] (/Users/snome/defi/stake-projetc/nft-stake-ponder/packages/hardhat/deploy/04_deploy_staking_pool.ts:67:49)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async DeploymentsManager.executeDeployScripts (/Users/snome/defi/stake-projetc/nft-stake-ponder/packages/hardhat/node_modules/hardhat-deploy/src/DeploymentsManager.ts:1212:22)
+    at async DeploymentsManager.runDeploy (/Users/snome/defi/stake-projetc/nft-stake-ponder/packages/hardhat/node_modules/hardhat-deploy/src/DeploymentsManager.ts:1061:5)
+    at async SimpleTaskDefinition.action (/Users/snome/defi/stake-projetc/nft-stake-ponder/packages/hardhat/node_modules/hardhat-deploy/src/index.ts:450:5)
+    at async Environment._runTaskDefinition (/Users/snome/defi/stake-projetc/nft-stake-ponder/packages/hardhat/node_modules/hardhat/src/internal/core/runtime-environment.ts:351:14)
+    at async Environment.run (/Users/snome/defi/stake-projetc/nft-stake-ponder/packages/hardhat/node_modules/hardhat/src/internal/core/runtime-environment.ts:184:14)
+    at async SimpleTaskDefinition.action (/Users/snome/defi/stake-projetc/nft-stake-ponder/packages/hardhat/node_modules/hardhat-deploy/src/index.ts:601:32)
+    at async Environment._runTaskDefinition (/Users/snome/defi/stake-projetc/nft-stake-ponder/packages/hardhat/node_modules/hardhat/src/internal/core/runtime-environment.ts:351:14)
+    at async Environment.run (/Users/snome/defi/stake-projetc/nft-stake-ponder/packages/hardhat/node_modules/hardhat/src/internal/core/runtime-environment.ts:184:14)
+    at DeploymentsManager.executeDeployScripts (/Users/snome/defi/stake-projetc/nft-stake-ponder/packages/hardhat/node_modules/hardhat-deploy/src/DeploymentsManager.ts:1215:19)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async DeploymentsManager.runDeploy (/Users/snome/defi/stake-projetc/nft-stake-ponder/packages/hardhat/node_modules/hardhat-deploy/src/DeploymentsManager.ts:1061:5)
+    at async SimpleTaskDefinition.action (/Users/snome/defi/stake-projetc/nft-stake-ponder/packages/hardhat/node_modules/hardhat-deploy/src/index.ts:450:5)
+    at async Environment._runTaskDefinition (/Users/snome/defi/stake-projetc/nft-stake-ponder/packages/hardhat/node_modules/hardhat/src/internal/core/runtime-environment.ts:351:14)
+    at async Environment.run (/Users/snome/defi/stake-projetc/nft-stake-ponder/packages/hardhat/node_modules/hardhat/src/internal/core/runtime-environment.ts:184:14)
+    at async SimpleTaskDefinition.action (/Users/snome/defi/stake-projetc/nft-stake-ponder/packages/hardhat/node_modules/hardhat-deploy/src/index.ts:601:32)
+    at async Environment._runTaskDefinition (/Users/snome/defi/stake-projetc/nft-stake-ponder/packages/hardhat/node_modules/hardhat/src/internal/core/runtime-environment.ts:351:14)
+    at async Environment.run (/Users/snome/defi/stake-projetc/nft-stake-ponder/packages/hardhat/node_modules/hardhat/src/internal/core/runtime-environment.ts:184:14)
+    at async SimpleTaskDefinition.action (/Users/snome/defi/stake-projetc/nft-stake-ponder/packages/hardhat/node_modules/hardhat-deploy/src/index.ts:690:5)

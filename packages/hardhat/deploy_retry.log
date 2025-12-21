@@ -1,0 +1,140 @@
+📍 Deploying to local network...
+Nothing to compile
+No need to generate any newer typings.
+
+🚀 开始部署 StakableNFT 合约...
+📝 部署者地址: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+👤 操作员地址: 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
+🛡️  安全员地址: 0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC
+deploying "StakableNFT" (tx: 0x3b5e00bf5c0f4bfb3c870a300607dd2d46c54e769640474a60a41b568b9aa0ac)...: deployed at 0x4A679253410272dd5232B3Ff7cF5dbB88f295319 with 3509088 gas
+✅ StakableNFT 新部署成功！
+📍 合约地址: 0x4A679253410272dd5232B3Ff7cF5dbB88f295319
+⛽ Gas 使用: 3509088
+
+⚙️  设置角色权限...
+🔑 授予 OPERATOR_ROLE 给 0x70997970C51812dc3A010C7d01b50e0d17dc79C8...
+✅ OPERATOR_ROLE 已授予
+🔑 授予 PAUSER_ROLE 给 0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC...
+✅ PAUSER_ROLE 已授予
+
+📊 合约状态:
+   最大供应量: 100
+   每地址最大铸造数: 20
+   铸造价格: 1.0 ETH
+   已铸造数量: 0
+   稀有度池是否已设置: false
+   是否已揭示: false
+
+🎉 部署完成！
+💡 下一步: 运行初始化配置脚本设置稀有度池
+
+⚙️  开始初始化 StakableNFT 配置...
+📍 合约地址: 0x4A679253410272dd5232B3Ff7cF5dbB88f295319
+👤 操作员地址: 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
+📊 稀有度池是否已设置: false
+
+🎲 生成稀有度池...
+📊 稀有度分布:
+   Common:    50 (预期: 50)
+   Rare:      30 (预期: 30)
+   Epic:      15 (预期: 15)
+   Legendary: 5 (预期: 5)
+
+📤 提交稀有度池到合约...
+⏳ 交易哈希: 0x7fc1f57d9f8eeda6bb1cae201bd101f9e94fa03e62f1478a2fa33b8c457d55cf
+⏳ 等待交易确认...
+✅ 稀有度池设置成功！
+
+🔍 验证: rarityPoolSet = true
+🔍 验证: rarityPool[0] = 2 (Epic)
+
+💰 奖励倍率配置:
+   Common: 1.00x (10000)
+   Rare: 1.50x (15000)
+   Epic: 2.00x (20000)
+   Legendary: 3.00x (30000)
+
+🎉 初始化配置完成！
+💡 下一步:
+   1. 用户可以开始铸造 NFT (调用 mint 函数)
+   2. 等待所有 NFT 铸造完成后，管理员调用 reveal() 揭示稀有度
+
+⚙️  开始初始化 StakableNFT 配置...
+📍 合约地址: 0x4A679253410272dd5232B3Ff7cF5dbB88f295319
+👤 操作员地址: 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
+📊 稀有度池是否已设置: true
+✅ 稀有度池已设置，跳过初始化
+
+🪙 开始部署 RewardToken 合约...
+📝 部署者地址: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+deploying "RewardToken" (tx: 0x3780d3fca0414e694b1c3e3576d650f09853afce55b0df511ba113db391f91f6)...: deployed at 0xc5a5C42992dECbae36851359345FE25997F5C42d with 2274722 gas
+✅ RewardToken 新部署成功！
+📍 合约地址: 0xc5a5C42992dECbae36851359345FE25997F5C42d
+⛽ Gas 使用: 2274722
+
+📊 合约状态:
+   代币名称: Reward Token
+   代币符号: RWRD
+   代币精度: 18
+   总供应量: 0.0 RWRD
+   部署者是否为管理员: true
+   + 授予 Deployer MINTER_ROLE (用于测试/Bootstrap)...
+
+🎉 部署完成！
+💡 下一步: 部署 NFTStakingPool 合约并授予 MINTER_ROLE
+
+🏦 开始部署 NFTStakingPool 合约...
+📝 部署者地址: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+📍 StakableNFT 地址: 0x4A679253410272dd5232B3Ff7cF5dbB88f295319
+📍 RewardToken 地址: 0xc5a5C42992dECbae36851359345FE25997F5C42d
+deploying "NFTStakingPool" (tx: 0xb742c1e5132ce306c9bdb7fb1314bed3ce257b28f7b4cd96765d09c823b10a1c)...: deployed at 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E with 1288977 gas
+✅ NFTStakingPool 新部署成功！
+📍 合约地址: 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E
+⛽ Gas 使用: 1288977
+
+🔑 授予 MINTER_ROLE...
+🔑 授予 MINTER_ROLE 给 NFTStakingPool (0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E)...
+✅ MINTER_ROLE 已授予
+
+📊 合约状态:
+   StakableNFT: 0x4A679253410272dd5232B3Ff7cF5dbB88f295319
+   RewardToken: 0xc5a5C42992dECbae36851359345FE25997F5C42d
+   基础奖励速率: 11574074074074 wei/秒
+   是否暂停: false
+   Owner: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+   拥有 MINTER_ROLE: true
+   预期日奖励（1x倍率）: 0.9999999999999936 RWRD
+
+🎉 部署完成！
+💡 提示: 用户需要先 approve NFT 给 StakingPool 才能质押
+
+🏛️ 开始部署 Governance 模块...
+📝 部署者地址: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+
+⏳ 部署 Timelock...
+deploying "Timelock" (tx: 0xae535bde59e460456aab8374e023a51d4266d0f7d57d03342d12dba5ff17d104)...: deployed at 0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB with 1268809 gas
+
+📜 部署 MyGovernor...
+deploying "MyGovernor" (tx: 0xd38cbefc10a103979455708d6a01e9cb327be65e349181583f5edaf089342258)...: deployed at 0x9E545E3C0baAB3E08CdfD552C960A1050f373042 with 3521125 gas
+
+🔌 开始组装权限...
+   + 授予 Governor PROPOSER_ROLE
+   + 授予 任何人 EXECUTOR_ROLE
+   + 授予 Deployer CANCELLER_ROLE (Dev Only)
+   + 正在将 Pool Ownership 转移给 Timelock...
+   ✅ Ownership 转移完成
+   ! [Dev] 保留 Deployer 作为 Timelock Admin
+
+🗳️ Bootstrap Initial Votes...
+   + Minting 100k RWRD to deployer...
+   + Delegating to self...
+   ✅ Delegation complete
+
+🎉 Governance 部署与组装完成！
+----------------------------------------------------
+Governor: 0x9E545E3C0baAB3E08CdfD552C960A1050f373042
+Timelock: 0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB
+Token:    0xc5a5C42992dECbae36851359345FE25997F5C42d
+Pool:     0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E
+----------------------------------------------------
+📝 Updated TypeScript contract definition file on ../nextjs/contracts/deployedContracts.ts

@@ -110,8 +110,8 @@ contract NFTStakingPool is Ownable, ReentrancyGuard, Pausable {
     IRewardToken public immutable rewardToken;
 
     /// @notice 基础奖励速率：1 RWRD/天 = 1e18 / 86400 wei/秒
-    /// @dev 预计算值：1000000000000000000 / 86400 ≈ 11574074074074
-    uint256 public constant BASE_REWARD_PER_SECOND = 11574074074074;
+    /// @dev 初始值：1000000000000000000 / 86400 ≈ 11574074074074
+    uint256 public baseRewardPerSecond = 11574074074074;
 
     // ============ 事件 ============
 
@@ -139,6 +139,13 @@ contract NFTStakingPool is Ownable, ReentrancyGuard, Pausable {
      * @param amount 领取的奖励数量
      */
     event RewardClaimed(address indexed user, uint256 indexed tokenId, uint256 amount);
+
+    /**
+     * @notice 基础奖励速率更新事件
+     * @param oldReward 旧的奖励速率
+     * @param newReward 新的奖励速率
+     */
+    event BaseRewardUpdated(uint256 oldReward, uint256 newReward);
 
     // ============ 构造函数 ============
 
@@ -478,7 +485,7 @@ contract NFTStakingPool is Ownable, ReentrancyGuard, Pausable {
         uint256 multiplier = stakableNFT.getTokenRewardMultiplier(tokenId);
 
         // 公式：时长 × 基础速率 × 倍率 / 10000
-        return (timeStaked * BASE_REWARD_PER_SECOND * multiplier) / 10000;
+        return (timeStaked * baseRewardPerSecond * multiplier) / 10000;
     }
 
     /**
@@ -543,5 +550,16 @@ contract NFTStakingPool is Ownable, ReentrancyGuard, Pausable {
      */
     function unpause() external onlyOwner {
         _unpause();
+    }
+
+    /**
+     * @notice 设置基础奖励速率 (DAO 可治理参数)
+     * @param newReward 新的奖励速率
+     * @dev 仅 owner (Timelock) 可调用
+     */
+    function setBaseReward(uint256 newReward) external onlyOwner {
+        uint256 oldReward = baseRewardPerSecond;
+        baseRewardPerSecond = newReward;
+        emit BaseRewardUpdated(oldReward, newReward);
     }
 }

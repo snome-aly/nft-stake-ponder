@@ -45,8 +45,14 @@ const deployRewardToken: DeployFunction = async function (hre: HardhatRuntimeEnv
   console.log(`   总供应量: ${hre.ethers.formatEther(await rewardToken.totalSupply())} RWRD`);
 
   const DEFAULT_ADMIN_ROLE = await rewardToken.DEFAULT_ADMIN_ROLE();
+  const MINTER_ROLE = await rewardToken.MINTER_ROLE();
   const hasAdminRole = await rewardToken.hasRole(DEFAULT_ADMIN_ROLE, deployer);
   console.log(`   部署者是否为管理员: ${hasAdminRole}`);
+
+  if (!(await rewardToken.hasRole(MINTER_ROLE, deployer))) {
+    console.log("   + 授予 Deployer MINTER_ROLE (用于测试/Bootstrap)...");
+    await rewardToken.grantRole(MINTER_ROLE, deployer).then(tx => tx.wait());
+  }
 
   console.log("\n🎉 部署完成！");
   console.log("💡 下一步: 部署 NFTStakingPool 合约并授予 MINTER_ROLE");

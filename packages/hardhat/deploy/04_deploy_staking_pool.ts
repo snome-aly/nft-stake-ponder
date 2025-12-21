@@ -64,7 +64,7 @@ const deployNFTStakingPool: DeployFunction = async function (hre: HardhatRuntime
   console.log("\n📊 合约状态:");
   const stakableNFTAddress = await stakingPool.stakableNFT();
   const rewardTokenAddress = await stakingPool.rewardToken();
-  const baseRewardPerSecond = await stakingPool.BASE_REWARD_PER_SECOND();
+  const baseRewardPerSecond = await stakingPool.baseRewardPerSecond();
   const isPaused = await stakingPool.paused();
   const owner = await stakingPool.owner();
 

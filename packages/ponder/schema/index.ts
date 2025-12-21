@@ -17,5 +17,8 @@ export * from "./stakableNFTEvents";
 // NFTStakingPool 合约事件
 export * from "./stakingEvents";
 
+// Governance 合约事件
+export * from "./governance";
+
 // 未来扩展示例：
 // export * from "./rewardEvents";

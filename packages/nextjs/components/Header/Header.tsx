@@ -2,10 +2,10 @@
 
 import React, { useState } from "react";
 import { usePathname } from "next/navigation";
-import { useAccount } from "wagmi";
 import { CustomConnectButton } from "./CustomConnectButton";
 import { Logo } from "./Logo";
 import { MobileNavLink, NavLink } from "./NavLink";
+import { useAccount } from "wagmi";
 import {
   Bars3Icon,
   ChartBarIcon,
@@ -13,11 +13,12 @@ import {
   HomeIcon,
   LockClosedIcon,
   PhotoIcon,
-  XMarkIcon,
+  ScaleIcon,
   WrenchScrewdriverIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 import { ADMIN_ROLE } from "~~/constants/roles";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
 /**
  * Header 导航链接配置
@@ -66,6 +67,11 @@ export const Header = () => {
       label: "Stats",
       href: "/stats",
       icon: <ChartBarIcon className="w-5 h-5" />,
+    },
+    {
+      label: "Governance",
+      href: "/governance",
+      icon: <ScaleIcon className="w-5 h-5" />,
     },
   ];
 

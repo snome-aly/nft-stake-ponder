@@ -4,6 +4,7 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
 /**
@@ -24,8 +25,9 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
  * - AccessControl：最小权限原则
  * - 铸造权限完全由 StakingPool 控制
  * - 可销毁：支持未来代币消耗场景
+ * - 支持 ERC20Votes (DAO 治理投票权限)
  */
-contract RewardToken is ERC20, ERC20Burnable, ERC20Permit, AccessControl {
+contract RewardToken is ERC20, ERC20Burnable, ERC20Permit, ERC20Votes, AccessControl {
     // ============ 角色定义 ============
 
     /**
@@ -165,5 +167,23 @@ contract RewardToken is ERC20, ERC20Burnable, ERC20Permit, AccessControl {
      */
     function fromWei(uint256 weiAmount) external pure returns (uint256) {
         return weiAmount / 10 ** 18;
+    }
+
+    // ============ Overrides (Required by ERC20Votes) ============
+
+    /**
+     * @dev 更新代币余额时同时更新投票权重快照
+     * 解决 ERC20Votes 与 ERC20 的冲突
+     */
+    function _update(address from, address to, uint256 value) internal override(ERC20, ERC20Votes) {
+        super._update(from, to, value);
+    }
+
+    /**
+     * @dev 获取当前 nonce
+     * 解决 ERC20Votes 与 ERC20Permit 的冲突
+     */
+    function nonces(address owner) public view override(ERC20Permit, Nonces) returns (uint256) {
+        return super.nonces(owner);
     }
 }

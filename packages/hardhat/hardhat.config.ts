@@ -38,13 +38,14 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: "0.8.20", // Solidity 版本
+        version: "0.8.24", // Solidity 版本
         settings: {
           optimizer: {
             enabled: true, // 启用优化器（减少 gas 消耗和字节码大小）
             runs: 200, // 优化运行次数：200 适合部署后频繁调用的合约
             // 详细说明: https://docs.soliditylang.org/en/latest/using-the-compiler.html#optimizer-options
           },
+          evmVersion: "cancun",
           viaIR: process.env.COVERAGE !== "true", // 通过 Yul IR 编译，解决 "Stack too deep" 问题 (coverage 时禁用)
           // 其他可选的编译器设置（已注释）
           // viaIR: false, // 通过 Yul IR 编译（实验性，可能减少字节码大小）
