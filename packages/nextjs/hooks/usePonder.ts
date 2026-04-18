@@ -49,10 +49,22 @@ export type StakingStats = {
   lastUpdated: number;
 };
 
+export type GlobalStats = {
+  id: string;
+  totalMinted: number;
+  totalRevealed: boolean;
+  rarityPoolSet: boolean;
+  commonCount: number;
+  rareCount: number;
+  epicCount: number;
+  legendaryCount: number;
+};
+
 type NFTsData = { nfts: { items: NFT[] } };
 type ActiveStakesData = { activeStakes: { items: ActiveStake[] } };
 type StakingEventsData = { stakingEvents: { items: StakingEvent[] } };
 type StakingStatsData = { stakingStats: StakingStats | null };
+type GlobalStatsData = { globalStats: GlobalStats | null };
 
 // ============================================
 // 配置
@@ -68,6 +80,7 @@ export const ponderKeys = {
   stakingEvents: (address?: string, type?: string) => [...ponderKeys.all, "stakingEvents", address, type] as const,
   stakingStats: (address?: string) => [...ponderKeys.all, "stakingStats", address] as const,
   userAllNFTs: (address?: string) => [...ponderKeys.all, "userAllNFTs", address] as const,
+  globalStats: () => [...ponderKeys.all, "globalStats"] as const,
 };
 
 // ============================================
@@ -217,6 +230,45 @@ export const fetchStakingStats = async (address: string): Promise<StakingStats |
     user: address.toLowerCase(),
   });
   return data.stakingStats;
+};
+
+/**
+ * 查询全局统计
+ */
+export const fetchGlobalStats = async (): Promise<GlobalStats | null> => {
+  const query = gql`
+    query GlobalStats {
+      globalStats(id: "global") {
+        id
+        totalMinted
+        totalRevealed
+        rarityPoolSet
+        commonCount
+        rareCount
+        epicCount
+        legendaryCount
+      }
+    }
+  `;
+  const data = await request<GlobalStatsData>(PONDER_URL, query);
+  return data.globalStats;
+};
+
+/**
+ * 查询全局质押统计（总质押数）
+ */
+export const fetchGlobalStakingStats = async (): Promise<{ totalStaked: number }> => {
+  const query = gql`
+    query GlobalStakingStats {
+      activeStakes {
+        items {
+          id
+        }
+      }
+    }
+  `;
+  const data = await request<{ activeStakes: { items: { id: string }[] } }>(PONDER_URL, query);
+  return { totalStaked: data.activeStakes.items.length };
 };
 
 // ============================================
@@ -390,6 +442,36 @@ export function usePonderStakingStats(
     enabled: !!address,
     staleTime: 30000,
     gcTime: 300000,
+    ...options,
+  });
+}
+
+/**
+ * Hook: 获取全局统计
+ */
+export function usePonderGlobalStats(
+  options?: Omit<UseQueryOptions<GlobalStats | null, Error>, "queryKey" | "queryFn">,
+) {
+  return useQuery({
+    queryKey: ponderKeys.globalStats(),
+    queryFn: fetchGlobalStats,
+    staleTime: 30000,
+    gcTime: 300000,
+    ...options,
+  });
+}
+
+/**
+ * Hook: 获取全局质押统计
+ */
+export function usePonderGlobalStakingStats(
+  options?: Omit<UseQueryOptions<{ totalStaked: number }, Error>, "queryKey" | "queryFn">,
+) {
+  return useQuery({
+    queryKey: [...ponderKeys.all, "globalStakingStats"] as const,
+    queryFn: fetchGlobalStakingStats,
+    staleTime: 10000,
+    gcTime: 60000,
     ...options,
   });
 }

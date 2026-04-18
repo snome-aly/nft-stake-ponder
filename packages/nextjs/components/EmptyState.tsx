@@ -1,28 +1,56 @@
-/**
- * 空状态提示组件
- */
+"use client";
 
 import Link from "next/link";
 
 interface EmptyStateProps {
-  icon?: string;
   title: string;
   message: string;
   actionLabel?: string;
   actionHref?: string;
 }
 
-export function EmptyState({ icon = "📭", title, message, actionLabel, actionHref }: EmptyStateProps) {
+/**
+ * EmptyState - Premium NFT Gallery
+ * Clean empty state with icon and CTA
+ */
+export function EmptyState({ title, message, actionLabel, actionHref }: EmptyStateProps) {
   return (
-    <div className="glass-card rounded-2xl p-12 text-center border border-cyan-500/30">
-      <div className="text-8xl mb-6">{icon}</div>
-      <h3 className="text-2xl font-bold text-white mb-3">{title}</h3>
-      <p className="text-gray-400 text-lg mb-6 max-w-md mx-auto">{message}</p>
+    <div className="card p-12 text-center max-w-md mx-auto" style={{ backgroundColor: "var(--bg-surface)" }}>
+      {/* Icon */}
+      <div
+        className="w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-6"
+        style={{
+          backgroundColor: "var(--bg-elevated)",
+          border: "1px solid var(--border-default)",
+        }}
+      >
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-[var(--text-tertiary)]">
+          <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M9 9l6 6M15 9l-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+      </div>
+
+      <h3
+        className="text-lg font-semibold mb-2"
+        style={{
+          fontFamily: "var(--font-display)",
+          color: "var(--text-primary)",
+        }}
+      >
+        {title}
+      </h3>
+      <p
+        className="text-sm mb-6"
+        style={{
+          fontFamily: "var(--font-body)",
+          color: "var(--text-tertiary)",
+          lineHeight: 1.6,
+        }}
+      >
+        {message}
+      </p>
       {actionLabel && actionHref && (
-        <Link
-          href={actionHref}
-          className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-500 text-white font-bold rounded-xl hover:opacity-90 transition-all"
-        >
+        <Link href={actionHref} className="btn btn-primary">
           {actionLabel}
         </Link>
       )}
@@ -30,26 +58,55 @@ export function EmptyState({ icon = "📭", title, message, actionLabel, actionH
   );
 }
 
-/**
- * 错误状态提示组件
- */
 interface ErrorMessageProps {
   title?: string;
   message: string;
   onRetry?: () => void;
 }
 
-export function ErrorMessage({ title = "Oops! Something went wrong", message, onRetry }: ErrorMessageProps) {
+export function ErrorMessage({ title = "Something went wrong", message, onRetry }: ErrorMessageProps) {
   return (
-    <div className="glass-card rounded-2xl p-12 text-center border border-red-500/30">
-      <div className="text-8xl mb-6">⚠️</div>
-      <h3 className="text-2xl font-bold text-white mb-3">{title}</h3>
-      <p className="text-red-400 text-lg mb-6 max-w-md mx-auto">{message}</p>
+    <div className="card p-12 text-center max-w-md mx-auto" style={{ backgroundColor: "var(--bg-surface)" }}>
+      {/* Icon */}
+      <div
+        className="w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-6"
+        style={{
+          backgroundColor: "var(--error-muted)",
+          border: "1px solid rgba(239, 68, 68, 0.2)",
+        }}
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-[var(--error)]">
+          <path
+            d="M12 9v4M12 17h.01M12 3l9.5 16.5H2.5L12 3z"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
+
+      <h3
+        className="text-lg font-semibold mb-2"
+        style={{
+          fontFamily: "var(--font-display)",
+          color: "var(--text-primary)",
+        }}
+      >
+        {title}
+      </h3>
+      <p
+        className="text-sm mb-6"
+        style={{
+          fontFamily: "var(--font-body)",
+          color: "var(--text-tertiary)",
+          lineHeight: 1.6,
+        }}
+      >
+        {message}
+      </p>
       {onRetry && (
-        <button
-          onClick={onRetry}
-          className="inline-flex items-center px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all"
-        >
+        <button onClick={onRetry} className="btn btn-secondary">
           Try Again
         </button>
       )}

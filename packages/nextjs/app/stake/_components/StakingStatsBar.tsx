@@ -9,51 +9,120 @@ interface StakingStatsBarProps {
 
 export function StakingStatsBar({ totalStaked, totalPendingReward, totalClaimed, totalEarned }: StakingStatsBarProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
       {/* Total Staked */}
-      <div className="glass-card rounded-2xl p-6 border border-cyan-500/30">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-gray-400 text-sm font-medium">Total Staked NFTs</h3>
-          <span className="text-3xl">🔒</span>
+      <div className="card p-5" style={{ backgroundColor: "var(--bg-elevated)" }}>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
+            Total Staked
+          </h3>
+          <div
+            className="w-8 h-8 rounded-lg flex items-center justify-center"
+            style={{ backgroundColor: "var(--bg-card)" }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-[var(--text-muted)]">
+              <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="1.5" />
+            </svg>
+          </div>
         </div>
-        <div className="text-4xl font-bold text-white">{totalStaked}</div>
-        <p className="text-gray-500 text-sm mt-2">Currently earning rewards</p>
+        <div
+          className="text-3xl font-bold mb-1"
+          style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
+        >
+          {totalStaked}
+        </div>
+        <p className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
+          Currently earning rewards
+        </p>
       </div>
 
       {/* Pending Rewards */}
-      <div className="glass-card rounded-2xl p-6 border border-cyan-500/30 bg-gradient-to-br from-cyan-500/10 to-purple-500/10">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-gray-400 text-sm font-medium">Pending Rewards</h3>
-          <span className="text-3xl">💰</span>
+      <div
+        className="card p-5"
+        style={{ backgroundColor: "var(--bg-elevated)", border: "1px solid var(--accent-border)" }}
+      >
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
+            Pending Rewards
+          </h3>
+          <div
+            className="w-8 h-8 rounded-lg flex items-center justify-center"
+            style={{ backgroundColor: "var(--accent-muted)" }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-[var(--accent)]">
+              <path
+                d="M12 2v4m0 12v4m-6-10H2m20 0h-4M6.34 6.34L4.93 4.93m14.14 14.14l-1.41-1.41M6.34 17.66l-1.41 1.41"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
         </div>
-        <div className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">
+        <div className="text-2xl font-bold mb-1" style={{ fontFamily: "var(--font-display)", color: "var(--accent)" }}>
           {(Number(totalPendingReward) / 1e18).toFixed(4)} RWRD
         </div>
-        <p className="text-gray-500 text-sm mt-2">Updating in real-time</p>
+        <p className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
+          Updating in real-time
+        </p>
       </div>
 
       {/* Total Claimed */}
-      <div className="glass-card rounded-2xl p-6 border border-cyan-500/30 bg-gradient-to-br from-green-500/10 to-emerald-500/10">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-gray-400 text-sm font-medium">Total Claimed</h3>
-          <span className="text-3xl">✅</span>
+      <div className="card p-5" style={{ backgroundColor: "var(--bg-elevated)" }}>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
+            Total Claimed
+          </h3>
+          <div
+            className="w-8 h-8 rounded-lg flex items-center justify-center"
+            style={{ backgroundColor: "var(--success-muted)" }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-[var(--success)]">
+              <path
+                d="M5 12l5 5L20 7"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
         </div>
-        <div className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400">
+        <div className="text-2xl font-bold mb-1" style={{ fontFamily: "var(--font-display)", color: "var(--success)" }}>
           {(Number(totalClaimed) / 1e18).toFixed(4)} RWRD
         </div>
-        <p className="text-gray-500 text-sm mt-2">Already in your wallet</p>
+        <p className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
+          Already in your wallet
+        </p>
       </div>
 
       {/* Total Earned */}
-      <div className="glass-card rounded-2xl p-6 border border-cyan-500/30 bg-gradient-to-br from-yellow-500/10 to-orange-500/10">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-gray-400 text-sm font-medium">Total Earned</h3>
-          <span className="text-3xl">🏆</span>
+      <div className="card p-5" style={{ backgroundColor: "var(--bg-elevated)" }}>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
+            Total Earned
+          </h3>
+          <div
+            className="w-8 h-8 rounded-lg flex items-center justify-center"
+            style={{ backgroundColor: "var(--warning-muted)" }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-[var(--warning)]">
+              <path
+                d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
         </div>
-        <div className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-400">
+        <div className="text-2xl font-bold mb-1" style={{ fontFamily: "var(--font-display)", color: "var(--warning)" }}>
           {(Number(totalEarned) / 1e18).toFixed(4)} RWRD
         </div>
-        <p className="text-gray-500 text-sm mt-2">Lifetime earnings</p>
+        <p className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
+          Lifetime earnings
+        </p>
       </div>
     </div>
   );

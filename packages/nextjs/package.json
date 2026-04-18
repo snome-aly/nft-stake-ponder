@@ -25,6 +25,7 @@
     "blo": "~1.2.0",
     "burner-connector": "0.0.18",
     "daisyui": "5.0.9",
+    "framer-motion": "^12.38.0",
     "graphql": "^16.9.0",
     "graphql-request": "^7.1.0",
     "kubo-rpc-client": "~5.0.2",

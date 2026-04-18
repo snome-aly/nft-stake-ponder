@@ -1,63 +1,35 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { useAccount } from "wagmi";
+import { FadeInUp, StaggerContainer } from "~~/components/ui/AnimatedCard";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
 const steps = [
-  {
-    number: 1,
-    icon: "🔗",
-    title: "Connect Wallet",
-    description: "Connect your Web3 wallet (MetaMask, WalletConnect, etc.)",
-    details: "Supports all major Ethereum wallets via RainbowKit",
-    status: "User Action",
-  },
-  {
-    number: 2,
-    icon: "🎁",
-    title: "Mint Blind Box",
-    description: "Pay 1 ETH to mint your mystery NFT (max 20 per wallet)",
-    details: "Receive unrevealed NFT with blind box metadata",
-    status: "User Action",
-  },
+  { number: 1, title: "Connect Wallet", description: "Connect your Web3 wallet to begin", status: "User" },
+  { number: 2, title: "Mint Blind Box", description: "Pay 0.001 ETH to mint your mystery NFT", status: "User" },
   {
     number: 3,
-    icon: "⏳",
     title: "Wait for Sellout",
-    description: "All 100 NFTs must be minted before reveal can trigger",
-    details: "Track progress in real-time on homepage",
-    status: "Community Progress",
+    description: "All 100 NFTs must be minted before reveal",
+    status: "Community",
   },
   {
     number: 4,
-    icon: "🎲",
     title: "Admin Triggers Reveal",
-    description: "Project admin calls reveal() function with VRF randomness",
-    details: "Random offset ensures fair rarity distribution",
-    status: "Admin Action",
+    description: "Project admin calls reveal() with VRF randomness",
+    status: "Admin",
   },
-  {
-    number: 5,
-    icon: "✨",
-    title: "Batch Reveal",
-    description: "All 100 NFTs reveal simultaneously with assigned rarities",
-    details: "Metadata updates instantly via on-chain generation",
-    status: "Automated",
-  },
-  {
-    number: 6,
-    icon: "💎",
-    title: "Stake & Earn",
-    description: "Transfer revealed NFT to staking pool contract to earn RWRD tokens",
-    details: "Rewards based on your rarity multiplier (1x-3x)",
-    status: "User Action",
-  },
+  { number: 5, title: "Batch Reveal", description: "All 100 NFTs reveal with assigned rarities", status: "Auto" },
+  { number: 6, title: "Stake & Earn", description: "Transfer NFT to staking pool to earn rewards", status: "User" },
 ];
 
+/**
+ * RevealProcess - Premium NFT Gallery
+ */
 export function RevealProcess() {
   const { address, isConnected } = useAccount();
 
-  // 读取合约状态
   const { data: totalMinted } = useScaffoldReadContract({
     contractName: "StakableNFT",
     functionName: "totalMinted",
@@ -69,193 +41,231 @@ export function RevealProcess() {
     args: [address],
   });
 
-  // 常量
-  const maxSupply = 100;
-  const maxPerAddress = 20;
-
-  // 计算状态
   const currentMinted = totalMinted !== undefined ? Number(totalMinted) : 0;
   const userCurrentMinted = userMinted !== undefined ? Number(userMinted) : 0;
-  const isSoldOut = currentMinted >= maxSupply;
-  const isUserMaxReached = userCurrentMinted >= maxPerAddress;
+  const isSoldOut = currentMinted >= 100;
+  const isUserMaxReached = userCurrentMinted >= 20;
 
-  // 按钮状态
   const getButtonState = () => {
-    if (!isConnected) {
-      return {
-        text: "🔗 Connect Wallet to Mint",
-        disabled: false,
-        className: "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700",
-      };
-    }
-    if (isSoldOut) {
-      return {
-        text: "🔥 Sold Out",
-        disabled: true,
-        className: "bg-gray-600 cursor-not-allowed",
-      };
-    }
-    if (isUserMaxReached) {
-      return {
-        text: `✅ Max Reached (${userCurrentMinted}/20)`,
-        disabled: true,
-        className: "bg-yellow-600 cursor-not-allowed",
-      };
-    }
-    return {
-      text: `🚀 Start Minting Now (${userCurrentMinted}/20)`,
-      disabled: false,
-      className: "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700",
-    };
+    if (!isConnected) return { text: "Connect Wallet", disabled: false };
+    if (isSoldOut) return { text: "Sold Out", disabled: true };
+    if (isUserMaxReached) return { text: `Max Reached (${userCurrentMinted}/20)`, disabled: true };
+    return { text: "Start Minting", disabled: false };
   };
 
   const buttonState = getButtonState();
 
   return (
-    <section className="py-20 bg-gradient-to-br from-purple-900/20 to-blue-900/20">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6">🎯 Complete User Journey</h2>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto whitespace-nowrap">
-            From minting to staking in 6 transparent steps. Understand the full process before you begin.
+    <section
+      style={{ backgroundColor: "var(--bg-base)", paddingTop: "var(--space-12)", paddingBottom: "var(--space-12)" }}
+    >
+      <div className="container-premium">
+        {/* Header */}
+        <FadeInUp className="text-center mb-8">
+          <h2
+            className="text-xl font-bold mb-3"
+            style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em", color: "var(--text-primary)" }}
+          >
+            User Journey
+          </h2>
+          <p
+            className="text-sm max-w-xl mx-auto"
+            style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)", lineHeight: 1.7 }}
+          >
+            From minting to staking in 6 transparent steps.
           </p>
-        </div>
+        </FadeInUp>
 
-        {/* Desktop Timeline Layout */}
-        <div className="hidden lg:block max-w-6xl mx-auto">
+        {/* Timeline - Desktop */}
+        <div className="hidden lg:block max-w-4xl mx-auto mb-8">
           <div className="relative">
-            {/* Connection Line */}
-            <div className="absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 -translate-y-1/2"></div>
+            {/* Line */}
+            <div className="absolute top-5 left-0 right-0 h-px" style={{ backgroundColor: "var(--border-default)" }} />
 
-            {/* Step Cards */}
-            <div className="grid grid-cols-6 gap-4 relative z-10">
-              {steps.map(step => (
-                <StepCard key={step.number} step={step} layout="vertical" />
+            <StaggerContainer className="grid grid-cols-6 gap-3 relative z-10">
+              {steps.map((step, index) => (
+                <motion.div
+                  key={step.number}
+                  className="text-center"
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: index * 0.06 }}
+                >
+                  {/* Step number */}
+                  <div
+                    className="w-9 h-9 rounded-full flex items-center justify-center mx-auto mb-2"
+                    style={{
+                      backgroundColor: "var(--bg-elevated)",
+                      border: "1px solid var(--accent-border)",
+                    }}
+                  >
+                    <span
+                      className="text-sm font-semibold"
+                      style={{ fontFamily: "var(--font-display)", color: "var(--accent)" }}
+                    >
+                      {step.number}
+                    </span>
+                  </div>
+
+                  {/* Card */}
+                  <div className="card p-3 text-left" style={{ backgroundColor: "var(--bg-elevated)" }}>
+                    <h3
+                      className="text-xs font-semibold mb-1"
+                      style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
+                    >
+                      {step.title}
+                    </h3>
+                    <p
+                      className="text-xs mb-2"
+                      style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)", lineHeight: 1.5 }}
+                    >
+                      {step.description}
+                    </p>
+                    <span
+                      className="text-xs px-1.5 py-0.5 rounded"
+                      style={{
+                        backgroundColor: "var(--bg-card)",
+                        color: "var(--text-muted)",
+                        fontFamily: "var(--font-body)",
+                      }}
+                    >
+                      {step.status}
+                    </span>
+                  </div>
+                </motion.div>
               ))}
-            </div>
+            </StaggerContainer>
           </div>
         </div>
 
-        {/* Mobile Vertical Layout */}
-        <div className="lg:hidden max-w-2xl mx-auto space-y-6">
-          {steps.map(step => (
-            <StepCard key={step.number} step={step} layout="horizontal" />
+        {/* Timeline - Mobile */}
+        <div className="lg:hidden max-w-sm mx-auto mb-8 space-y-3">
+          {steps.map((step, index) => (
+            <motion.div
+              key={step.number}
+              className="flex items-start gap-3 card p-4"
+              style={{ backgroundColor: "var(--bg-elevated)" }}
+              initial={{ opacity: 0, x: -12 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.05 }}
+            >
+              <div
+                className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                style={{ backgroundColor: "var(--accent-muted)", border: "1px solid var(--accent-border)" }}
+              >
+                <span
+                  className="text-xs font-semibold"
+                  style={{ fontFamily: "var(--font-display)", color: "var(--accent)" }}
+                >
+                  {step.number}
+                </span>
+              </div>
+              <div>
+                <h3
+                  className="text-sm font-semibold mb-0.5"
+                  style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
+                >
+                  {step.title}
+                </h3>
+                <p className="text-xs mb-1.5" style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)" }}>
+                  {step.description}
+                </p>
+                <span
+                  className="text-xs px-1.5 py-0.5 rounded"
+                  style={{
+                    backgroundColor: "var(--bg-card)",
+                    color: "var(--text-muted)",
+                    fontFamily: "var(--font-body)",
+                  }}
+                >
+                  {step.status}
+                </span>
+              </div>
+            </motion.div>
           ))}
         </div>
 
-        {/* VRF Fairness Explanation */}
-        <div className="mt-16 max-w-4xl mx-auto">
-          <div className="bg-gradient-to-r from-indigo-900/50 to-purple-900/50 backdrop-blur rounded-2xl p-8 border border-indigo-500/50">
-            <h3 className="text-2xl font-bold text-white mb-6 text-center flex items-center justify-center space-x-3">
-              <span>🔐</span>
-              <span>Provably Fair Randomness</span>
+        {/* VRF Explanation */}
+        <FadeInUp>
+          <div className="max-w-2xl mx-auto card p-5" style={{ backgroundColor: "var(--bg-elevated)" }}>
+            <h3
+              className="text-sm font-semibold mb-4 text-center"
+              style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
+            >
+              Provably Fair Reveal
             </h3>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="bg-black/30 rounded-xl p-6">
-                <h4 className="text-purple-400 font-semibold mb-3">How VRF Works</h4>
-                <ol className="space-y-2 text-sm text-gray-200">
-                  <li>
-                    1. Admin calls <code className="bg-black/50 px-1 rounded">reveal()</code> after sellout
-                  </li>
-                  <li>2. Random number generated via VRF oracle</li>
-                  <li>
-                    3. Offset calculated: <code className="bg-black/50 px-1 rounded">offset = randomNum % 100</code>
-                  </li>
-                  <li>
-                    4. Each tokenId maps to:{" "}
-                    <code className="bg-black/50 px-1 rounded">rarityPool[(tokenId + offset) % 100]</code>
-                  </li>
-                  <li>5. All rarities assigned in single transaction</li>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div
+                className="p-4 rounded-lg"
+                style={{ backgroundColor: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}
+              >
+                <h4
+                  className="text-xs font-semibold mb-3"
+                  style={{ fontFamily: "var(--font-body)", color: "var(--accent)" }}
+                >
+                  How It Works
+                </h4>
+                <ol className="space-y-1.5">
+                  {[
+                    "Admin calls reveal() after sellout",
+                    "Random offset via VRF oracle",
+                    "Each tokenId maps to rarity",
+                    "All 100 NFTs revealed at once",
+                  ].map((item, i) => (
+                    <li
+                      key={i}
+                      className="flex items-start gap-2 text-xs"
+                      style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)" }}
+                    >
+                      <span className="font-medium text-[var(--text-muted)]">{i + 1}.</span>
+                      {item}
+                    </li>
+                  ))}
                 </ol>
               </div>
 
-              <div className="bg-black/30 rounded-xl p-6">
-                <h4 className="text-pink-400 font-semibold mb-3">Why It&apos;s Fair</h4>
-                <ul className="space-y-2 text-sm text-gray-200">
-                  <li>✅ Rarity pool shuffled off-chain before deployment</li>
-                  <li>✅ Random offset prevents prediction</li>
-                  <li>✅ All 100 NFTs revealed simultaneously</li>
-                  <li>✅ No individual advantage based on mint order</li>
-                  <li>✅ Distribution locked to 50/30/15/5%</li>
+              <div
+                className="p-4 rounded-lg"
+                style={{ backgroundColor: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}
+              >
+                <h4
+                  className="text-xs font-semibold mb-3"
+                  style={{ fontFamily: "var(--font-body)", color: "var(--success)" }}
+                >
+                  Why It Is Fair
+                </h4>
+                <ul className="space-y-1.5">
+                  {[
+                    "Rarity pool shuffled off-chain",
+                    "Random offset prevents prediction",
+                    "All 100 revealed simultaneously",
+                    "No mint-order advantage",
+                  ].map((item, i) => (
+                    <li
+                      key={i}
+                      className="flex items-start gap-2 text-xs"
+                      style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)" }}
+                    >
+                      <span style={{ color: "var(--success)" }}>—</span>
+                      {item}
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
-
-            <div className="mt-6 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-              <p className="text-sm text-gray-200 leading-relaxed">
-                <span className="text-yellow-400 font-semibold">⚠️ Current Implementation:</span> Using{" "}
-                <code className="bg-black/50 px-1 rounded">
-                  keccak256(block.timestamp, block.prevrandao, msg.sender, totalMinted)
-                </code>{" "}
-                for demo. Production will integrate <strong className="text-green-400">Chainlink VRF</strong> for
-                cryptographic randomness.
-              </p>
-            </div>
           </div>
-        </div>
+        </FadeInUp>
 
         {/* CTA */}
-        <div className="text-center mt-12">
-          <button
-            onClick={() => !buttonState.disabled && (window.location.href = "/mint")}
-            disabled={buttonState.disabled}
-            className={`px-8 py-4 text-white font-bold text-lg rounded-xl transform hover:scale-105 transition-all duration-300 shadow-xl ${buttonState.className}`}
-          >
-            {buttonState.text}
-          </button>
-          <p className="text-gray-300 mt-4 text-sm">
-            New to Web3?{" "}
-            <a href="/guide" className="text-purple-400 hover:text-purple-300 underline">
-              Read our beginner&apos;s guide
+        <FadeInUp>
+          <div className="text-center mt-8">
+            <a href="/mint" className={`btn btn-lg ${buttonState.disabled ? "btn-secondary" : "btn-primary"}`}>
+              {buttonState.text}
             </a>
-          </p>
-        </div>
+          </div>
+        </FadeInUp>
       </div>
     </section>
-  );
-}
-
-function StepCard({ step, layout }: { step: (typeof steps)[0]; layout: "vertical" | "horizontal" }) {
-  if (layout === "vertical") {
-    return (
-      <div className="relative">
-        {/* Step Circle */}
-        <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-gray-900 relative z-20">
-          <span className="text-white font-bold">{step.number}</span>
-        </div>
-
-        {/* Card Content */}
-        <div className="bg-gray-800/50 backdrop-blur rounded-xl p-4 border border-gray-700 hover:border-purple-500/50 transition-all">
-          <div className="text-center mb-2">
-            <span className="text-3xl">{step.icon}</span>
-          </div>
-          <h3 className="text-white font-bold text-sm mb-2 text-center">{step.title}</h3>
-          <p className="text-gray-200 text-xs leading-relaxed">{step.description}</p>
-          <div className="mt-3 pt-3 border-t border-gray-700">
-            <span className="text-xs text-purple-400 block text-center">{step.status}</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex items-start space-x-4 bg-gray-800/50 backdrop-blur rounded-xl p-6 border border-gray-700">
-      <div className="flex-shrink-0">
-        <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center">
-          <span className="text-white font-bold">{step.number}</span>
-        </div>
-      </div>
-      <div className="flex-1">
-        <div className="flex items-center space-x-2 mb-2">
-          <span className="text-2xl">{step.icon}</span>
-          <h3 className="text-white font-bold">{step.title}</h3>
-        </div>
-        <p className="text-gray-200 text-sm mb-2">{step.description}</p>
-        <p className="text-gray-400 text-xs mb-2">{step.details}</p>
-        <span className="inline-block text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded">{step.status}</span>
-      </div>
-    </div>
   );
 }

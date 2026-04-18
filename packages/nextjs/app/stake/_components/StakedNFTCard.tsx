@@ -1,9 +1,8 @@
 "use client";
 
-import Image from "next/image";
+import { motion } from "framer-motion";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 import { useNFTMetadata } from "~~/hooks/useNFTMetadata";
-import { convertIpfsToHttp } from "~~/utils/staking";
 
 type StakedNFT = {
   tokenId: number;
@@ -24,88 +23,125 @@ interface StakedNFTCardProps {
   isProcessing: boolean;
 }
 
-const RARITY_NAMES = ["Common", "Rare", "Epic", "Legendary"];
-const RARITY_COLORS = ["text-gray-400", "text-blue-400", "text-purple-400", "text-yellow-400"];
-const RARITY_GRADIENTS = [
-  "from-gray-400 to-gray-600",
-  "from-blue-400 to-blue-600",
-  "from-purple-400 to-purple-600",
-  "from-yellow-400 to-orange-500",
-];
+const RARITY_CONFIG = {
+  0: { name: "Common", color: "var(--rarity-common)", bg: "var(--rarity-common-bg)" },
+  1: { name: "Rare", color: "var(--rarity-rare)", bg: "var(--rarity-rare-bg)" },
+  2: { name: "Epic", color: "var(--rarity-epic)", bg: "var(--rarity-epic-bg)" },
+  3: { name: "Legendary", color: "var(--rarity-legendary)", bg: "var(--rarity-legendary-bg)" },
+};
 
 export function StakedNFTCard({ nft, isSelected, onSelect, onClaim, onUnstake, isProcessing }: StakedNFTCardProps) {
-  // Get tokenURI from contract
   const { data: tokenURI } = useScaffoldReadContract({
     contractName: "StakableNFT",
     functionName: "tokenURI",
     args: [BigInt(nft.tokenId)],
   });
 
-  // Get image URL from metadata
   const { imageUrl } = useNFTMetadata(tokenURI);
-
   const rarityIndex = nft.rarity ?? 0;
+  const rarityConfig = RARITY_CONFIG[rarityIndex as keyof typeof RARITY_CONFIG];
 
   return (
-    <div
-      className={`glass-card rounded-2xl overflow-hidden border transition-all group ${
-        isSelected ? "ring-2 ring-cyan-500 border-cyan-500" : "border-cyan-500/30"
-      }`}
+    <motion.div
+      className="card overflow-hidden"
+      style={{
+        backgroundColor: "var(--bg-elevated)",
+        border: isSelected ? "2px solid var(--accent)" : "1px solid var(--border-subtle)",
+      }}
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.2 }}
     >
-      <div className={`aspect-square bg-gradient-to-br ${RARITY_GRADIENTS[rarityIndex]} relative overflow-hidden`}>
+      {/* Image Section */}
+      <div className="aspect-square relative overflow-hidden" style={{ backgroundColor: rarityConfig.bg }}>
         {imageUrl ? (
-          <>
-            <Image
-              src={convertIpfsToHttp(imageUrl)}
-              alt={`StakableNFT #${nft.tokenId}`}
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            />
-            {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-          </>
+          <img
+            src={imageUrl}
+            alt={`StakableNFT #${nft.tokenId}`}
+            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center">
-              <span className="text-6xl block mb-2">
-                {nft.rarity === 3 ? "👑" : nft.rarity === 2 ? "💎" : nft.rarity === 1 ? "⭐" : "🎴"}
+              <div
+                className="w-16 h-16 rounded-full mx-auto mb-3 flex items-center justify-center"
+                style={{ backgroundColor: "var(--bg-elevated)" }}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ color: rarityConfig.color }}>
+                  <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="1.5" />
+                  <path d="M8 12h8M12 8v8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+              </div>
+              <span
+                className="text-sm font-semibold"
+                style={{ fontFamily: "var(--font-display)", color: rarityConfig.color }}
+              >
+                {rarityConfig.name}
               </span>
-              <span className={`text-sm font-bold ${RARITY_COLORS[rarityIndex]}`}>{RARITY_NAMES[rarityIndex]}</span>
             </div>
           </div>
         )}
 
-        <div className="absolute top-3 left-3 px-2 py-1 glass-dark rounded-lg backdrop-blur-md z-10">
-          <span className="text-white text-sm font-bold">#{nft.tokenId}</span>
+        {/* Token ID Badge */}
+        <div className="absolute top-3 left-3 px-2 py-1 rounded-lg" style={{ backgroundColor: "rgba(0,0,0,0.6)" }}>
+          <span
+            className="text-sm font-mono font-semibold"
+            style={{ fontFamily: "var(--font-mono)", color: "var(--text-primary)" }}
+          >
+            #{nft.tokenId}
+          </span>
         </div>
 
+        {/* Selection Checkbox */}
         <div className="absolute top-3 right-3 z-10">
-          <input
-            type="checkbox"
-            checked={isSelected}
-            onChange={onSelect}
-            className="w-5 h-5 cursor-pointer accent-cyan-500"
-          />
+          <button
+            onClick={onSelect}
+            className="w-6 h-6 rounded flex items-center justify-center transition-all"
+            style={{
+              backgroundColor: isSelected ? "var(--accent)" : "var(--bg-elevated)",
+              border: `2px solid ${isSelected ? "var(--accent)" : "var(--border-subtle)"}`,
+            }}
+          >
+            {isSelected && (
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="text-white">
+                <path
+                  d="M5 12l5 5L20 7"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            )}
+          </button>
         </div>
       </div>
 
+      {/* Info Section */}
       <div className="p-4">
-        <div className="glass-dark rounded-lg p-3 mb-3 border border-cyan-500/20">
-          <p className="text-xs text-gray-400 mb-1">Pending Reward</p>
-          <p className="text-cyan-400 font-bold text-xl">{(Number(nft.pendingReward) / 1e18).toFixed(4)} RWRD</p>
-          <p className="text-xs text-gray-500 mt-1">~{(nft.rewardMultiplier / 10000).toFixed(1)} RWRD/day</p>
+        <div
+          className="p-3 rounded-lg mb-3"
+          style={{ backgroundColor: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}
+        >
+          <p className="text-xs mb-1" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
+            Pending Reward
+          </p>
+          <p className="text-lg font-bold" style={{ fontFamily: "var(--font-display)", color: "var(--accent)" }}>
+            {(Number(nft.pendingReward) / 1e18).toFixed(4)} RWRD
+          </p>
+          <p className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
+            ~{(nft.rewardMultiplier / 10000).toFixed(1)} RWRD/day
+          </p>
         </div>
 
         <div className="flex gap-2">
-          <button onClick={onClaim} disabled={isProcessing} className="btn-primary flex-1 py-2 text-sm rounded-lg">
+          <button onClick={onClaim} disabled={isProcessing} className="btn btn-primary flex-1 py-2 text-sm">
             Claim
           </button>
-          <button onClick={onUnstake} disabled={isProcessing} className="btn-secondary flex-1 py-2 text-sm rounded-lg">
+          <button onClick={onUnstake} disabled={isProcessing} className="btn btn-secondary flex-1 py-2 text-sm">
             Unstake
           </button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

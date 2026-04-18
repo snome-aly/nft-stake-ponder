@@ -6,7 +6,7 @@ describe("StakableNFT", function () {
   // ============ 常量定义 ============
   const MAX_SUPPLY = 100;
   const MAX_PER_ADDRESS = 20;
-  const MINT_PRICE = ethers.parseEther("1");
+  const MINT_PRICE = ethers.parseEther("0.001");
 
   const COMMON_COUNT = 50;
   const RARE_COUNT = 30;

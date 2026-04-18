@@ -1,16 +1,6 @@
 import Link from "next/link";
+import { motion } from "framer-motion";
 
-/**
- * 桌面端导航链接组件
- *
- * 用于桌面端的水平导航菜单。
- *
- * 特性：
- * - active 状态：紫色背景 + 底部边框
- * - 悬停效果：背景变暗，文字变白
- * - 平滑过渡动画
- * - iconOnly 模式：只显示图标，节省空间
- */
 export const NavLink = ({
   href,
   children,
@@ -27,36 +17,37 @@ export const NavLink = ({
   return (
     <Link
       href={href}
-      className={`group flex items-center ${iconOnly ? "p-2" : "px-4 py-2"} rounded-xl font-medium transition-all duration-300 ease-out ${
-        active
-          ? "bg-purple-600/20 text-purple-400 shadow-[0_0_20px_rgba(147,51,234,0.3)] border border-purple-500/30"
-          : "text-gray-400 hover:text-white hover:bg-white/5 hover:scale-105"
-      }`}
-      title={iconOnly ? String(children) : undefined}
+      className={`group flex items-center ${iconOnly ? "p-2" : "px-3 py-2"} rounded-lg font-medium text-sm transition-colors duration-150`}
     >
-      {icon && (
-        <span
-          className={`${iconOnly ? "" : "mr-0.5"} transition-transform duration-300 group-hover:rotate-12 ${active ? "text-purple-400" : "text-gray-500 group-hover:text-purple-400"}`}
-        >
-          {icon}
-        </span>
+      <span
+        className={`
+          flex items-center gap-2 transition-all duration-150
+          ${active ? "text-[var(--accent)]" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}
+        `}
+      >
+        {icon && (
+          <span
+            className={
+              active ? "text-[var(--accent)]" : "text-[var(--text-muted)] group-hover:text-[var(--text-secondary)]"
+            }
+          >
+            {icon}
+          </span>
+        )}
+        {!iconOnly && <span>{children}</span>}
+      </span>
+      {active && (
+        <motion.div
+          layoutId="nav-indicator"
+          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 rounded-full"
+          style={{ backgroundColor: "var(--accent)" }}
+          transition={{ type: "spring", stiffness: 500, damping: 35 }}
+        />
       )}
-      {!iconOnly && <span suppressHydrationWarning>{children}</span>}
     </Link>
   );
 };
 
-/**
- * 移动端导航链接组件
- *
- * 用于移动端的下拉导航菜单。
- *
- * 特性：
- * - active 状态：紫色背景 + 左侧边框
- * - flex 布局：支持图标和文字横向排列
- * - 更大的点击区域（padding）
- * - 悬停效果：背景变暗，文字变白
- */
 export const MobileNavLink = ({
   href,
   children,
@@ -69,16 +60,16 @@ export const MobileNavLink = ({
   icon?: React.ReactNode;
 }) => {
   return (
-    <Link
-      href={href}
-      className={`px-4 py-3 rounded-xl font-medium flex items-center space-x-2 transition-all duration-200 ${
-        active
-          ? "bg-purple-600/20 text-purple-400 border border-purple-500/30"
-          : "text-gray-400 hover:text-white hover:bg-white/5"
-      }`}
-    >
-      {icon && <span className={`${active ? "text-purple-400" : "text-gray-500"}`}>{icon}</span>}
-      <span>{children}</span>
+    <Link href={href}>
+      <div
+        className={`
+          px-4 py-3 rounded-lg font-medium flex items-center gap-3 text-sm transition-colors duration-150
+          ${active ? "text-[var(--accent)] bg-[var(--accent-muted)]" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)]"}
+        `}
+      >
+        {icon && <span className={active ? "text-[var(--accent)]" : "text-[var(--text-muted)]"}>{icon}</span>}
+        <span>{children}</span>
+      </div>
     </Link>
   );
 };

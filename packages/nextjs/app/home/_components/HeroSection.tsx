@@ -2,38 +2,35 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import { useAccount } from "wagmi";
-import { RectangleStackIcon } from "@heroicons/react/24/outline";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
+/**
+ * HeroSection - Tightened for first-viewport density
+ */
 export function HeroSection() {
   const router = useRouter();
   const { address, isConnected } = useAccount();
   const [isMounted, setIsMounted] = useState(false);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  useEffect(() => setIsMounted(true), []);
 
-  // 读取关键状态 - 禁用自动刷新以减少 RPC 请求
   const { data: totalMinted } = useScaffoldReadContract({
     contractName: "StakableNFT",
     functionName: "totalMinted",
-    watch: false, // 禁用区块监听
+    watch: false,
   });
-
   const { data: isRevealed } = useScaffoldReadContract({
     contractName: "StakableNFT",
     functionName: "isRevealed",
     watch: false,
   });
-
   const { data: rarityPoolSet } = useScaffoldReadContract({
     contractName: "StakableNFT",
     functionName: "rarityPoolSet",
     watch: false,
   });
-
   const { data: userMinted } = useScaffoldReadContract({
     contractName: "StakableNFT",
     functionName: "mintedCount",
@@ -42,230 +39,200 @@ export function HeroSection() {
   });
 
   const MAX_SUPPLY = 100;
-  const MAX_PER_ADDRESS = 20;
-  const MINT_PRICE = "1 ETH";
-  // const progress = totalMinted ? Number((totalMinted * 100n) / BigInt(MAX_SUPPLY)) : 0;
-
-  // 计算状态
   const userCurrentMinted = userMinted !== undefined ? Number(userMinted) : 0;
   const isSoldOut = totalMinted === BigInt(MAX_SUPPLY);
-  const isUserMaxReached = isConnected && userCurrentMinted >= MAX_PER_ADDRESS;
+  const isUserMaxReached = isConnected && userCurrentMinted >= 20;
+  const progress = totalMinted ? (Number(totalMinted) / MAX_SUPPLY) * 100 : 0;
+  const remaining = MAX_SUPPLY - Number(totalMinted || 0);
 
-  // 按钮状态
   const getMintButtonState = () => {
-    if (!rarityPoolSet) {
-      return { text: "⚠️ Not Active", disabled: true };
-    }
-    if (isSoldOut) {
-      return { text: "✅ Sold Out", disabled: true };
-    }
-    if (isUserMaxReached) {
-      return { text: `✅ Max Reached (${userCurrentMinted}/20)`, disabled: true };
-    }
-    return { text: "🎲 Mint Blind Box", disabled: false };
+    if (!rarityPoolSet) return { text: "Pool Not Active", disabled: true };
+    if (isSoldOut) return { text: "Sold Out", disabled: true };
+    if (isUserMaxReached) return { text: `Max ${userCurrentMinted}/20`, disabled: true };
+    return { text: "Mint Blind Box", disabled: false };
   };
 
   const mintButtonState = getMintButtonState();
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
-      {/* 浮动装饰元素 - 仅客户端渲染避免 hydration 问题 */}
-      {isMounted && (
-        <>
-          <div className="absolute top-20 left-10 w-20 h-20 text-purple-400/20 animate-float text-6xl select-none">
-            🎁
-          </div>
-          <div
-            className="absolute bottom-20 right-10 w-16 h-16 text-pink-400/20 animate-float-slow text-5xl select-none"
-            style={{ animationDelay: "2s" }}
+    <section
+      className="relative overflow-hidden"
+      style={{
+        minHeight: "88vh",
+        backgroundColor: "var(--bg-base)",
+        backgroundImage: `radial-gradient(ellipse at 60% 30%, rgba(139,92,246,0.08) 0%, transparent 55%), radial-gradient(ellipse at 30% 70%, rgba(34,211,238,0.04) 0%, transparent 50%)`,
+      }}
+    >
+      <div
+        className="absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage: `linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)`,
+          backgroundSize: "60px 60px",
+        }}
+      />
+
+      <div className="container-premium relative z-10 flex flex-col justify-center min-h-[88vh] py-16">
+        <div className="max-w-3xl mx-auto text-center">
+          <motion.p
+            className="mb-4 text-xs uppercase tracking-[0.2em]"
+            style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)" }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
           >
-            💎
-          </div>
-          <div
-            className="absolute top-40 right-20 w-24 h-24 text-blue-400/20 animate-float text-7xl select-none"
-            style={{ animationDelay: "4s" }}
+            On-Chain Blind Box NFT Collection
+          </motion.p>
+
+          <motion.h1
+            className="mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.05 }}
           >
-            🌟
-          </div>
-        </>
-      )}
+            <span
+              className="block text-4xl sm:text-5xl md:text-6xl font-bold mb-2"
+              style={{
+                fontFamily: "var(--font-display)",
+                letterSpacing: "-0.02em",
+                color: "var(--text-primary)",
+                lineHeight: 1.05,
+              }}
+            >
+              Blind Box NFT
+            </span>
+            <span
+              className="block text-2xl sm:text-3xl md:text-4xl font-normal"
+              style={{ fontFamily: "var(--font-display)", color: "var(--text-secondary)", letterSpacing: "-0.01em" }}
+            >
+              Mint, Reveal, Stake
+            </span>
+          </motion.h1>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 select-none">
-        <div className="text-center max-w-5xl mx-auto">
-          {/* 主标题 */}
-          <div className="mb-8 mt-4">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6">
-              <span
-                className="block bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 bg-clip-text"
-                suppressHydrationWarning
-              >
-                🎁 <span className="text-transparent">Mystical</span>
-              </span>
-              <span className="block bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Blind Box NFT
-              </span>
-            </h1>
+          <motion.p
+            className="mb-8 text-sm max-w-lg mx-auto"
+            style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)", lineHeight: 1.7 }}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            100 NFTs. Hidden rarities revealed after sellout. Stake to earn rewards — Legendary earns 3× more.
+          </motion.p>
 
-            <p className="text-xl sm:text-2xl md:text-3xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
-              Mint a mysterious blind box and await the grand reveal!
-              <br className="hidden sm:block" />
-              <span className="text-purple-400 font-semibold">Limited to 100 NFTs</span> — only unlocked after sellout
-            </p>
-          </div>
-
-          {/* 揭示状态指示器 */}
-          {!rarityPoolSet && (
-            <div className="mb-8 p-4 bg-yellow-500/20 border border-yellow-500/50 rounded-xl">
-              <p className="text-yellow-300 font-semibold">
-                <span suppressHydrationWarning>⚠️</span> Rarity Pool Setup Required — Minting Not Yet Active
-              </p>
-            </div>
+          {/* Status banner */}
+          {isMounted && (!rarityPoolSet || isSoldOut || isRevealed) && (
+            <motion.div
+              className="mb-8"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.12 }}
+            >
+              {!rarityPoolSet && (
+                <div
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm"
+                  style={{ backgroundColor: "var(--bg-elevated)", border: "1px solid var(--border-default)" }}
+                >
+                  <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "var(--warning)" }} />
+                  <span style={{ color: "var(--text-secondary)", fontFamily: "var(--font-body)" }}>
+                    Rarity Pool Setup Required
+                  </span>
+                </div>
+              )}
+              {isSoldOut && !isRevealed && (
+                <div
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm"
+                  style={{ backgroundColor: "var(--accent-muted)", border: "1px solid var(--accent-border)" }}
+                >
+                  <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "var(--accent)" }} />
+                  <span style={{ color: "var(--accent)", fontFamily: "var(--font-body)" }}>
+                    All 100 minted — Rarities coming soon
+                  </span>
+                </div>
+              )}
+              {isRevealed && (
+                <div
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm"
+                  style={{ backgroundColor: "var(--success-muted)", border: "1px solid rgba(16,185,129,0.2)" }}
+                >
+                  <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "var(--success)" }} />
+                  <span style={{ color: "var(--success)", fontFamily: "var(--font-body)" }}>
+                    Rarities Revealed — Check Your Collection
+                  </span>
+                </div>
+              )}
+            </motion.div>
           )}
 
-          {totalMinted === BigInt(MAX_SUPPLY) && !isRevealed && (
-            <div className="mb-8 p-6 bg-purple-500/20 border-2 border-purple-500/50 rounded-xl animate-pulse">
-              <p className="text-purple-300 font-bold text-2xl">
-                <span suppressHydrationWarning>🎉</span> SOLD OUT! Awaiting Admin Reveal...
-              </p>
-              <p className="text-gray-300 mt-2">
-                All 100 NFTs minted. Rarities will be revealed soon via VRF randomness!
-              </p>
-            </div>
-          )}
-
-          {isRevealed && (
-            <div className="mb-8 p-6 bg-green-500/20 border-2 border-green-500/50 rounded-xl">
-              <p className="text-green-300 font-bold text-2xl">
-                <span suppressHydrationWarning>✨</span> REVEALED! Check Your Rarity
-              </p>
-            </div>
-          )}
-
-          {/* CTA 按钮组 */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+          {/* CTA */}
+          <motion.div
+            className="flex flex-col sm:flex-row gap-3 justify-center mb-8"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.15 }}
+          >
             <button
               onClick={() => !mintButtonState.disabled && router.push("/mint")}
               disabled={mintButtonState.disabled}
-              className="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold text-lg rounded-xl transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-purple-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 overflow-hidden"
+              className="btn btn-primary btn-lg"
             >
-              <span className="relative z-10 flex items-center gap-2" suppressHydrationWarning>
-                {mintButtonState.text}
-              </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-              <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:animate-shimmer"></div>
+              {mintButtonState.text}
             </button>
-
-            <button
-              onClick={() => router.push("/my-nfts")}
-              className="px-8 py-4 border-2 border-purple-400/50 hover:border-purple-400 text-purple-400 hover:text-white hover:bg-purple-400/10 font-bold text-lg rounded-xl transform hover:scale-105 transition-all duration-300 flex items-center gap-2"
-            >
-              <RectangleStackIcon className="w-6 h-6" />
+            <button onClick={() => router.push("/my-nfts")} className="btn btn-secondary btn-lg">
               My Collection
             </button>
-          </div>
+          </motion.div>
 
-          {/* 铸造进度条 */}
-          <CollectionProgress
-            totalMinted={totalMinted}
-            maxSupply={MAX_SUPPLY}
-            mintPrice={MINT_PRICE}
-            isRevealed={isRevealed}
-          />
+          {/* Progress bar - compact */}
+          <motion.div
+            className="max-w-sm mx-auto"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            <div className="flex justify-between items-baseline mb-1.5">
+              <span className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)" }}>
+                {remaining} remaining
+              </span>
+              <span className="text-xs font-mono" style={{ color: "var(--text-tertiary)" }}>
+                {progress.toFixed(0)}%
+              </span>
+            </div>
+            <div className="progress">
+              <div className="progress-bar" style={{ width: `${progress}%` }} />
+            </div>
+            <div className="flex justify-between items-baseline mt-1.5">
+              <span className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
+                {totalMinted?.toString() || "0"}/{MAX_SUPPLY} minted
+              </span>
+              <span className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
+                0.001 ETH · Max 20
+              </span>
+            </div>
+          </motion.div>
 
-          {/* 核心特性展示 */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto mt-12 mb-4">
-            <FeatureCard icon="🎲" title="Blind Box Mystery" description="Every mint is unrevealed until sellout" />
-            <FeatureCard icon="🔒" title="Batch Reveal" description="Fair VRF-based reveal after 100/100 minted" />
-            <FeatureCard icon="💎" title="Rarity Rewards" description="Legendary NFTs earn 3x staking rewards" />
-          </div>
+          {/* Feature pills */}
+          <motion.div
+            className="flex flex-wrap justify-center gap-2 mt-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.25 }}
+          >
+            {["Blind Box Mystery", "VRF Fair Reveal", "3× Legendary Rewards"].map(feat => (
+              <span
+                key={feat}
+                className="text-xs px-3 py-1.5 rounded-full"
+                style={{
+                  fontFamily: "var(--font-body)",
+                  backgroundColor: "var(--bg-elevated)",
+                  border: "1px solid var(--border-subtle)",
+                  color: "var(--text-tertiary)",
+                }}
+              >
+                {feat}
+              </span>
+            ))}
+          </motion.div>
         </div>
       </div>
     </section>
-  );
-}
-
-function CollectionProgress({
-  totalMinted,
-  maxSupply,
-  mintPrice,
-  isRevealed,
-}: {
-  totalMinted: bigint | undefined;
-  maxSupply: number;
-  mintPrice: string;
-  isRevealed: boolean | undefined;
-}) {
-  const progress = totalMinted ? Number((totalMinted * 100n) / BigInt(maxSupply)) : 0;
-  const remaining = maxSupply - Number(totalMinted || 0);
-
-  return (
-    <div className="max-w-2xl mx-auto">
-      <div className="text-center mb-6">
-        <h3 className="text-2xl font-bold text-white mb-2">Collection Progress</h3>
-        <p className="text-gray-400">Limited Edition • Only {remaining} Blind Boxes Remaining</p>
-      </div>
-
-      {/* 进度条 */}
-      <div className="relative">
-        <div className="w-full bg-gray-800 rounded-full h-6 overflow-hidden">
-          <div
-            className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-1000 ease-out relative overflow-hidden"
-            style={{ width: `${progress}%` }}
-          >
-            <div className="absolute inset-0 bg-white/20 animate-shimmer"></div>
-          </div>
-        </div>
-
-        {/* 进度文字 */}
-        <div className="flex justify-between items-center mt-4">
-          <span className="text-lg font-semibold text-white">
-            {totalMinted?.toString() || "0"} / {maxSupply} Minted
-          </span>
-          <span className="text-lg font-bold text-purple-400">{progress.toFixed(1)}%</span>
-        </div>
-      </div>
-
-      {/* 铸造信息 */}
-      <div className="text-center mt-6">
-        <div className="inline-flex items-center space-x-4 bg-gray-800/50 rounded-lg px-6 py-3 backdrop-blur">
-          <div className="flex items-center space-x-2">
-            <span className="text-gray-400">Mint Price:</span>
-            <span className="text-white font-bold">{mintPrice}</span>
-          </div>
-          <div className="text-gray-600">•</div>
-          <div className="flex items-center space-x-2">
-            <span className="text-gray-400">Max Per Wallet:</span>
-            <span className="text-white font-bold">20 NFTs</span>
-          </div>
-        </div>
-
-        {/* 揭示状态徽章 */}
-        <div className="mt-4">
-          {isRevealed ? (
-            <span className="inline-flex items-center space-x-2 bg-green-500/20 text-green-400 px-4 py-2 rounded-full border border-green-500/50">
-              <span suppressHydrationWarning>✅</span>
-              <span className="font-semibold">Rarities Revealed</span>
-            </span>
-          ) : (
-            <span className="inline-flex items-center space-x-2 bg-yellow-500/20 text-yellow-400 px-4 py-2 rounded-full border border-yellow-500/50">
-              <span suppressHydrationWarning>🔒</span>
-              <span className="font-semibold">Blind Box State</span>
-            </span>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FeatureCard({ icon, title, description }: { icon: string; title: string; description: string }) {
-  return (
-    <div className="bg-gray-800/30 backdrop-blur rounded-xl p-6 border border-gray-700/50 hover:border-purple-500/50 hover:bg-gray-800/50 transition-all duration-300">
-      <div className="text-4xl mb-4 text-center" suppressHydrationWarning>
-        {icon}
-      </div>
-      <h3 className="text-white font-bold text-lg mb-2 text-center">{title}</h3>
-      <p className="text-gray-400 text-sm text-center leading-relaxed">{description}</p>
-    </div>
   );
 }

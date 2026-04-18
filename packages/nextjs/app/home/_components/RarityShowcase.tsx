@@ -1,218 +1,186 @@
 "use client";
 
+import { motion } from "framer-motion";
+import { FadeInUp, StaggerContainer } from "~~/components/ui/AnimatedCard";
+
 const rarityData = [
-  {
-    name: "Common",
-    icon: "⚪",
-    quantity: 50,
-    percentage: 50,
-    multiplier: "1.0x",
-    multiplierValue: 10000,
-    textClass: "text-gray-300",
-    description: "50% chance - Standard rewards",
-    cardClass: "metallic",
-    borderClass: "border-gray-400/50",
-    glowClass: "",
-    delay: "0s",
-  },
-  {
-    name: "Rare",
-    icon: "🔵",
-    quantity: 30,
-    percentage: 30,
-    multiplier: "1.5x",
-    multiplierValue: 15000,
-    textClass: "text-blue-400",
-    description: "30% chance - Enhanced rewards",
-    cardClass: "bg-blue-900/20",
-    borderClass: "border-neon-blue",
-    glowClass: "animate-glow-blue",
-    delay: "0.1s",
-  },
-  {
-    name: "Epic",
-    icon: "🟣",
-    quantity: 15,
-    percentage: 15,
-    multiplier: "2.0x",
-    multiplierValue: 20000,
-    textClass: "text-purple-400",
-    description: "15% chance - Double rewards",
-    cardClass: "bg-purple-900/20",
-    borderClass: "border-neon-purple",
-    glowClass: "animate-glow",
-    delay: "0.2s",
-  },
-  {
-    name: "Legendary",
-    icon: "🌟",
-    quantity: 5,
-    percentage: 5,
-    multiplier: "3.0x",
-    multiplierValue: 30000,
-    textClass: "text-yellow-400",
-    description: "5% chance - Triple rewards!",
-    cardClass: "bg-gradient-to-br from-yellow-900/30 to-orange-900/30",
-    borderClass: "border-neon-gold",
-    glowClass: "animate-glow-gold",
-    delay: "0.3s",
-  },
+  { name: "Common", quantity: 50, percentage: 50, multiplier: "1.0×", multiplierValue: 10000, color: "common" },
+  { name: "Rare", quantity: 30, percentage: 30, multiplier: "1.5×", multiplierValue: 15000, color: "rare" },
+  { name: "Epic", quantity: 15, percentage: 15, multiplier: "2.0×", multiplierValue: 20000, color: "epic" },
+  { name: "Legendary", quantity: 5, percentage: 5, multiplier: "3.0×", multiplierValue: 30000, color: "legendary" },
 ];
 
+const getRarityColors = (color: string) => {
+  switch (color) {
+    case "rare":
+      return { text: "var(--rarity-rare)", bg: "var(--rarity-rare-bg)", border: "rgba(96,165,250,0.2)" };
+    case "epic":
+      return { text: "var(--rarity-epic)", bg: "var(--rarity-epic-bg)", border: "rgba(167,139,250,0.2)" };
+    case "legendary":
+      return { text: "var(--rarity-legendary)", bg: "var(--rarity-legendary-bg)", border: "rgba(251,191,36,0.2)" };
+    default:
+      return { text: "var(--rarity-common)", bg: "var(--rarity-common-bg)", border: "rgba(113,113,122,0.2)" };
+  }
+};
+
+/**
+ * RarityShowcase - Tighter grid and table, reduced padding
+ */
 export function RarityShowcase() {
   return (
-    <section className="py-20 bg-gray-900 relative overflow-hidden">
-      {/* Background Effects */}
-      <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-16 animate-slide-in-up">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6 text-gradient-purple">
-            💎 Rarity Distribution & Rewards
+    <section
+      style={{ backgroundColor: "var(--bg-base)", paddingTop: "var(--space-12)", paddingBottom: "var(--space-12)" }}
+    >
+      <div className="container-premium">
+        <FadeInUp className="text-center mb-8">
+          <h2
+            className="text-2xl font-bold mb-3"
+            style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em", color: "var(--text-primary)" }}
+          >
+            Rarity & Rewards
           </h2>
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-            Each NFT has a unique rarity that determines staking rewards. Higher rarity = Higher multiplier!
+          <p
+            className="text-sm max-w-xl mx-auto"
+            style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)", lineHeight: 1.6 }}
+          >
+            Each NFT has a unique rarity that determines staking rewards. Higher rarity = higher multiplier.
           </p>
-        </div>
+        </FadeInUp>
 
-        {/* Rarity Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mb-16">
-          {rarityData.map(rarity => (
-            <RarityCard key={rarity.name} rarity={rarity} />
-          ))}
-        </div>
+        <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+          {rarityData.map(rarity => {
+            const colors = getRarityColors(rarity.color);
+            return (
+              <motion.div
+                key={rarity.name}
+                className="card p-4 text-center"
+                style={{ backgroundColor: "var(--bg-elevated)" }}
+                whileHover={{ y: -3 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div
+                  className="text-2xl font-bold mb-1"
+                  style={{ fontFamily: "var(--font-display)", color: colors.text }}
+                >
+                  {rarity.multiplier}
+                </div>
+                <h3
+                  className="text-sm font-semibold mb-0.5"
+                  style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
+                >
+                  {rarity.name}
+                </h3>
+                <p className="text-xs mb-2" style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)" }}>
+                  {rarity.quantity} NFTs · {rarity.percentage}%
+                </p>
+                <div className="h-1 rounded-full overflow-hidden" style={{ backgroundColor: "var(--bg-card)" }}>
+                  <div
+                    className="h-full rounded-full"
+                    style={{ width: `${rarity.percentage}%`, backgroundColor: colors.text }}
+                  />
+                </div>
+              </motion.div>
+            );
+          })}
+        </StaggerContainer>
 
-        {/* Enhanced Comparison Table */}
-        <div className="max-w-5xl mx-auto animate-slide-in-up" style={{ animationDelay: "0.4s" }}>
-          <div className="glass-card rounded-2xl p-6 sm:p-8 border border-purple-500/30">
-            <h3 className="text-2xl font-bold text-white mb-8 text-center text-gradient-blue">Rarity Comparison</h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="border-b border-gray-700">
-                    <th className="py-4 px-4 text-gray-400 font-semibold">Rarity</th>
-                    <th className="py-4 px-4 text-gray-400 font-semibold">Quantity</th>
-                    <th className="py-4 px-4 text-gray-400 font-semibold">Distribution</th>
-                    <th className="py-4 px-4 text-gray-400 font-semibold">Multiplier</th>
-                    <th className="py-4 px-4 text-gray-400 font-semibold">Base Value</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {rarityData.map((rarity, index) => (
+        <FadeInUp delay={0.2}>
+          <div
+            className="rounded-xl overflow-hidden"
+            style={{ backgroundColor: "var(--bg-elevated)", border: "1px solid var(--border-subtle)" }}
+          >
+            <table className="w-full text-left">
+              <thead>
+                <tr style={{ borderBottom: "1px solid var(--border-subtle)" }}>
+                  {["Rarity", "Quantity", "Distribution", "Multiplier", "Base Value"].map(h => (
+                    <th
+                      key={h}
+                      className="py-3 px-4 text-xs font-medium"
+                      style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}
+                    >
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {rarityData.map((rarity, index) => {
+                  const colors = getRarityColors(rarity.color);
+                  return (
                     <tr
                       key={rarity.name}
-                      className="border-b border-gray-700/50 last:border-b-0 hover:bg-white/5 transition-all duration-300 group"
-                      style={{ animationDelay: `${0.5 + index * 0.1}s` }}
+                      style={{
+                        borderBottom: index < rarityData.length - 1 ? "1px solid var(--border-subtle)" : "none",
+                      }}
                     >
-                      <td className="py-4 px-4">
-                        <div className="flex items-center space-x-3">
-                          <span className="text-3xl group-hover:scale-110 transition-transform">{rarity.icon}</span>
-                          <span className={`font-bold text-lg ${rarity.textClass}`}>{rarity.name}</span>
-                        </div>
+                      <td className="py-3 px-4">
+                        <span
+                          className="text-sm font-medium"
+                          style={{ fontFamily: "var(--font-body)", color: colors.text }}
+                        >
+                          {rarity.name}
+                        </span>
                       </td>
-                      <td className="py-4 px-4">
-                        <span className="text-white font-semibold">{rarity.quantity} NFTs</span>
+                      <td className="py-3 px-4">
+                        <span
+                          className="text-sm"
+                          style={{ fontFamily: "var(--font-body)", color: "var(--text-secondary)" }}
+                        >
+                          {rarity.quantity} NFTs
+                        </span>
                       </td>
-                      <td className="py-4 px-4">
-                        <div className="flex items-center space-x-3">
-                          <div className="flex-1 bg-gray-700 rounded-full h-3 max-w-[120px] overflow-hidden">
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-3">
+                          <div
+                            className="flex-1 h-1 rounded-full max-w-[60px]"
+                            style={{ backgroundColor: "var(--bg-card)" }}
+                          >
                             <div
-                              className={`h-full rounded-full ${
-                                rarity.name === "Common"
-                                  ? "bg-gray-500"
-                                  : rarity.name === "Rare"
-                                    ? "bg-blue-500 animate-energy-flow"
-                                    : rarity.name === "Epic"
-                                      ? "bg-purple-500 animate-energy-flow"
-                                      : "bg-gradient-to-r from-yellow-500 to-orange-500 animate-energy-flow"
-                              }`}
-                              style={{ width: `${rarity.percentage}%` }}
-                            ></div>
+                              className="h-full rounded-full"
+                              style={{ width: `${rarity.percentage}%`, backgroundColor: colors.text }}
+                            />
                           </div>
-                          <span className="text-white font-medium min-w-[3rem]">{rarity.percentage}%</span>
+                          <span
+                            className="text-xs"
+                            style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)" }}
+                          >
+                            {rarity.percentage}%
+                          </span>
                         </div>
                       </td>
-                      <td className="py-4 px-4">
-                        <span className={`font-bold text-xl ${rarity.textClass}`}>{rarity.multiplier}</span>
+                      <td className="py-3 px-4">
+                        <span
+                          className="text-sm font-semibold"
+                          style={{ fontFamily: "var(--font-display)", color: colors.text }}
+                        >
+                          {rarity.multiplier}
+                        </span>
                       </td>
-                      <td className="py-4 px-4">
-                        <code className="terminal-glow px-3 py-1.5 rounded text-sm text-green-400 font-mono">
+                      <td className="py-3 px-4">
+                        <code
+                          className="px-2 py-1 rounded text-xs"
+                          style={{
+                            fontFamily: "var(--font-mono)",
+                            backgroundColor: "var(--bg-card)",
+                            color: "var(--text-tertiary)",
+                          }}
+                        >
                           {rarity.multiplierValue}
                         </code>
                       </td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            <div className="mt-8 p-4 glass-dark rounded-lg border border-purple-500/30">
-              <p className="text-sm text-gray-300 leading-relaxed">
-                <span className="text-purple-400 font-semibold">ℹ️ Multiplier Base:</span> All values use base 10000
-                (e.g., 15000 = 1.5x). This precision allows for accurate reward calculations in the staking pool
-                contract.
+                  );
+                })}
+              </tbody>
+            </table>
+            <div className="px-4 py-2.5" style={{ borderTop: "1px solid var(--border-subtle)" }}>
+              <p className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
+                Multiplier base is 10000 (e.g., 15000 = 1.5×). Rewards are calculated on-chain using rarity multipliers.
               </p>
             </div>
           </div>
-        </div>
+        </FadeInUp>
       </div>
     </section>
-  );
-}
-
-function RarityCard({ rarity }: { rarity: (typeof rarityData)[0] }) {
-  return (
-    <div
-      className={`group relative ${rarity.cardClass} glass-medium rounded-2xl p-6 border-2 ${rarity.borderClass} ${rarity.glowClass} hover:scale-105 hover:-translate-y-2 transition-all duration-500 tilt-3d animate-slide-in-up overflow-hidden`}
-      style={{ animationDelay: rarity.delay }}
-    >
-      {/* Animated Background */}
-      {rarity.name === "Legendary" && (
-        <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/10 via-orange-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-      )}
-
-      {/* Rarity Icon */}
-      <div className="text-center mb-4 relative z-10">
-        <span
-          className={`text-6xl group-hover:scale-125 ${
-            rarity.name === "Legendary" ? "group-hover:rotate-180" : ""
-          } transition-all duration-500 inline-block`}
-        >
-          {rarity.icon}
-        </span>
-      </div>
-
-      {/* Rarity Name */}
-      <h3 className={`text-2xl font-bold ${rarity.textClass} text-center mb-6 relative z-10`}>{rarity.name}</h3>
-
-      {/* Stats Grid */}
-      <div className="space-y-4 relative z-10">
-        <div className="flex justify-between items-center p-2 rounded-lg glass-dark">
-          <span className="text-gray-400 text-sm">Quantity</span>
-          <span className="text-white font-bold">{rarity.quantity} NFTs</span>
-        </div>
-
-        <div className="flex justify-between items-center p-2 rounded-lg glass-dark">
-          <span className="text-gray-400 text-sm">Drop Rate</span>
-          <span className={`font-bold ${rarity.textClass}`}>{rarity.percentage}%</span>
-        </div>
-
-        <div className="flex justify-between items-center p-2 rounded-lg glass-dark">
-          <span className="text-gray-400 text-sm">Multiplier</span>
-          <span className={`font-bold text-xl ${rarity.textClass}`}>{rarity.multiplier}</span>
-        </div>
-
-        <div className="flex justify-between items-center p-2 rounded-lg glass-dark">
-          <span className="text-gray-400 text-sm">Base Value</span>
-          <code className="terminal-glow px-2 py-1 rounded text-xs text-green-400">{rarity.multiplierValue}</code>
-        </div>
-      </div>
-
-      {/* Description */}
-      <p className="mt-6 text-center text-sm text-gray-300 leading-relaxed relative z-10">{rarity.description}</p>
-
-      {/* Hover Shine Effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 -translate-x-full group-hover:translate-x-full"></div>
-    </div>
   );
 }

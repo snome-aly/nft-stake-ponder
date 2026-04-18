@@ -5,11 +5,12 @@ import { ScaffoldEthAppWithProviders } from "~~/components/ScaffoldEthAppWithPro
 import { ThemeProvider } from "~~/components/ThemeProvider";
 import { wagmiConfig } from "~~/services/web3/wagmiConfig";
 import "~~/styles/globals.css";
+import "~~/styles/premium-theme.css";
 import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
 
 export const metadata = getMetadata({
-  title: "Scaffold-ETH 2 App",
-  description: "Built with 🏗 Scaffold-ETH 2",
+  title: "盲盒 NFT | Blind Box NFT",
+  description: "探索盲盒 NFT 的神秘世界，透明稀有度分布与可持续质押奖励。加入 gamified DeFi 的未来。",
 });
 
 const ScaffoldEthApp = async ({ children }: { children: React.ReactNode }) => {

@@ -27,10 +27,7 @@ describe("NFTStakingPool", function () {
 
     // 3. 部署 NFTStakingPool
     const NFTStakingPool = await ethers.getContractFactory("NFTStakingPool");
-    const stakingPool = await NFTStakingPool.deploy(
-      await stakableNFT.getAddress(),
-      await rewardToken.getAddress(),
-    );
+    const stakingPool = await NFTStakingPool.deploy(await stakableNFT.getAddress(), await rewardToken.getAddress());
 
     // 4. 授予 StakingPool MINTER_ROLE
     const MINTER_ROLE = await rewardToken.MINTER_ROLE();
@@ -50,7 +47,7 @@ describe("NFTStakingPool", function () {
     await stakableNFT.connect(operator).setRarityPool(rarityPool);
 
     // 7. 铸造所有 NFT（分配给测试用户）
-    const MINT_PRICE = ethers.parseEther("1");
+    const MINT_PRICE = ethers.parseEther("0.001");
     await stakableNFT.connect(user1).mint(20, { value: MINT_PRICE * 20n });
     await stakableNFT.connect(user2).mint(20, { value: MINT_PRICE * 20n });
     await stakableNFT.connect(user3).mint(20, { value: MINT_PRICE * 20n });
@@ -791,13 +788,7 @@ describe("NFTStakingPool", function () {
       const deadline = BigInt((await time.latest()) + 3600); // 1小时后过期
 
       // 生成签名
-      const { v, r, s } = await signPermit(
-        user1,
-        stakableNFT,
-        await stakingPool.getAddress(),
-        tokenId,
-        deadline,
-      );
+      const { v, r, s } = await signPermit(user1, stakableNFT, await stakingPool.getAddress(), tokenId, deadline);
 
       // 使用 Permit 质押（无需预先 approve）
       await expect(stakingPool.connect(user1).stakeWithPermit(tokenId, deadline, v, r, s)).to.not.be.reverted;
@@ -813,17 +804,13 @@ describe("NFTStakingPool", function () {
       const tokenId = 1n;
       const deadline = BigInt((await time.latest()) + 3600);
 
-      const { v, r, s } = await signPermit(
-        user1,
-        stakableNFT,
-        await stakingPool.getAddress(),
-        tokenId,
-        deadline,
-      );
+      const { v, r, s } = await signPermit(user1, stakableNFT, await stakingPool.getAddress(), tokenId, deadline);
 
       // 不验证精确的时间戳，只验证事件被触发
-      await expect(stakingPool.connect(user1).stakeWithPermit(tokenId, deadline, v, r, s))
-        .to.emit(stakingPool, "Staked");
+      await expect(stakingPool.connect(user1).stakeWithPermit(tokenId, deadline, v, r, s)).to.emit(
+        stakingPool,
+        "Staked",
+      );
     });
 
     it("过期的 Permit 应失败", async function () {
@@ -832,13 +819,7 @@ describe("NFTStakingPool", function () {
       const tokenId = 1n;
       const deadline = BigInt((await time.latest()) - 1); // 已过期
 
-      const { v, r, s } = await signPermit(
-        user1,
-        stakableNFT,
-        await stakingPool.getAddress(),
-        tokenId,
-        deadline,
-      );
+      const { v, r, s } = await signPermit(user1, stakableNFT, await stakingPool.getAddress(), tokenId, deadline);
 
       await expect(stakingPool.connect(user1).stakeWithPermit(tokenId, deadline, v, r, s)).to.be.revertedWith(
         "Permit expired",
@@ -852,13 +833,7 @@ describe("NFTStakingPool", function () {
       const deadline = BigInt((await time.latest()) + 3600);
 
       // user2 签名，但尝试质押 user1 的 NFT
-      const { v, r, s } = await signPermit(
-        user2,
-        stakableNFT,
-        await stakingPool.getAddress(),
-        tokenId,
-        deadline,
-      );
+      const { v, r, s } = await signPermit(user2, stakableNFT, await stakingPool.getAddress(), tokenId, deadline);
 
       await expect(stakingPool.connect(user1).stakeWithPermit(tokenId, deadline, v, r, s)).to.be.revertedWith(
         "Invalid signature",
@@ -895,13 +870,7 @@ describe("NFTStakingPool", function () {
       const tokenId = 1n;
       const deadline = BigInt((await time.latest()) + 3600);
 
-      const { v, r, s } = await signPermit(
-        user1,
-        stakableNFT,
-        await stakingPool.getAddress(),
-        tokenId,
-        deadline,
-      );
+      const { v, r, s } = await signPermit(user1, stakableNFT, await stakingPool.getAddress(), tokenId, deadline);
 
       // 第一次使用成功
       await stakingPool.connect(user1).stakeWithPermit(tokenId, deadline, v, r, s);
@@ -937,8 +906,7 @@ describe("NFTStakingPool", function () {
       const ss = signatures.map(sig => sig.s);
 
       // 批量质押
-      await expect(stakingPool.connect(user1).batchStakeWithPermit(tokenIds, deadline, vs, rs, ss)).to.not.be
-        .reverted;
+      await expect(stakingPool.connect(user1).batchStakeWithPermit(tokenIds, deadline, vs, rs, ss)).to.not.be.reverted;
 
       // 验证所有 NFT 都已质押
       for (const tokenId of tokenIds) {
@@ -955,9 +923,9 @@ describe("NFTStakingPool", function () {
       const rs = ["0x" + "00".repeat(32), "0x" + "00".repeat(32), "0x" + "00".repeat(32)];
       const ss = ["0x" + "00".repeat(32), "0x" + "00".repeat(32), "0x" + "00".repeat(32)];
 
-      await expect(
-        stakingPool.connect(user1).batchStakeWithPermit(tokenIds, deadline, vs, rs, ss),
-      ).to.be.revertedWith("Array length mismatch");
+      await expect(stakingPool.connect(user1).batchStakeWithPermit(tokenIds, deadline, vs, rs, ss)).to.be.revertedWith(
+        "Array length mismatch",
+      );
     });
 
     it("批量 Permit 质押空数组应失败", async function () {
@@ -976,13 +944,7 @@ describe("NFTStakingPool", function () {
       const tokenId = 1n;
       const deadline = BigInt((await time.latest()) + 3600);
 
-      const { v, r, s } = await signPermit(
-        user1,
-        stakableNFT,
-        await stakingPool.getAddress(),
-        tokenId,
-        deadline,
-      );
+      const { v, r, s } = await signPermit(user1, stakableNFT, await stakingPool.getAddress(), tokenId, deadline);
 
       // 暂停合约
       await stakingPool.connect(deployer).pause();

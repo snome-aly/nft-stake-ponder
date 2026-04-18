@@ -8,7 +8,8 @@
 
 /* 渐变动画 - 用于 NFT 文字效果 */
 @keyframes gradient {
-  0%, 100% {
+  0%,
+  100% {
     background-position: 0% 50%;
   }
   50% {
@@ -18,7 +19,8 @@
 
 /* 弹跳动画 - 用于盲盒图标悬停效果 */
 @keyframes bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -28,7 +30,8 @@
 
 /* 脉冲动画 - 用于状态指示器 */
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -42,7 +45,8 @@
     transform: scale(1);
     opacity: 1;
   }
-  75%, 100% {
+  75%,
+  100% {
     transform: scale(1.5);
     opacity: 0;
   }
@@ -169,7 +173,8 @@
 
 /* Floating Animation */
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -178,7 +183,8 @@
 }
 
 @keyframes float-slow {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -196,7 +202,8 @@
 
 /* Glow Pulse */
 @keyframes glow-pulse {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
   }
   50% {
@@ -229,21 +236,21 @@
 
 /* Text Gradients */
 .text-gradient-gold {
-  background: linear-gradient(to right, #FCD34D, #F59E0B);
+  background: linear-gradient(to right, #fcd34d, #f59e0b);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .text-gradient-purple {
-  background: linear-gradient(to right, #C084FC, #DB2777);
+  background: linear-gradient(to right, #c084fc, #db2777);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .text-gradient-blue {
-  background: linear-gradient(to right, #60A5FA, #3B82F6);
+  background: linear-gradient(to right, #60a5fa, #3b82f6);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -251,7 +258,8 @@
 
 /* Complex Floating Animation with Rotation */
 @keyframes float-complex {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0) rotate(0deg);
   }
   33% {
@@ -299,7 +307,8 @@
 
 /* Glow Effects - Multiple Variants */
 @keyframes glow {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
   }
   50% {
@@ -308,7 +317,8 @@
 }
 
 @keyframes glow-gold {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
   }
   50% {
@@ -317,7 +327,8 @@
 }
 
 @keyframes glow-blue {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
   }
   50% {
@@ -326,7 +337,8 @@
 }
 
 @keyframes glow-pink {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 20px rgba(236, 72, 153, 0.5);
   }
   50% {
@@ -367,7 +379,8 @@
 
 /* Scale Pulse */
 @keyframes scale-pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -436,7 +449,7 @@
 }
 
 .btn-glow-hover::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
@@ -478,7 +491,7 @@
   box-shadow:
     inset 0 0 30px rgba(0, 255, 136, 0.1),
     0 0 20px rgba(0, 255, 136, 0.2);
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
 }
 
 /* Background Pattern */

@@ -6,8 +6,7 @@ import { useAccount, useBalance } from "wagmi";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 
 /**
- * 格式化余额显示
- * 避免显示科学计数法（如 1e-14 ETH）
+ * Format balance to avoid scientific notation
  */
 const formatBalance = (balance: string | undefined): string => {
   if (!balance) return "0";
@@ -20,29 +19,12 @@ const formatBalance = (balance: string | undefined): string => {
 };
 
 /**
- * 自定义钱包连接按钮组件
- *
- * 功能：
- * - 解决 RainbowKit 原生按钮余额显示科学计数法的问题
- * - 集成 RainbowKit 的网络切换功能（openChainModal）
- * - 显示格式化后的余额
- * - 提供账户管理功能（openAccountModal）
- *
- * 桌面端显示（横向排列）：
- * - 网络选择按钮（带图标和名称）
- * - 余额显示卡片
- * - 账户按钮（地址缩写）
- *
- * 移动端显示（纵向排列，带标签）：
- * - 网络选择按钮（带 "Network:" 标签）
- * - 余额显示卡片（带 "Balance:" 标签）
- * - 账户按钮（带 "Account:" 标签）
+ * Custom wallet connection button
+ * Graphite + muted violet aesthetic
  */
 export const CustomConnectButton = () => {
   const { address } = useAccount();
 
-  // 使用 wagmi 的 useBalance hook 获取余额
-  // React Query 会自动管理缓存和更新
   const { data: balanceData } = useBalance({
     address: address,
     query: {
@@ -68,86 +50,77 @@ export const CustomConnectButton = () => {
             })}
           >
             {(() => {
-              // 未连接状态
+              // Not connected
               if (!connected) {
                 return (
-                  <button
-                    onClick={openConnectModal}
-                    type="button"
-                    className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg"
-                  >
+                  <button onClick={openConnectModal} type="button" className="btn btn-primary">
                     Connect Wallet
                   </button>
                 );
               }
 
-              // 不支持的网络
+              // Unsupported network
               if (chain.unsupported) {
                 return (
                   <button
                     onClick={openChainModal}
                     type="button"
-                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors"
+                    className="btn btn-sm"
+                    style={{
+                      backgroundColor: "var(--error-muted)",
+                      color: "var(--error)",
+                      borderColor: "rgba(239, 68, 68, 0.25)",
+                    }}
                   >
                     Wrong network
                   </button>
                 );
               }
 
-              // 已连接状态
+              // Connected
               return (
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
-                  {/* 网络选择按钮 - 集成 RainbowKit 的网络切换 */}
-                  <button
-                    onClick={openChainModal}
-                    type="button"
-                    className="flex items-center justify-between sm:justify-start space-x-2 px-3 py-2 bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700 hover:border-gray-600 rounded-lg transition-all duration-200"
-                  >
-                    <div className="flex items-center space-x-2">
-                      {chain.hasIcon && (
-                        <div className="w-5 h-5">
-                          {chain.iconUrl && (
-                            <Image
-                              alt={chain.name ?? "Chain icon"}
-                              src={chain.iconUrl}
-                              width={20}
-                              height={20}
-                              className="w-5 h-5 rounded-full"
-                              unoptimized
-                              priority
-                            />
-                          )}
-                        </div>
-                      )}
-                      <span className="text-white text-sm font-medium">{chain.name}</span>
-                    </div>
-                    <ChevronDownIcon className="w-4 h-4 text-gray-400" />
+                <div className="flex items-center gap-2">
+                  {/* Network selector */}
+                  <button onClick={openChainModal} type="button" className="btn btn-sm btn-secondary">
+                    {chain.hasIcon && (
+                      <div className="w-4 h-4 mr-1.5">
+                        {chain.iconUrl && (
+                          <Image
+                            alt={chain.name ?? "Chain icon"}
+                            src={chain.iconUrl}
+                            width={16}
+                            height={16}
+                            className="rounded-full"
+                            unoptimized
+                            priority
+                          />
+                        )}
+                      </div>
+                    )}
+                    <span className="hidden sm:inline">{chain.name}</span>
+                    <ChevronDownIcon className="w-3.5 h-3.5 opacity-60" />
                   </button>
 
-                  {/* 余额显示 */}
-                  <div className="flex items-center justify-between sm:justify-start space-x-2 px-3 py-2 bg-gray-800/50 border border-gray-700 rounded-lg">
-                    <span className="text-gray-400 text-sm sm:hidden">Balance:</span>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-white font-medium">
-                        {balanceData
-                          ? formatBalance((Number(balanceData.value) / Math.pow(10, balanceData.decimals)).toString())
-                          : "0"}
-                      </span>
-                      <span className="text-gray-400 text-sm">{balanceData?.symbol || "ETH"}</span>
-                    </div>
+                  {/* Balance */}
+                  <div
+                    className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm"
+                    style={{
+                      backgroundColor: "var(--bg-elevated)",
+                      border: "1px solid var(--border-subtle)",
+                    }}
+                  >
+                    <span style={{ color: "var(--text-primary)", fontWeight: 500 }}>
+                      {balanceData
+                        ? formatBalance((Number(balanceData.value) / Math.pow(10, balanceData.decimals)).toString())
+                        : "0"}
+                    </span>
+                    <span style={{ color: "var(--text-tertiary)" }}>{balanceData?.symbol || "ETH"}</span>
                   </div>
 
-                  {/* 账户按钮 */}
-                  <button
-                    onClick={openAccountModal}
-                    type="button"
-                    className="flex items-center justify-between sm:justify-start space-x-2 px-3 py-2 bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700 hover:border-gray-600 rounded-lg transition-all duration-200"
-                  >
-                    <span className="text-gray-400 text-sm sm:hidden">Account:</span>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-white font-medium">{account.displayName}</span>
-                      <ChevronDownIcon className="w-4 h-4 text-gray-400" />
-                    </div>
+                  {/* Account */}
+                  <button onClick={openAccountModal} type="button" className="btn btn-sm btn-secondary">
+                    <span style={{ color: "var(--text-secondary)" }}>{account.displayName}</span>
+                    <ChevronDownIcon className="w-3.5 h-3.5 opacity-60" />
                   </button>
                 </div>
               );

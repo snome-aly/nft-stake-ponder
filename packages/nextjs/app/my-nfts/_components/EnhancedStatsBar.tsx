@@ -1,31 +1,17 @@
-/**
- * Enhanced Stats Bar Component
- *
- * Shows:
- * - Total NFTs count
- * - Staked NFTs count
- * - Available (unstaked) NFTs count
- * - Rarity distribution
- */
-
 "use client";
 
-type NFT = {
-  rarity: number | null;
-  isRevealed: boolean;
-  isStaked?: boolean;
-};
-
-interface EnhancedStatsBarProps {
-  nfts: NFT[];
-}
+import { type NFTWithStakeStatus } from "~~/hooks/usePonder";
 
 const RARITY_CONFIG = {
-  0: { name: "Common", textColor: "text-gray-400" },
-  1: { name: "Rare", textColor: "text-blue-400" },
-  2: { name: "Epic", textColor: "text-purple-400" },
-  3: { name: "Legendary", textColor: "text-yellow-400" },
+  0: { name: "Common", color: "var(--rarity-common)" },
+  1: { name: "Rare", color: "var(--rarity-rare)" },
+  2: { name: "Epic", color: "var(--rarity-epic)" },
+  3: { name: "Legendary", color: "var(--rarity-legendary)" },
 } as const;
+
+interface EnhancedStatsBarProps {
+  nfts: NFTWithStakeStatus[];
+}
 
 export function EnhancedStatsBar({ nfts }: EnhancedStatsBarProps) {
   const rarityCount = nfts.reduce(
@@ -42,36 +28,70 @@ export function EnhancedStatsBar({ nfts }: EnhancedStatsBarProps) {
   const availableCount = nfts.length - stakedCount;
 
   return (
-    <div className="flex flex-col md:flex-row gap-4 mb-8">
+    <div className="flex flex-col lg:flex-row gap-4 mb-8">
       {/* Left: NFT Counts */}
-      <div className="glass-card rounded-2xl p-6 border border-cyan-500/30 flex items-center justify-around min-w-[350px] gap-6">
+      <div
+        className="card p-5 flex items-center justify-around gap-6"
+        style={{ backgroundColor: "var(--bg-elevated)" }}
+      >
         <div className="text-center">
-          <div className="text-4xl font-bold text-white mb-1">{nfts.length}</div>
-          <div className="text-gray-400 text-sm font-medium">Total</div>
+          <div
+            className="text-3xl font-bold mb-1"
+            style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
+          >
+            {nfts.length}
+          </div>
+          <div className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
+            Total
+          </div>
         </div>
 
-        <div className="h-12 w-px bg-gray-700/50" />
+        <div className="h-10 w-px" style={{ backgroundColor: "var(--border-subtle)" }} />
 
         <div className="text-center">
-          <div className="text-4xl font-bold text-green-400 mb-1">{stakedCount}</div>
-          <div className="text-gray-400 text-sm font-medium">Staked</div>
+          <div
+            className="text-3xl font-bold mb-1"
+            style={{ fontFamily: "var(--font-display)", color: "var(--success)" }}
+          >
+            {stakedCount}
+          </div>
+          <div className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
+            Staked
+          </div>
         </div>
 
-        <div className="h-12 w-px bg-gray-700/50" />
+        <div className="h-10 w-px" style={{ backgroundColor: "var(--border-subtle)" }} />
 
         <div className="text-center">
-          <div className="text-4xl font-bold text-cyan-400 mb-1">{availableCount}</div>
-          <div className="text-gray-400 text-sm font-medium">Available</div>
+          <div
+            className="text-3xl font-bold mb-1"
+            style={{ fontFamily: "var(--font-display)", color: "var(--accent)" }}
+          >
+            {availableCount}
+          </div>
+          <div className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
+            Available
+          </div>
         </div>
       </div>
 
       {/* Right: Rarity Distribution */}
-      <div className="glass-card rounded-2xl p-6 border border-cyan-500/30 flex-grow flex items-center justify-around overflow-x-auto">
-        <div className="flex items-center justify-between w-full px-4 min-w-[400px]">
+      <div
+        className="card p-5 flex-grow flex items-center justify-around"
+        style={{ backgroundColor: "var(--bg-elevated)" }}
+      >
+        <div className="flex items-center justify-between w-full px-4">
           {Object.entries(RARITY_CONFIG).map(([rarity, config]) => (
             <div key={rarity} className="text-center">
-              <div className={`text-3xl font-bold ${config.textColor}`}>{rarityCount[Number(rarity)] || 0}</div>
-              <div className="text-gray-400 text-sm">{config.name}</div>
+              <div
+                className="text-2xl font-bold mb-1"
+                style={{ fontFamily: "var(--font-display)", color: config.color }}
+              >
+                {rarityCount[Number(rarity)] || 0}
+              </div>
+              <div className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
+                {config.name}
+              </div>
             </div>
           ))}
         </div>

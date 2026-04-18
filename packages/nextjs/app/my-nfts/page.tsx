@@ -9,6 +9,7 @@ import { useAccount } from "wagmi";
 import { ConnectWalletPrompt } from "~~/components/ConnectWalletPrompt";
 import { EmptyState } from "~~/components/EmptyState";
 import { FullPageLoading } from "~~/components/LoadingComponents";
+import { FadeInUp } from "~~/components/ui/AnimatedCard";
 import { usePonderUserAllNFTs } from "~~/hooks/usePonder";
 import { useBatchStake } from "~~/hooks/useStaking";
 
@@ -17,7 +18,7 @@ function PageContent() {
   const [isBatchMode, setIsBatchMode] = useState(false);
   const [selectedNFTs, setSelectedNFTs] = useState<number[]>([]);
 
-  const { address, isConnected, status } = useAccount();
+  const { address, status } = useAccount();
   const { handleBatchStake, isProcessing: isBatchProcessing } = useBatchStake();
   const queryClient = useQueryClient();
 
@@ -31,19 +32,6 @@ function PageContent() {
     return (allNFTs || []).filter(nft => !nft.isStaked && nft.isRevealed);
   }, [allNFTs]);
 
-  const handleStakeSuccess = (tokenId: number) => {
-    // 乐观更新：交易已确认，立即更新本地缓存
-    // 不需要 invalidateQueries，因为数据已经是正确的
-    // 依赖 refetchInterval 自动更新（15秒后）
-    queryClient.setQueryData(userAllNFTs, (oldData: typeof allNFTs) => {
-      if (!oldData) return oldData;
-
-      return oldData.map(nft =>
-        nft.tokenId === tokenId ? { ...nft, isStaked: true, stakedAt: Math.floor(Date.now() / 1000) } : nft,
-      );
-    });
-  };
-
   const handleSelectNFT = (tokenId: number) => {
     setSelectedNFTs(prev => (prev.includes(tokenId) ? prev.filter(id => id !== tokenId) : [...prev, tokenId]));
   };
@@ -54,10 +42,8 @@ function PageContent() {
     try {
       await handleBatchStake(selectedNFTs, address as `0x${string}`);
 
-      // 乐观更新：立即更新所有选中的 NFT
       queryClient.setQueryData(userAllNFTs, (oldData: typeof allNFTs) => {
         if (!oldData) return oldData;
-
         const now = Math.floor(Date.now() / 1000);
         return oldData.map(nft =>
           selectedNFTs.includes(nft.tokenId) ? { ...nft, isStaked: true, stakedAt: now } : nft,
@@ -66,21 +52,17 @@ function PageContent() {
 
       setSelectedNFTs([]);
       setIsBatchMode(false);
-
-      // 不需要手动刷新，依赖 refetchInterval 自动更新
     } catch (error) {
       console.error("Batch stake failed:", error);
-      // 如果失败，立即刷新数据以恢复正确状态
       queryClient.invalidateQueries({ queryKey: userAllNFTs });
     }
   };
 
-  // Loading states
   if (!isMounted || status === "connecting" || status === "reconnecting") {
     return <FullPageLoading message="Loading your collection..." />;
   }
 
-  if (!isConnected) {
+  if (!address) {
     return <ConnectWalletPrompt message="Please connect your wallet to view your NFT collection." />;
   }
 
@@ -91,7 +73,6 @@ function PageContent() {
   if (!allNFTs || allNFTs.length === 0) {
     return (
       <EmptyState
-        icon="🎴"
         title="No NFTs Found"
         message="You don't own any StakableNFTs yet. Mint your first NFT to start your collection!"
         actionLabel="Mint NFT"
@@ -113,33 +94,30 @@ function PageContent() {
         isProcessing={isBatchProcessing}
       />
 
-      <NFTGrid
-        nfts={allNFTs}
-        isBatchMode={isBatchMode}
-        selectedNFTs={selectedNFTs}
-        onSelectNFT={handleSelectNFT}
-        onStakeSuccess={handleStakeSuccess}
-      />
+      <NFTGrid nfts={allNFTs} isBatchMode={isBatchMode} selectedNFTs={selectedNFTs} onSelectNFT={handleSelectNFT} />
     </>
   );
 }
 
 export default function MyNFTsPage() {
   return (
-    <div className="min-h-screen bg-black">
-      <section className="relative py-12 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 to-transparent" />
-        <div className="absolute inset-0 bg-grid-pattern opacity-5" />
-
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500 mb-4">
+    <div className="min-h-screen" style={{ backgroundColor: "var(--bg-base)" }}>
+      <section className="py-12">
+        <div className="container-premium">
+          <FadeInUp className="text-center mb-12">
+            <h1
+              className="text-4xl font-bold mb-4"
+              style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em", color: "var(--text-primary)" }}
+            >
               My NFT Collection
             </h1>
-            <p className="text-gray-400">
+            <p
+              className="text-base max-w-xl mx-auto"
+              style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)", lineHeight: 1.7 }}
+            >
               View and stake your StakableNFT collection. Each NFT earns rewards based on its rarity.
             </p>
-          </div>
+          </FadeInUp>
 
           <PageContent />
         </div>

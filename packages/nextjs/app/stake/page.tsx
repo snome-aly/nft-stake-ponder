@@ -9,6 +9,7 @@ import { StakingStatsBar } from "./_components/StakingStatsBar";
 import { useAccount } from "wagmi";
 import { ConnectWalletPrompt } from "~~/components/ConnectWalletPrompt";
 import { FullPageLoading } from "~~/components/LoadingComponents";
+import { FadeInUp } from "~~/components/ui/AnimatedCard";
 import { usePonderStakedNFTs, usePonderStakingStats, useRefreshPonderData } from "~~/hooks/usePonder";
 import { useRealTimePendingRewards } from "~~/hooks/useRealTimePendingRewards";
 import { useBatchClaimReward, useClaimReward, useUnstake } from "~~/hooks/useStaking";
@@ -27,28 +28,21 @@ function PageContent() {
     setIsMounted(true);
   }, []);
 
-  // === 从 Ponder 获取质押 NFT 数据（包含 lastClaimTime 和 rarity）===
   const { data: stakedNFTsFromPonder, isLoading: isPonderLoading } = usePonderStakedNFTs(address);
   const { data: stakingStats } = usePonderStakingStats(address);
   const refreshPonderData = useRefreshPonderData(address);
 
-  // === 前端实时计算 pending rewards（每秒更新）===
-  // Hook 已经返回正确格式的数据，包含 bigint 类型转换
   const { nftsWithRewards: stakedNFTs, totalPendingReward } = useRealTimePendingRewards(
     stakedNFTsFromPonder,
     isConnected,
   );
 
-  // Calculate totals
   const totalStaked = stakedNFTs.length;
   const totalClaimed = stakingStats?.totalClaimed ? BigInt(stakingStats.totalClaimed) : 0n;
-  // Total Earned = Total Claimed + Pending Rewards (总收益 = 已领取 + 待领取)
   const totalEarned = totalClaimed + totalPendingReward;
 
-  // Loading states
   const isLoading = isPonderLoading;
 
-  // Selection handlers
   const handleSelectNFT = (tokenId: number) => {
     setSelectedNFTs(prev => (prev.includes(tokenId) ? prev.filter(id => id !== tokenId) : [...prev, tokenId]));
   };
@@ -88,7 +82,6 @@ function PageContent() {
     }, 2000);
   };
 
-  // Loading states
   if (!isMounted || status === "connecting" || status === "reconnecting") {
     return <FullPageLoading message="Loading staking dashboard..." />;
   }
@@ -107,7 +100,6 @@ function PageContent() {
 
   return (
     <>
-      {/* Stats Dashboard */}
       <StakingStatsBar
         totalStaked={totalStaked}
         totalPendingReward={totalPendingReward}
@@ -115,7 +107,6 @@ function PageContent() {
         totalEarned={totalEarned}
       />
 
-      {/* Batch Actions */}
       <BatchClaimControls
         totalStaked={totalStaked}
         selectedCount={selectedNFTs.length}
@@ -125,7 +116,6 @@ function PageContent() {
         isProcessing={isBatchClaimProcessing}
       />
 
-      {/* Staked NFTs Grid */}
       <StakedNFTGrid
         stakedNFTs={stakedNFTs}
         selectedNFTs={selectedNFTs}
@@ -135,11 +125,9 @@ function PageContent() {
         isProcessing={isClaimProcessing || isUnstakeProcessing}
       />
 
-      {/* Back to My NFTs */}
       <div className="text-center mt-12">
-        <Link href="/my-nfts" className="inline-flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition">
-          <span>←</span>
-          <span>Back to My NFT Collection</span>
+        <Link href="/my-nfts" className="btn btn-ghost">
+          ← Back to My NFT Collection
         </Link>
       </div>
     </>
@@ -148,18 +136,23 @@ function PageContent() {
 
 export default function StakePage() {
   return (
-    <div className="min-h-screen bg-black">
-      <section className="relative py-12 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 to-transparent" />
-        <div className="absolute inset-0 bg-grid-pattern opacity-5" />
-
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl md:text-5xl -mt-5 font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500 mb-4">
+    <div className="min-h-screen" style={{ backgroundColor: "var(--bg-base)" }}>
+      <section className="py-12">
+        <div className="container-premium">
+          <FadeInUp className="text-center mb-12">
+            <h1
+              className="text-4xl font-bold mb-4"
+              style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em", color: "var(--text-primary)" }}
+            >
               Staking Dashboard
             </h1>
-            <p className="text-gray-400">Manage your staked NFTs and claim rewards</p>
-          </div>
+            <p
+              className="text-base max-w-xl mx-auto"
+              style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)", lineHeight: 1.7 }}
+            >
+              Manage your staked NFTs and claim rewards
+            </p>
+          </FadeInUp>
 
           <PageContent />
         </div>

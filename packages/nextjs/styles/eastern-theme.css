@@ -1,0 +1,1002 @@
+/**
+ * Digital Oriental Luxury Aesthetic
+ * 数字东方奢潮美学设计系统
+ *
+ * 色彩：玄墨黑、宣纸白、石青、绛红、松烟绿、天青、赭石、雾紫、鎏金、冰珀、银灰、胭脂红、竹青
+ * 风格：东方雅致底蕴+Web3数字艺术感，稀缺、高级、温润、视觉层次丰富
+ */
+
+/* ============================================
+   CSS Variables - Design Tokens
+   ============================================ */
+
+:root {
+  /* ========== 基底双主题 ========== */
+  /* 玄墨黑 - 主暗色调 */
+  --luxe-ink-black: #0d0d0f;
+  --luxe-dark-bg: #141417;
+  --luxe-dark-surface: #1a1a1e;
+  --luxe-dark-elevated: #222226;
+  --luxe-dark-card: #1e1e22;
+
+  /* 宣纸白 - 主亮色调 */
+  --luxe-rice-paper: #faf8f5;
+  --luxe-cream: #f5f3f0;
+  --luxe-warm-white: #fdfcfb;
+
+  /* 烟墨灰 - 过渡色 */
+  --luxe-smoke-gray: #3a3a3d;
+  --luxe-smoke-light: #5a5a5d;
+  --luxe-smoke-dark: #2a2a2d;
+
+  /* ========== 三大核心主色 ========== */
+  /* 石青 - Stone Cyan (主功能色) */
+  --luxe-stone-cyan: #3d6b6b;
+  --luxe-stone-cyan-light: #4a7a7a;
+  --luxe-stone-cyan-dark: #2d5a5a;
+
+  /* 绛红 - Crimson (稀缺珍贵感) */
+  --luxe-crimson: #7a4a4a;
+  --luxe-crimson-light: #8a5a5a;
+  --luxe-crimson-dark: #6a3a3a;
+
+  /* 松烟绿 - Pine Smoke (辅助沉稳) */
+  --luxe-pine-green: #5d6b5d;
+  --luxe-pine-green-light: #6a7a6a;
+  --luxe-pine-green-dark: #4a5a4a;
+
+  /* ========== 二级辅助主色 ========== */
+  /* 天青 - Azure */
+  --luxe-azure: #5a7a8a;
+  --luxe-azure-light: #6a8a9a;
+  --luxe-azure-dark: #4a6a7a;
+
+  /* 赭石 - Ochre */
+  --luxe-ochre: #9a7a5a;
+  --luxe-ochre-light: #aa8a6a;
+  --luxe-ochre-dark: #8a6a4a;
+
+  /* 雾紫 - Mist Purple */
+  --luxe-mist-purple: #7a6a8a;
+  --luxe-mist-purple-light: #8a7a9a;
+  --luxe-mist-purple-dark: #6a5a7a;
+
+  /* ========== 高亮点缀色 ========== */
+  /* 鎏金 - Gilded Gold (奢华感) */
+  --luxe-gilded-gold: #b8956a;
+  --luxe-gilded-gold-light: #c8a57a;
+  --luxe-gilded-gold-dark: #a8855a;
+
+  /* 冰珀 - Ice Amber */
+  --luxe-ice-amber: #c4b896;
+  --luxe-ice-amber-light: #d4c8a6;
+  --luxe-ice-amber-dark: #b4a886;
+
+  /* 银灰 - Silver Gray */
+  --luxe-silver: #a0a0a5;
+  --luxe-silver-light: #b0b0b5;
+  --luxe-silver-dark: #909095;
+
+  /* ========== 交互强调色 ========== */
+  /* 胭脂红 - Rouge Red (Mint/核心按钮) */
+  --luxe-rouge-red: #a65a5a;
+  --luxe-rouge-red-light: #b66a6a;
+  --luxe-rouge-red-dark: #964a4a;
+
+  /* 竹青 - Bamboo Green (钱包/连接) */
+  --luxe-bamboo-green: #5a7a6a;
+  --luxe-bamboo-green-light: #6a8a7a;
+  --luxe-bamboo-green-dark: #4a6a5a;
+
+  /* ========== 文字色彩 ========== */
+  /* 亮色主题文字 */
+  --luxe-text-primary: #1a1a1e;
+  --luxe-text-secondary: #5a5a5d;
+  --luxe-text-tertiary: #8a8a8d;
+  --luxe-text-muted: #a0a0a5;
+
+  /* 暗色主题文字 */
+  --luxe-text-light: #f5f3f0;
+  --luxe-text-light-secondary: #c0c0c3;
+  --luxe-text-light-tertiary: #909093;
+
+  /* ========== 边框与分割线 ========== */
+  --luxe-border: rgba(255, 255, 255, 0.08);
+  --luxe-border-light: rgba(0, 0, 0, 0.08);
+  --luxe-border-gold: rgba(184, 149, 106, 0.3);
+  --luxe-divider: rgba(255, 255, 255, 0.06);
+  --luxe-divider-light: rgba(0, 0, 0, 0.06);
+
+  /* ========== 阴影 ========== */
+  --luxe-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.12);
+  --luxe-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.16);
+  --luxe-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.2);
+  --luxe-shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.24);
+  --luxe-shadow-gold: 0 4px 20px rgba(184, 149, 106, 0.2);
+  --luxe-shadow-cyan: 0 4px 20px rgba(61, 107, 107, 0.2);
+
+  /* ========== 圆角 ========== */
+  --luxe-radius-xs: 4px;
+  --luxe-radius-sm: 8px;
+  --luxe-radius-md: 12px;
+  --luxe-radius-lg: 16px;
+  --luxe-radius-xl: 24px;
+  --luxe-radius-2xl: 32px;
+
+  /* ========== 间距 ========== */
+  --luxe-space-xs: 4px;
+  --luxe-space-sm: 8px;
+  --luxe-space-md: 16px;
+  --luxe-space-lg: 24px;
+  --luxe-space-xl: 32px;
+  --luxe-space-2xl: 48px;
+  --luxe-space-3xl: 64px;
+  --luxe-space-4xl: 96px;
+
+  /* ========== 过渡 ========== */
+  --luxe-transition-fast: 150ms ease;
+  --luxe-transition-normal: 250ms ease;
+  --luxe-transition-slow: 400ms ease;
+  --luxe-transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ============================================
+   Typography System - 中式排版美学
+   ============================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap");
+
+.luxe-font-display {
+  font-family: "Noto Serif SC", "Songti SC", "SimSun", serif;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.luxe-font-body {
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  letter-spacing: 0.02em;
+  line-height: 1.8;
+}
+
+.luxe-text-hero {
+  font-family: "Noto Serif SC", serif;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1.1;
+}
+
+.luxe-text-title {
+  font-family: "Noto Serif SC", serif;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+.luxe-text-heading {
+  font-family: "Noto Serif SC", serif;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+
+.luxe-text-body {
+  font-family: "Noto Sans SC", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  line-height: 1.9;
+}
+
+.luxe-text-caption {
+  font-family: "Noto Sans SC", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  font-size: 0.875rem;
+}
+
+/* ============================================
+   Background & Surface System
+   ============================================ */
+
+/* 亮色主题背景 */
+.luxe-bg {
+  background-color: var(--luxe-rice-paper);
+}
+
+.luxe-bg-cream {
+  background-color: var(--luxe-cream);
+}
+
+/* 暗色主题背景 - Web3暗黑审美 */
+.luxe-bg-dark {
+  background-color: var(--luxe-ink-black);
+  background-image:
+    radial-gradient(ellipse at 20% 0%, rgba(61, 107, 107, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(122, 74, 74, 0.05) 0%, transparent 50%);
+}
+
+.luxe-bg-dark-surface {
+  background-color: var(--luxe-dark-surface);
+}
+
+/* 亮色表面 */
+.luxe-surface {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--luxe-border-light);
+}
+
+.luxe-surface-elevated {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--luxe-shadow-lg);
+}
+
+/* 暗色表面 */
+.luxe-surface-dark {
+  background: rgba(30, 30, 34, 0.9);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--luxe-border);
+}
+
+.luxe-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--luxe-radius-lg);
+  box-shadow: var(--luxe-shadow-md);
+  transition: all var(--luxe-transition-normal);
+}
+
+.luxe-card:hover {
+  box-shadow: var(--luxe-shadow-lg);
+  border-color: var(--luxe-border-gold);
+  transform: translateY(-2px);
+}
+
+.luxe-card-dark {
+  background: rgba(30, 30, 34, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--luxe-border);
+  border-radius: var(--luxe-radius-lg);
+  box-shadow: var(--luxe-shadow-lg);
+  transition: all var(--luxe-transition-normal);
+}
+
+.luxe-card-dark:hover {
+  border-color: rgba(184, 149, 106, 0.4);
+  box-shadow: var(--luxe-shadow-gold);
+}
+
+/* ============================================
+   Color Module Classes
+   ============================================ */
+
+/* 文字颜色 */
+.luxe-text { color: var(--luxe-text-primary); }
+.luxe-text-secondary { color: var(--luxe-text-secondary); }
+.luxe-text-tertiary { color: var(--luxe-text-tertiary); }
+.luxe-text-light { color: var(--luxe-text-light); }
+
+/* 核心主色 */
+.luxe-stone-cyan { color: var(--luxe-stone-cyan); }
+.luxe-crimson { color: var(--luxe-crimson); }
+.luxe-pine-green { color: var(--luxe-pine-green); }
+
+/* 辅助色 */
+.luxe-azure { color: var(--luxe-azure); }
+.luxe-ochre { color: var(--luxe-ochre); }
+.luxe-mist-purple { color: var(--luxe-mist-purple); }
+
+/* 高亮点缀色 */
+.luxe-gilded { color: var(--luxe-gilded-gold); }
+.luxe-ice { color: var(--luxe-ice-amber); }
+.luxe-silver { color: var(--luxe-silver); }
+
+/* 交互强调色 */
+.luxe-rouge { color: var(--luxe-rouge-red); }
+.luxe-bamboo { color: var(--luxe-bamboo-green); }
+
+/* 背景填充 */
+.luxe-bg-stone-cyan { background-color: var(--luxe-stone-cyan); }
+.luxe-bg-crimson { background-color: var(--luxe-crimson); }
+.luxe-bg-pine-green { background-color: var(--luxe-pine-green); }
+.luxe-bg-rouge { background-color: var(--luxe-rouge-red); }
+.luxe-bg-bamboo { background-color: var(--luxe-bamboo-green); }
+.luxe-bg-gilded { background-color: var(--luxe-gilded-gold); }
+
+/* 渐变背景 */
+.luxe-gradient-hero {
+  background: linear-gradient(
+    135deg,
+    var(--luxe-ink-black) 0%,
+    var(--luxe-dark-bg) 50%,
+    rgba(61, 107, 107, 0.15) 100%
+  );
+}
+
+.luxe-gradient-card {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+}
+
+.luxe-gradient-gold {
+  background: linear-gradient(
+    135deg,
+    var(--luxe-gilded-gold) 0%,
+    var(--luxe-ochre) 100%
+  );
+}
+
+.luxe-gradient-cyan {
+  background: linear-gradient(
+    135deg,
+    var(--luxe-stone-cyan) 0%,
+    var(--luxe-azure) 100%
+  );
+}
+
+.luxe-gradient-crimson {
+  background: linear-gradient(
+    135deg,
+    var(--luxe-crimson) 0%,
+    var(--luxe-mist-purple) 100%
+  );
+}
+
+/* ============================================
+   Button System - 东方奢潮按钮
+   ============================================ */
+
+.luxe-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--luxe-space-sm);
+  padding: var(--luxe-space-md) var(--luxe-space-xl);
+  font-family: "Noto Sans SC", sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  border-radius: var(--luxe-radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all var(--luxe-transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 按钮悬浮光效 */
+.luxe-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity var(--luxe-transition-fast);
+}
+
+.luxe-btn:hover::before {
+  opacity: 1;
+}
+
+/* Primary - 胭脂红 Mint按钮 */
+.luxe-btn-primary {
+  background: var(--luxe-rouge-red);
+  color: white;
+  border-color: var(--luxe-rouge-red);
+  box-shadow: 0 4px 16px rgba(166, 90, 90, 0.3);
+}
+
+.luxe-btn-primary:hover {
+  background: var(--luxe-rouge-red-light);
+  box-shadow: 0 6px 24px rgba(166, 90, 90, 0.4);
+  transform: translateY(-2px);
+}
+
+.luxe-btn-primary:active {
+  transform: translateY(0);
+}
+
+/* Secondary - 竹青 钱包连接 */
+.luxe-btn-secondary {
+  background: var(--luxe-bamboo-green);
+  color: white;
+  border-color: var(--luxe-bamboo-green);
+  box-shadow: 0 4px 16px rgba(90, 122, 106, 0.3);
+}
+
+.luxe-btn-secondary:hover {
+  background: var(--luxe-bamboo-green-light);
+  box-shadow: 0 6px 24px rgba(90, 122, 106, 0.4);
+  transform: translateY(-2px);
+}
+
+/* Outline - 石青边框 */
+.luxe-btn-outline {
+  background: transparent;
+  color: var(--luxe-stone-cyan);
+  border-color: var(--luxe-stone-cyan);
+}
+
+.luxe-btn-outline:hover {
+  background: rgba(61, 107, 107, 0.1);
+  box-shadow: var(--luxe-shadow-cyan);
+}
+
+/* Ghost - 透明幽灵 */
+.luxe-btn-ghost {
+  background: transparent;
+  color: var(--luxe-text-secondary);
+  border-color: transparent;
+}
+
+.luxe-btn-ghost:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--luxe-text-primary);
+}
+
+.luxe-btn-ghost-light {
+  background: transparent;
+  color: var(--luxe-text-light-secondary);
+  border-color: transparent;
+}
+
+.luxe-btn-ghost-light:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--luxe-text-light);
+}
+
+/* Gold Accent */
+.luxe-btn-gold {
+  background: linear-gradient(135deg, var(--luxe-gilded-gold) 0%, var(--luxe-ochre) 100%);
+  color: var(--luxe-ink-black);
+  border-color: transparent;
+  box-shadow: var(--luxe-shadow-gold);
+}
+
+.luxe-btn-gold:hover {
+  box-shadow: 0 6px 28px rgba(184, 149, 106, 0.35);
+  transform: translateY(-2px);
+}
+
+/* ============================================
+   Input System
+   ============================================ */
+
+.luxe-input {
+  width: 100%;
+  padding: var(--luxe-space-md) var(--luxe-space-lg);
+  font-family: "Noto Sans SC", sans-serif;
+  font-size: 0.9375rem;
+  color: var(--luxe-text-primary);
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--luxe-border-light);
+  border-radius: var(--luxe-radius-md);
+  outline: none;
+  transition: all var(--luxe-transition-normal);
+  letter-spacing: 0.02em;
+}
+
+.luxe-input:focus {
+  border-color: var(--luxe-stone-cyan);
+  box-shadow: 0 0 0 3px rgba(61, 107, 107, 0.15);
+}
+
+.luxe-input::placeholder {
+  color: var(--luxe-text-tertiary);
+  letter-spacing: 0.04em;
+}
+
+.luxe-input-dark {
+  background-color: rgba(30, 30, 34, 0.9);
+  border-color: var(--luxe-border);
+  color: var(--luxe-text-light);
+}
+
+.luxe-input-dark:focus {
+  border-color: var(--luxe-azure);
+  box-shadow: 0 0 0 3px rgba(90, 122, 138, 0.2);
+}
+
+/* ============================================
+   Navigation
+   ============================================ */
+
+.luxe-nav-link {
+  position: relative;
+  padding: var(--luxe-space-sm) var(--luxe-space-md);
+  font-family: "Noto Sans SC", sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--luxe-text-secondary);
+  letter-spacing: 0.03em;
+  transition: color var(--luxe-transition-normal);
+}
+
+.luxe-nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--luxe-stone-cyan), var(--luxe-azure));
+  transition: all var(--luxe-transition-normal);
+  transform: translateX(-50%);
+}
+
+.luxe-nav-link:hover {
+  color: var(--luxe-text-primary);
+}
+
+.luxe-nav-link:hover::after {
+  width: 70%;
+}
+
+.luxe-nav-link.active {
+  color: var(--luxe-stone-cyan);
+}
+
+.luxe-nav-link.active::after {
+  width: 80%;
+}
+
+/* Dark theme nav */
+.luxe-nav-link-dark {
+  color: var(--luxe-text-light-secondary);
+}
+
+.luxe-nav-link-dark:hover {
+  color: var(--luxe-text-light);
+}
+
+.luxe-nav-link-dark.active {
+  color: var(--luxe-azure);
+}
+
+/* ============================================
+   Dividers
+   ============================================ */
+
+.luxe-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--luxe-divider) 20%,
+    var(--luxe-divider) 80%,
+    transparent 100%
+  );
+  margin: var(--luxe-space-xl) 0;
+}
+
+.luxe-divider-light {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--luxe-divider-light) 20%,
+    var(--luxe-divider-light) 80%,
+    transparent 100%
+  );
+}
+
+.luxe-divider-gold {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--luxe-border-gold) 50%,
+    transparent 100%
+  );
+}
+
+/* ============================================
+   Badge & Tag
+   ============================================ */
+
+.luxe-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--luxe-space-xs);
+  padding: var(--luxe-space-xs) var(--luxe-space-md);
+  font-family: "Noto Sans SC", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  border-radius: 100px;
+  border: 1px solid;
+}
+
+.luxe-badge-cyan {
+  background: rgba(61, 107, 107, 0.1);
+  border-color: rgba(61, 107, 107, 0.25);
+  color: var(--luxe-stone-cyan);
+}
+
+.luxe-badge-crimson {
+  background: rgba(122, 74, 74, 0.1);
+  border-color: rgba(122, 74, 74, 0.25);
+  color: var(--luxe-crimson-light);
+}
+
+.luxe-badge-gold {
+  background: rgba(184, 149, 106, 0.12);
+  border-color: rgba(184, 149, 106, 0.3);
+  color: var(--luxe-gilded-gold);
+}
+
+.luxe-badge-green {
+  background: rgba(93, 122, 104, 0.1);
+  border-color: rgba(93, 122, 104, 0.25);
+  color: var(--luxe-pine-green-light);
+}
+
+.luxe-badge-azure {
+  background: rgba(90, 122, 138, 0.1);
+  border-color: rgba(90, 122, 138, 0.25);
+  color: var(--luxe-azure);
+}
+
+/* ============================================
+   Progress Bar
+   ============================================ */
+
+.luxe-progress {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.luxe-progress-light {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.luxe-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--luxe-stone-cyan), var(--luxe-azure));
+  border-radius: 2px;
+  transition: width 0.8s ease-out;
+}
+
+.luxe-progress-bar-gold {
+  background: linear-gradient(90deg, var(--luxe-gilded-gold), var(--luxe-ochre));
+}
+
+.luxe-progress-bar-crimson {
+  background: linear-gradient(90deg, var(--luxe-crimson), var(--luxe-mist-purple));
+}
+
+/* ============================================
+   Animations
+   ============================================ */
+
+@keyframes luxe-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes luxe-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes luxe-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes luxe-slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes luxe-glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(184, 149, 106, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(184, 149, 106, 0.25);
+  }
+}
+
+@keyframes luxe-shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes luxe-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.luxe-animate-fade-in {
+  animation: luxe-fade-in 0.6s ease-out forwards;
+}
+
+.luxe-animate-fade-in-up {
+  animation: luxe-fade-in-up 0.7s ease-out forwards;
+}
+
+.luxe-animate-scale-in {
+  animation: luxe-scale-in 0.5s ease-out forwards;
+}
+
+.luxe-animate-slide-left {
+  animation: luxe-slide-in-left 0.6s ease-out forwards;
+}
+
+/* Stagger animation children */
+.luxe-stagger > * {
+  opacity: 0;
+  animation: luxe-fade-in 0.5s ease-out forwards;
+}
+
+.luxe-stagger > *:nth-child(1) { animation-delay: 0ms; }
+.luxe-stagger > *:nth-child(2) { animation-delay: 80ms; }
+.luxe-stagger > *:nth-child(3) { animation-delay: 160ms; }
+.luxe-stagger > *:nth-child(4) { animation-delay: 240ms; }
+.luxe-stagger > *:nth-child(5) { animation-delay: 320ms; }
+.luxe-stagger > *:nth-child(6) { animation-delay: 400ms; }
+
+/* Hover effects */
+.luxe-hover-lift {
+  transition: transform var(--luxe-transition-normal), box-shadow var(--luxe-transition-normal);
+}
+
+.luxe-hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--luxe-shadow-lg);
+}
+
+.luxe-hover-glow-gold {
+  transition: box-shadow var(--luxe-transition-normal);
+}
+
+.luxe-hover-glow-gold:hover {
+  box-shadow: var(--luxe-shadow-gold);
+}
+
+.luxe-hover-glow-cyan {
+  transition: box-shadow var(--luxe-transition-normal);
+}
+
+.luxe-hover-glow-cyan:hover {
+  box-shadow: var(--luxe-shadow-cyan);
+}
+
+/* ============================================
+   Layout Utilities
+   ============================================ */
+
+.luxe-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--luxe-space-xl);
+}
+
+.luxe-container-wide {
+  max-width: 1400px;
+}
+
+.luxe-container-narrow {
+  max-width: 800px;
+}
+
+.luxe-section {
+  padding: var(--luxe-space-4xl) 0;
+}
+
+.luxe-section-lg {
+  padding: var(--luxe-space-4xl) 0;
+}
+
+/* ============================================
+   Decorative Elements - 东方数字装饰元素
+   ============================================ */
+
+/* 几何窗棂元素 */
+.luxe-window-frame {
+  position: relative;
+}
+
+.luxe-window-frame::before,
+.luxe-window-frame::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 1px solid;
+  opacity: 0.3;
+}
+
+.luxe-window-frame::before {
+  top: 0;
+  left: 0;
+  border-right: none;
+  border-bottom: none;
+}
+
+.luxe-window-frame::after {
+  bottom: 0;
+  right: 0;
+  border-left: none;
+  border-top: none;
+}
+
+/* 角落装饰 */
+.luxe-corner-decoration {
+  position: relative;
+}
+
+.luxe-corner-decoration::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 20px;
+  height: 20px;
+  border-top: 1px solid var(--luxe-gilded-gold);
+  border-left: 1px solid var(--luxe-gilded-gold);
+  opacity: 0.4;
+}
+
+.luxe-corner-decoration::after {
+  content: "";
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 20px;
+  height: 20px;
+  border-bottom: 1px solid var(--luxe-gilded-gold);
+  border-right: 1px solid var(--luxe-gilded-gold);
+  opacity: 0.4;
+}
+
+/* 线条装饰 */
+.luxe-line-decoration {
+  display: flex;
+  align-items: center;
+  gap: var(--luxe-space-md);
+}
+
+.luxe-line-decoration::before,
+.luxe-line-decoration::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--luxe-border-gold),
+    transparent
+  );
+}
+
+/* 光晕效果 */
+.luxe-glow-stone-cyan {
+  box-shadow: 0 0 40px rgba(61, 107, 107, 0.2);
+}
+
+.luxe-glow-gilded {
+  box-shadow: 0 0 40px rgba(184, 149, 106, 0.2);
+}
+
+.luxe-glow-crimson {
+  box-shadow: 0 0 40px rgba(122, 74, 74, 0.2);
+}
+
+/* ============================================
+   Scrollbar
+   ============================================ */
+
+.luxe-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.luxe-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.luxe-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+
+.luxe-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* ============================================
+   Selection
+   ============================================ */
+
+::selection {
+  background: rgba(61, 107, 107, 0.25);
+  color: inherit;
+}
+
+/* ============================================
+   Focus
+   ============================================ */
+
+.luxe-focus:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--luxe-rice-paper), 0 0 0 4px var(--luxe-stone-cyan);
+}
+
+/* ============================================
+   Tooltip
+   ============================================ */
+
+.luxe-tooltip {
+  position: relative;
+}
+
+.luxe-tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  padding: var(--luxe-space-sm) var(--luxe-space-md);
+  font-family: "Noto Sans SC", sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  color: var(--luxe-text-light);
+  background: var(--luxe-dark-bg);
+  border: 1px solid var(--luxe-border);
+  border-radius: var(--luxe-radius-sm);
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--luxe-transition-fast);
+}
+
+.luxe-tooltip:hover::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(-8px);
+}

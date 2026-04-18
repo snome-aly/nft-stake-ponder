@@ -1,183 +1,211 @@
 "use client";
 
+import { FadeInUp } from "~~/components/ui/AnimatedCard";
+
+/**
+ * BlindBoxShowcase - Tightened spacing, reduced vertical gaps
+ */
 export function BlindBoxShowcase() {
   return (
-    <section className="py-12 bg-black relative overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
-
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-10 animate-slide-in-up">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6 text-gradient-purple">
-            🎁 How Blind Boxes Work
-          </h2>
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-            Experience the thrill of mystery. All NFTs start as blind boxes with hidden rarities, revealed only after
-            complete sellout.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-          {/* Unrevealed State Card */}
-          <div className="glass-card rounded-2xl p-5 border-neon-gold animate-slide-in tilt-3d">
-            <div className="text-center mb-6">
-              <span className="inline-flex items-center space-x-2 glass-medium text-yellow-400 px-4 py-2 rounded-full border-neon-gold mb-4">
-                <span>🔒</span>
-                <span className="font-semibold">Unrevealed State</span>
-              </span>
-              <h3 className="text-2xl font-bold text-white">Before Reveal</h3>
-            </div>
-
-            {/* Blind Box Visual */}
-            <div className="mb-6 flex justify-center">
-              <div className="w-48 h-48 bg-gradient-to-br from-gray-700 to-gray-900 rounded-xl flex items-center justify-center border-4 border-gray-600 relative overflow-hidden group tilt-3d animate-scale-pulse">
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 to-pink-600/20 animate-pulse"></div>
-                <span className="text-6xl relative z-10 group-hover:scale-125 transition-transform duration-300">
-                  🎁
-                </span>
-              </div>
-            </div>
-
-            {/* Terminal-styled Metadata */}
-            <div className="terminal-glow rounded-lg p-4 font-mono text-sm mb-6">
-              <div className="flex items-center space-x-2 mb-2">
-                <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                <span className="text-green-400 text-xs ml-2">metadata.json</span>
-              </div>
-              <pre className="text-green-300 overflow-x-auto text-xs leading-relaxed">
-                {`{
-  "name": "Stakable NFT #42",
-  "description": "A mysterious blind box...",
-  "image": "ipfs://Qmd2S...S1cKk",
-  "attributes": [
-    { "trait_type": "Rarity",           "value": "???" },
-    { "trait_type": "Reward Multiplier","value": "???" },
-    { "trait_type": "Multiplier Value", "value": "???" },
-    { "trait_type": "Status",           "value": "Unrevealed" }
-  ]
-}`}
-              </pre>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center space-x-2 text-gray-400">
-                <span>❌</span>
-                <span>Rarity Hidden</span>
-              </div>
-              <div className="flex items-center space-x-2 text-gray-400">
-                <span>❌</span>
-                <span>Multiplier Unknown</span>
-              </div>
-              <div className="flex items-center space-x-2 text-gray-400">
-                <span>❌</span>
-                <span>Cannot Query getRarity()</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Revealed State Card */}
-          <div
-            className="glass-card rounded-2xl p-5 border-neon-blue animate-slide-in tilt-3d"
-            style={{ animationDelay: "0.2s" }}
+    <section
+      style={{ backgroundColor: "var(--bg-surface)", paddingTop: "var(--space-12)", paddingBottom: "var(--space-12)" }}
+    >
+      <div className="container-premium">
+        <FadeInUp className="text-center mb-8">
+          <h2
+            className="text-2xl font-bold mb-3"
+            style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em", color: "var(--text-primary)" }}
           >
-            <div className="text-center mb-6">
-              <span className="inline-flex items-center space-x-2 glass-medium text-green-400 px-4 py-2 rounded-full border-neon-blue mb-4 animate-glow-blue">
-                <span>✅</span>
-                <span className="font-semibold">Revealed State</span>
-              </span>
-              <h3 className="text-2xl font-bold text-white">After Reveal</h3>
-            </div>
+            How Blind Boxes Work
+          </h2>
+          <p
+            className="text-sm max-w-xl mx-auto"
+            style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)", lineHeight: 1.6 }}
+          >
+            All NFTs start as blind boxes with hidden rarities. Rarity is revealed only after all 100 NFTs are minted.
+          </p>
+        </FadeInUp>
 
-            {/* Revealed NFT Visual */}
-            <div className="mb-6 flex justify-center">
-              <div className="w-48 h-48 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl flex items-center justify-center border-4 border-yellow-400 relative overflow-hidden group tilt-3d animate-glow-gold">
-                <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/30 to-orange-500/30 animate-pulse"></div>
-                <span className="text-6xl relative z-10 group-hover:scale-125 group-hover:rotate-12 transition-all duration-300">
-                  🌟
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 max-w-4xl mx-auto mb-8">
+          {/* Unrevealed */}
+          <FadeInUp delay={0.1}>
+            <div className="card p-6 h-full" style={{ backgroundColor: "var(--bg-elevated)" }}>
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "var(--warning)" }} />
+                <span
+                  className="text-xs font-medium uppercase tracking-wider"
+                  style={{ fontFamily: "var(--font-body)", color: "var(--warning)" }}
+                >
+                  Unrevealed State
                 </span>
               </div>
-            </div>
+              <h3
+                className="text-lg font-semibold mb-4"
+                style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
+              >
+                Before Reveal
+              </h3>
 
-            {/* Terminal-styled Metadata */}
-            <div className="terminal-glow rounded-lg p-4 font-mono text-sm mb-6">
-              <div className="flex items-center space-x-2 mb-2">
-                <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                <span className="text-green-400 text-xs ml-2">metadata.json</span>
+              <div className="mb-4 flex justify-center">
+                <div
+                  className="w-24 h-24 rounded-xl flex items-center justify-center"
+                  style={{ backgroundColor: "var(--bg-card)", border: "1px solid var(--border-default)" }}
+                >
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" className="text-[var(--text-muted)]">
+                    <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="1.5" />
+                    <path d="M12 8v8M8 12h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  </svg>
+                </div>
               </div>
-              <pre className="text-green-300 overflow-x-auto text-xs leading-relaxed">
-                {`{
-  "name": "Stakable NFT #42",
-  "description": "A Legendary stakable NFT!",
-  "image": "ipfs://QmZH...sjtf",
-  "attributes": [
-    { "trait_type": "Rarity",           "value": "Legendary" },
-    { "trait_type": "Reward Multiplier","value": "3x" },
-    { "trait_type": "Multiplier Value", "value": 30000 },
-    { "trait_type": "Status",           "value": "Revealed" }
-  ]
-}`}
-              </pre>
-            </div>
 
-            <div className="space-y-2">
-              <div className="flex items-center space-x-2 text-green-400">
-                <span>✅</span>
-                <span>Rarity Visible</span>
+              <div
+                className="rounded-lg p-3 mb-4"
+                style={{ backgroundColor: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}
+              >
+                <pre
+                  className="text-xs overflow-x-auto"
+                  style={{ fontFamily: "var(--font-mono)", lineHeight: 1.6, color: "var(--text-tertiary)" }}
+                >
+                  {`{ "rarity": "???", "multiplier": "???" }`}
+                </pre>
               </div>
-              <div className="flex items-center space-x-2 text-green-400">
-                <span>✅</span>
-                <span>Multiplier Known</span>
-              </div>
-              <div className="flex items-center space-x-2 text-green-400">
-                <span>✅</span>
-                <span>Ready to Stake</span>
+
+              <div className="space-y-1.5">
+                {[{ text: "Rarity Hidden" }, { text: "Multiplier Unknown" }, { text: "Cannot Stake" }].map(item => (
+                  <div key={item.text} className="flex items-center gap-2">
+                    <div
+                      className="w-4 h-4 rounded flex items-center justify-center"
+                      style={{ backgroundColor: "var(--bg-card)" }}
+                    >
+                      <span style={{ color: "var(--text-muted)", fontSize: "10px" }}>—</span>
+                    </div>
+                    <span className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
+                      {item.text}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
-          </div>
+          </FadeInUp>
+
+          {/* Revealed */}
+          <FadeInUp delay={0.15}>
+            <div
+              className="card p-6 h-full"
+              style={{ backgroundColor: "var(--bg-elevated)", borderColor: "var(--accent-border)" }}
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "var(--success)" }} />
+                <span
+                  className="text-xs font-medium uppercase tracking-wider"
+                  style={{ fontFamily: "var(--font-body)", color: "var(--success)" }}
+                >
+                  Revealed State
+                </span>
+              </div>
+              <h3
+                className="text-lg font-semibold mb-4"
+                style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
+              >
+                After Reveal
+              </h3>
+
+              <div className="mb-4 flex justify-center">
+                <div
+                  className="w-24 h-24 rounded-xl flex items-center justify-center"
+                  style={{ backgroundColor: "var(--accent-muted)", border: "1px solid var(--accent-border)" }}
+                >
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" className="text-[var(--accent)]">
+                    <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="1.5" />
+                    <path
+                      d="M9 12l2 2 4-4"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              <div
+                className="rounded-lg p-3 mb-4"
+                style={{ backgroundColor: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}
+              >
+                <pre
+                  className="text-xs overflow-x-auto"
+                  style={{ fontFamily: "var(--font-mono)", lineHeight: 1.6, color: "var(--text-tertiary)" }}
+                >
+                  {`{ "rarity": "Legendary", "multiplier": "3x" }`}
+                </pre>
+              </div>
+
+              <div className="space-y-1.5">
+                {[{ text: "Rarity Visible" }, { text: "Multiplier Known" }, { text: "Ready to Stake" }].map(item => (
+                  <div key={item.text} className="flex items-center gap-2">
+                    <div
+                      className="w-4 h-4 rounded flex items-center justify-center"
+                      style={{ backgroundColor: "var(--success-muted)" }}
+                    >
+                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                        <path
+                          d="M2 5l2 2 4-4"
+                          stroke="var(--success)"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    <span className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--success)" }}>
+                      {item.text}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </FadeInUp>
         </div>
 
-        {/* VRF Explanation */}
-        <div className="mt-10 max-w-3xl mx-auto animate-slide-in-up" style={{ animationDelay: "0.4s" }}>
-          <div className="glass-card rounded-2xl p-6 border-neon-purple">
-            <h3 className="text-2xl font-bold text-white mb-4 text-center text-gradient-purple">
-              🎲 VRF-Based Fair Reveal
-            </h3>
-            <div className="space-y-3 text-gray-300">
-              <div className="grid grid-cols-[5rem_1fr] gap-x-4 items-baseline">
-                <div className="text-purple-400 font-bold">When?</div>
-                <p>Only after all 100 NFTs are minted (sellout)</p>
+        {/* VRF Note - tight */}
+        <FadeInUp delay={0.2}>
+          <div
+            className="max-w-2xl mx-auto rounded-xl p-4"
+            style={{ backgroundColor: "var(--bg-elevated)", border: "1px solid var(--border-subtle)" }}
+          >
+            <div className="flex items-start gap-3">
+              <div
+                className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                style={{ backgroundColor: "var(--accent-muted)" }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="text-[var(--accent)]">
+                  <path
+                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
               </div>
-              <div className="grid grid-cols-[5rem_1fr] gap-x-4 items-baseline">
-                <div className="text-purple-400 font-bold">Who?</div>
-                <p>
-                  Admin triggers reveal using <code className="terminal-glow px-2 py-1 rounded text-xs">reveal()</code>{" "}
-                  function
+              <div>
+                <h4
+                  className="text-sm font-semibold mb-0.5"
+                  style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
+                >
+                  VRF-Based Fair Reveal
+                </h4>
+                <p
+                  className="text-xs"
+                  style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)", lineHeight: 1.6 }}
+                >
+                  After all 100 NFTs are minted, the admin triggers reveal via Chainlink VRF. All rarities assigned
+                  simultaneously — no mint-order advantage.
                 </p>
               </div>
-              <div className="grid grid-cols-[5rem_1fr] gap-x-4 items-baseline">
-                <div className="text-purple-400 font-bold">How?</div>
-                <p>Random offset calculated via VRF (Verifiable Random Function)</p>
-              </div>
-              <div className="grid grid-cols-[5rem_1fr] gap-x-4 items-baseline">
-                <div className="text-purple-400 font-bold">Result?</div>
-                <p>All 100 NFTs reveal simultaneously with fair rarity distribution</p>
-              </div>
-            </div>
-
-            <div className="mt-6 p-4 glass-dark rounded-lg border border-yellow-500/30">
-              <p className="text-sm text-gray-300 leading-relaxed">
-                <span className="text-yellow-400 font-semibold">⚠️ Note:</span> Current implementation uses{" "}
-                <code className="terminal-glow px-1 rounded text-xs">blockhash</code> for randomness. Production
-                deployment will integrate <strong className="text-green-400">Chainlink VRF</strong> for
-                cryptographically secure randomness.
-              </p>
             </div>
           </div>
-        </div>
+        </FadeInUp>
       </div>
     </section>
   );

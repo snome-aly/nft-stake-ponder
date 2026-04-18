@@ -1,242 +1,186 @@
 "use client";
 
+import { motion } from "framer-motion";
+import { FadeInUp, StaggerContainer } from "~~/components/ui/AnimatedCard";
+
+const contracts = [
+  {
+    name: "StakableNFT",
+    type: "ERC721",
+    features: ["Mint blind box NFTs", "Store rarity metadata", "Provide reward multipliers", "Trigger VRF reveal"],
+  },
+  {
+    name: "NFTStakingPool",
+    type: "Staking",
+    features: [
+      "Accept NFT deposits",
+      "Calculate time-based rewards",
+      "Apply rarity multipliers",
+      "Distribute RWRD tokens",
+      "Handle withdrawals",
+    ],
+  },
+  {
+    name: "RewardToken",
+    type: "ERC20",
+    features: ["Standard ERC20 token", "Minted to staking pool", "Distributed to stakers"],
+  },
+];
+
+/**
+ * StakingArchitecture - Premium NFT Gallery
+ */
 export function StakingArchitecture() {
   return (
-    <section className="py-20 bg-black relative overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-16 animate-slide-in-up">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6 text-gradient-purple">
-            🏗️ Multi-Contract Architecture
+    <section
+      style={{ backgroundColor: "var(--bg-surface)", paddingTop: "var(--space-12)", paddingBottom: "var(--space-12)" }}
+    >
+      <div className="container-premium">
+        {/* Header */}
+        <FadeInUp className="text-center mb-8">
+          <h2
+            className="text-xl font-bold mb-3"
+            style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em", color: "var(--text-primary)" }}
+          >
+            Architecture
           </h2>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Our system uses separate contracts for NFTs, staking, and rewards. This modular design ensures security and
-            upgradeability.
+          <p
+            className="text-sm max-w-xl mx-auto"
+            style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)", lineHeight: 1.7 }}
+          >
+            Separate contracts for NFTs, staking, and rewards. Modular design ensures security and upgradeability.
           </p>
-        </div>
+        </FadeInUp>
 
-        {/* Architecture Diagram */}
-        <div className="max-w-5xl mx-auto mb-16">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Contract 1: StakableNFT */}
-            <div className="group glass-card rounded-2xl p-6 border-2 border-purple-500/50 hover:border-purple-400 transition-all duration-500 hover:scale-105 hover:-translate-y-2 animate-slide-in-up">
-              <div className="text-center mb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-700 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-purple-500/30">
-                  <span className="text-3xl">🎨</span>
-                </div>
-                <h3 className="text-xl font-bold text-white">StakableNFT</h3>
-                <p className="text-purple-400 text-sm mt-1 font-medium">ERC721 Contract</p>
-              </div>
-
-              <div className="space-y-2 text-sm">
-                <div className="flex items-start space-x-2">
-                  <span className="text-purple-400 mt-0.5">✓</span>
-                  <span className="text-gray-100">Mint blind box NFTs</span>
-                </div>
-                <div className="flex items-start space-x-2">
-                  <span className="text-purple-400 mt-0.5">✓</span>
-                  <span className="text-gray-100">Store rarity metadata</span>
-                </div>
-                <div className="flex items-start space-x-2">
-                  <span className="text-purple-400 mt-0.5">✓</span>
-                  <span className="text-gray-100">Provide reward multipliers</span>
-                </div>
-                <div className="flex items-start space-x-2">
-                  <span className="text-purple-400 mt-0.5">✓</span>
-                  <span className="text-gray-100">Trigger VRF reveal</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Arrow */}
-            <div
-              className="hidden md:flex items-center justify-center animate-slide-in-up"
-              style={{ animationDelay: "0.1s" }}
-            >
-              <div className="text-center">
-                <div className="text-4xl text-cyan-400 animate-pulse">→</div>
-                <p className="text-xs text-gray-400 mt-1">Transfer NFT</p>
-              </div>
-            </div>
-
-            {/* Contract 2: NFTStakingPool */}
-            <div
-              className="group glass-card rounded-2xl p-6 border-2 border-cyan-500/50 hover:border-cyan-400 transition-all duration-500 hover:scale-105 hover:-translate-y-2 animate-slide-in-up"
-              style={{ animationDelay: "0.2s" }}
+        {/* Contract Cards */}
+        <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          {contracts.map(contract => (
+            <motion.div
+              key={contract.name}
+              className="card p-6"
+              style={{ backgroundColor: "var(--bg-elevated)" }}
+              whileHover={{ y: -4 }}
+              transition={{ duration: 0.2 }}
             >
               <div className="text-center mb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-cyan-700 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-cyan-500/30">
-                  <span className="text-3xl">🔒</span>
+                <div
+                  className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3"
+                  style={{ backgroundColor: "var(--accent-muted)", border: "1px solid var(--accent-border)" }}
+                >
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="text-[var(--accent)]">
+                    <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="1.5" />
+                    <path d="M8 12h8M12 8v8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  </svg>
                 </div>
-                <h3 className="text-xl font-bold text-white">NFTStakingPool</h3>
-                <p className="text-cyan-400 text-sm mt-1 font-medium">Staking Contract</p>
+                <h3
+                  className="text-base font-semibold mb-1"
+                  style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
+                >
+                  {contract.name}
+                </h3>
+                <span className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--accent)" }}>
+                  {contract.type}
+                </span>
               </div>
 
-              <div className="space-y-2 text-sm">
-                <div className="flex items-start space-x-2">
-                  <span className="text-cyan-400 mt-0.5">✓</span>
-                  <span className="text-gray-100">Accept NFT deposits</span>
-                </div>
-                <div className="flex items-start space-x-2">
-                  <span className="text-cyan-400 mt-0.5">✓</span>
-                  <span className="text-gray-100">Calculate time-based rewards</span>
-                </div>
-                <div className="flex items-start space-x-2">
-                  <span className="text-cyan-400 mt-0.5">✓</span>
-                  <span className="text-gray-100">Apply rarity multipliers</span>
-                </div>
-                <div className="flex items-start space-x-2">
-                  <span className="text-cyan-400 mt-0.5">✓</span>
-                  <span className="text-gray-100">Distribute RWRD tokens</span>
-                </div>
-                <div className="flex items-start space-x-2">
-                  <span className="text-cyan-400 mt-0.5">✓</span>
-                  <span className="text-gray-100">Handle withdrawals</span>
-                </div>
-              </div>
+              <ul className="space-y-1.5">
+                {contract.features.map((f, i) => (
+                  <li
+                    key={i}
+                    className="flex items-start gap-2 text-xs"
+                    style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)" }}
+                  >
+                    <span className="text-[var(--text-muted)] mt-0.5">—</span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          ))}
+        </StaggerContainer>
+
+        {/* Flow indicator */}
+        <motion.div
+          className="flex items-center justify-center gap-3 py-3 mb-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+        >
+          <span className="text-sm" style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)" }}>
+            Mint
+          </span>
+          <span style={{ color: "var(--text-muted)" }}>→</span>
+          <span className="text-sm" style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)" }}>
+            Stake
+          </span>
+          <span style={{ color: "var(--text-muted)" }}>→</span>
+          <span className="text-sm" style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)" }}>
+            Earn
+          </span>
+        </motion.div>
+
+        {/* Info cards */}
+        <div className="grid md:grid-cols-2 gap-5 max-w-3xl mx-auto">
+          <FadeInUp delay={0.5}>
+            <div className="card p-5" style={{ backgroundColor: "var(--bg-elevated)" }}>
+              <h3
+                className="text-sm font-semibold mb-3"
+                style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
+              >
+                Why Separate Contracts?
+              </h3>
+              <ul className="space-y-2">
+                {[
+                  { label: "Security", desc: "Exploit in one doesn&apos;t affect others" },
+                  { label: "Upgradability", desc: "New staking logic without touching NFTs" },
+                  { label: "Flexibility", desc: "Same NFT can work with multiple pools" },
+                ].map(item => (
+                  <li key={item.label} className="flex items-start gap-2 text-xs">
+                    <span className="text-[var(--text-muted)]">—</span>
+                    <span>
+                      <span style={{ fontFamily: "var(--font-body)", color: "var(--accent)" }}>{item.label}:</span>{" "}
+                      <span style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)" }}>{item.desc}</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
+          </FadeInUp>
 
-          {/* Arrow Down */}
-          <div className="flex justify-center my-6 animate-slide-in-up" style={{ animationDelay: "0.3s" }}>
-            <div className="text-center">
-              <div className="text-4xl text-amber-400 animate-bounce">↓</div>
-              <p className="text-xs text-gray-400 mt-1">Earn Rewards</p>
+          <FadeInUp delay={0.6}>
+            <div className="card p-5" style={{ backgroundColor: "var(--bg-elevated)" }}>
+              <h3
+                className="text-sm font-semibold mb-3"
+                style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
+              >
+                How They Interact
+              </h3>
+              <ol className="space-y-1.5">
+                {[
+                  "User mints NFT from StakableNFT",
+                  "User approves NFTStakingPool",
+                  "Pool calls getRewardMultiplier()",
+                  "Pool transfers NFT via safeTransferFrom()",
+                  "Pool distributes RWRD tokens",
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-2 text-xs">
+                    <span className="text-[var(--text-muted)] font-mono w-4">{i + 1}.</span>
+                    <span style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)" }}>{item}</span>
+                  </li>
+                ))}
+              </ol>
             </div>
-          </div>
-
-          {/* Contract 3: RewardToken */}
-          <div className="max-w-md mx-auto animate-slide-in-up" style={{ animationDelay: "0.4s" }}>
-            <div className="group glass-card rounded-2xl p-6 border-2 border-amber-500/50 hover:border-amber-400 transition-all duration-500 hover:scale-105">
-              <div className="text-center mb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-amber-500/30">
-                  <span className="text-3xl">💰</span>
-                </div>
-                <h3 className="text-xl font-bold text-white">RewardToken (RWRD)</h3>
-                <p className="text-amber-400 text-sm mt-1 font-medium">ERC20 Contract</p>
-              </div>
-
-              <div className="space-y-2 text-sm">
-                <div className="flex items-start space-x-2">
-                  <span className="text-amber-400 mt-0.5">✓</span>
-                  <span className="text-gray-100">Standard ERC20 token</span>
-                </div>
-                <div className="flex items-start space-x-2">
-                  <span className="text-amber-400 mt-0.5">✓</span>
-                  <span className="text-gray-100">Minted to staking pool</span>
-                </div>
-                <div className="flex items-start space-x-2">
-                  <span className="text-amber-400 mt-0.5">✓</span>
-                  <span className="text-gray-100">Distributed to stakers</span>
-                </div>
-                <div className="flex items-start space-x-2">
-                  <span className="text-amber-400 mt-0.5">✓</span>
-                  <span className="text-gray-100">Tradeable on DEXs</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Key Explanations */}
-        <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-6">
-          <div
-            className="glass-card rounded-xl p-6 border border-purple-500/30 hover:border-purple-500/50 transition-all duration-300 animate-slide-in-up"
-            style={{ animationDelay: "0.5s" }}
-          >
-            <h3 className="text-white font-bold mb-4 flex items-center space-x-2">
-              <span className="text-2xl">💡</span>
-              <span className="text-gradient-purple">Why Separate Contracts?</span>
-            </h3>
-            <ul className="space-y-3 text-sm text-gray-200">
-              <li className="flex items-start space-x-2">
-                <span className="text-purple-400 mt-0.5">•</span>
-                <span>
-                  <strong className="text-purple-300">Security:</strong> Isolated risk - exploit in one doesn&apos;t
-                  affect others
-                </span>
-              </li>
-              <li className="flex items-start space-x-2">
-                <span className="text-purple-400 mt-0.5">•</span>
-                <span>
-                  <strong className="text-purple-300">Upgradability:</strong> Can deploy new staking logic without
-                  touching NFTs
-                </span>
-              </li>
-              <li className="flex items-start space-x-2">
-                <span className="text-purple-400 mt-0.5">•</span>
-                <span>
-                  <strong className="text-purple-300">Flexibility:</strong> Same NFT can work with multiple staking
-                  pools
-                </span>
-              </li>
-              <li className="flex items-start space-x-2">
-                <span className="text-purple-400 mt-0.5">•</span>
-                <span>
-                  <strong className="text-purple-300">Gas Efficiency:</strong> Smaller contracts = cheaper deployments
-                </span>
-              </li>
-            </ul>
-          </div>
-
-          <div
-            className="glass-card rounded-xl p-6 border border-cyan-500/30 hover:border-cyan-500/50 transition-all duration-300 animate-slide-in-up"
-            style={{ animationDelay: "0.6s" }}
-          >
-            <h3 className="text-white font-bold mb-4 flex items-center space-x-2">
-              <span className="text-2xl">⚙️</span>
-              <span className="text-gradient-blue">How They Interact</span>
-            </h3>
-            <ol className="space-y-2 text-sm text-gray-200">
-              <li className="flex items-start space-x-2">
-                <span className="text-cyan-400 font-bold w-5">1.</span>
-                <span>
-                  User mints NFT from <code className="terminal-glow px-1.5 py-0.5 rounded text-xs">StakableNFT</code>
-                </span>
-              </li>
-              <li className="flex items-start space-x-2">
-                <span className="text-cyan-400 font-bold w-5">2.</span>
-                <span>
-                  User approves <code className="terminal-glow px-1.5 py-0.5 rounded text-xs">NFTStakingPool</code> to
-                  transfer
-                </span>
-              </li>
-              <li className="flex items-start space-x-2">
-                <span className="text-cyan-400 font-bold w-5">3.</span>
-                <span>
-                  Pool calls <code className="terminal-glow px-1.5 py-0.5 rounded text-xs">getRewardMultiplier()</code>
-                </span>
-              </li>
-              <li className="flex items-start space-x-2">
-                <span className="text-cyan-400 font-bold w-5">4.</span>
-                <span>
-                  Pool transfers NFT via{" "}
-                  <code className="terminal-glow px-1.5 py-0.5 rounded text-xs">safeTransferFrom()</code>
-                </span>
-              </li>
-              <li className="flex items-start space-x-2">
-                <span className="text-cyan-400 font-bold w-5">5.</span>
-                <span>Pool calculates rewards using multiplier</span>
-              </li>
-              <li className="flex items-start space-x-2">
-                <span className="text-cyan-400 font-bold w-5">6.</span>
-                <span>Pool transfers RWRD tokens to user</span>
-              </li>
-            </ol>
-          </div>
+          </FadeInUp>
         </div>
 
         {/* CTA */}
-        <div className="text-center mt-12 animate-slide-in-up" style={{ animationDelay: "0.7s" }}>
-          <a
-            href="/stake"
-            className="inline-block px-8 py-4 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white font-bold text-lg rounded-xl transform hover:scale-105 transition-all duration-300 shadow-xl shadow-purple-500/25 hover:shadow-cyan-500/25"
-          >
-            🔒 Explore Staking Pool
-          </a>
-        </div>
+        <FadeInUp>
+          <div className="text-center mt-6">
+            <a href="/stake" className="btn btn-secondary btn-lg">
+              View Staking Pool
+            </a>
+          </div>
+        </FadeInUp>
       </div>
     </section>
   );

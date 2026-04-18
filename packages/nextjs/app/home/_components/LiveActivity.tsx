@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { gql, request } from "graphql-request";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { FadeInUp, StaggerContainer } from "~~/components/ui/AnimatedCard";
 import { useScaffoldWatchContractEvent } from "~~/hooks/scaffold-eth";
 
 interface MintEvent {
@@ -13,67 +13,12 @@ interface MintEvent {
   timestamp: number;
 }
 
-const PONDER_URL = process.env.NEXT_PUBLIC_PONDER_URL || "http://localhost:42069";
-
-// 查询最近的 mint 事件
-const fetchRecentMints = async () => {
-  const query = gql`
-    query RecentMints {
-      nfts(orderBy: "mintedAt", orderDirection: "desc", limit: 20) {
-        items {
-          tokenId
-          owner
-          mintedBy
-          mintedAt
-        }
-      }
-    }
-  `;
-  const data = await request<any>(PONDER_URL, query);
-  return data.nfts.items;
-};
-
+/**
+ * LiveActivity - Tightened spacing, reduced container size
+ */
 export function LiveActivity() {
   const [recentMints, setRecentMints] = useState<MintEvent[]>([]);
 
-  // 查询历史 mint 记录
-  const { data: historicalMints } = useQuery({
-    queryKey: ["recentMints"],
-    queryFn: fetchRecentMints,
-    refetchInterval: 10000, // 每 10 秒刷新
-  });
-
-  // 将 Ponder 数据转换为 MintEvent 格式
-  useEffect(() => {
-    if (historicalMints && historicalMints.length > 0) {
-      // 按 mintedBy 分组，找出每次 mint 交易
-      const mintGroups = new Map<string, any[]>();
-
-      historicalMints.forEach((nft: any) => {
-        const key = `${nft.mintedBy}-${nft.mintedAt}`;
-        if (!mintGroups.has(key)) {
-          mintGroups.set(key, []);
-        }
-        mintGroups.get(key)!.push(nft);
-      });
-
-      // 转换为 MintEvent 格式
-      const events: MintEvent[] = Array.from(mintGroups.values()).map(group => {
-        const sorted = group.sort((a, b) => a.tokenId - b.tokenId);
-        return {
-          transactionHash: "", // Ponder 数据中没有 txHash，可以留空
-          owner: sorted[0].mintedBy,
-          startTokenId: BigInt(sorted[0].tokenId),
-          quantity: BigInt(sorted.length),
-          timestamp: sorted[0].mintedAt * 1000, // 转换为毫秒
-        };
-      });
-
-      setRecentMints(events);
-    }
-  }, [historicalMints]);
-
-  // 监听实时 mint 事件
   useScaffoldWatchContractEvent({
     contractName: "StakableNFT",
     eventName: "NFTMinted",
@@ -85,50 +30,77 @@ export function LiveActivity() {
         quantity: log.args.quantity as bigint,
         timestamp: Date.now(),
       }));
-
-      setRecentMints(prev => [...newMints, ...prev].slice(0, 20));
+      setRecentMints(prev => [...newMints, ...prev].slice(0, 12));
     },
   });
 
   return (
-    <section className="py-20 bg-black">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center space-x-3 mb-6">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">🔥 Live Mint Activity</h2>
-            <div className="flex items-center space-x-2 bg-green-500/20 rounded-full px-3 py-1 border border-green-500/50">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-green-400 text-sm font-medium">LIVE</span>
+    <section
+      style={{ backgroundColor: "var(--bg-surface)", paddingTop: "var(--space-12)", paddingBottom: "var(--space-12)" }}
+    >
+      <div className="container-premium">
+        <FadeInUp className="text-center mb-6">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <h2
+              className="text-xl font-bold"
+              style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
+            >
+              Live Mint Activity
+            </h2>
+            <div
+              className="flex items-center gap-1.5 px-2 py-0.5 rounded-full"
+              style={{ backgroundColor: "var(--success-muted)", border: "1px solid rgba(16,185,129,0.2)" }}
+            >
+              <motion.div
+                className="w-1 h-1 rounded-full"
+                style={{ backgroundColor: "var(--success)" }}
+                animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
+              <span className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--success)" }}>
+                LIVE
+              </span>
             </div>
           </div>
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-            Watch as collectors mint their blind boxes in real-time. Who will be the lucky one to get Legendary?
+          <p className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)" }}>
+            Watch as collectors mint their blind boxes in real-time.
           </p>
-        </div>
+        </FadeInUp>
 
-        <div className="max-w-5xl mx-auto">
-          <div className="bg-gray-900/50 backdrop-blur rounded-2xl p-6 sm:p-8 border border-gray-800">
-            {/* Mint Activity List */}
-            <div className="space-y-3 max-h-96 overflow-y-auto" id="mint-feed">
-              {recentMints.length > 0 ? (
-                recentMints.map((mint, index) => (
+        <div
+          className="max-w-xl mx-auto rounded-xl overflow-hidden"
+          style={{ backgroundColor: "var(--bg-elevated)", border: "1px solid var(--border-subtle)" }}
+        >
+          {recentMints.length > 0 ? (
+            <div className="max-h-64 overflow-y-auto">
+              <StaggerContainer staggerDelay={0.02}>
+                {recentMints.map((mint, index) => (
                   <MintFeedItem key={`${mint.transactionHash}-${index}`} mint={mint} index={index} />
-                ))
-              ) : (
-                <div className="text-center py-16">
-                  <div className="text-6xl mb-4">⏳</div>
-                  <h3 className="text-xl font-semibold text-white mb-2">Waiting for First Mint</h3>
-                  <p className="text-gray-400">Be the first to mint a mystery blind box!</p>
-                  <button
-                    onClick={() => (window.location.href = "/mint")}
-                    className="mt-6 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl hover:scale-105 transition-transform"
-                  >
-                    🎲 Be First to Mint
-                  </button>
-                </div>
-              )}
+                ))}
+              </StaggerContainer>
             </div>
-          </div>
+          ) : (
+            <div className="text-center py-10 px-6">
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-3"
+                style={{ backgroundColor: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-[var(--text-muted)]">
+                  <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="1.5" />
+                  <path d="M9 9l6 6M15 9l-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+              </div>
+              <p className="text-sm mb-1" style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}>
+                Waiting for First Mint
+              </p>
+              <p className="text-xs mb-4" style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)" }}>
+                Be the first to mint a mystery blind box.
+              </p>
+              <a href="/mint" className="btn btn-primary btn-sm">
+                Mint Now
+              </a>
+            </div>
+          )}
         </div>
       </div>
     </section>
@@ -136,67 +108,79 @@ export function LiveActivity() {
 }
 
 function MintFeedItem({ mint, index }: { mint: MintEvent; index: number }) {
-  const timeAgo = useTimeAgo(mint.timestamp);
+  const [timeAgo, setTimeAgo] = useState("");
   const quantity = Number(mint.quantity);
   const tokenIds = Array.from({ length: quantity }, (_, i) => Number(mint.startTokenId) + i);
 
-  return (
-    <div
-      className="flex items-center justify-between p-4 bg-gray-800/50 hover:bg-gray-800/70 rounded-xl border border-gray-700/50 transition-all animate-slide-in"
-      style={{ animationDelay: `${index * 50}ms` }}
-    >
-      <div className="flex items-center space-x-4 flex-1">
-        {/* Blind Box Icon */}
-        <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center flex-shrink-0">
-          <span className="text-2xl">🎁</span>
-        </div>
+  useEffect(() => {
+    const update = () => {
+      const seconds = Math.floor((Date.now() - mint.timestamp) / 1000);
+      if (seconds < 60) setTimeAgo(`${seconds}s ago`);
+      else if (seconds < 3600) setTimeAgo(`${Math.floor(seconds / 60)}m ago`);
+      else if (seconds < 86400) setTimeAgo(`${Math.floor(seconds / 3600)}h ago`);
+      else setTimeAgo(`${Math.floor(seconds / 86400)}d ago`);
+    };
+    update();
+    const interval = setInterval(update, 30000);
+    return () => clearInterval(interval);
+  }, [mint.timestamp]);
 
-        {/* Mint Info */}
+  return (
+    <motion.div
+      className="flex items-center justify-between px-4 py-3"
+      style={{ backgroundColor: "var(--bg-elevated)", borderBottom: "1px solid var(--border-subtle)" }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2, delay: index * 0.02 }}
+    >
+      <div className="flex items-center gap-2.5 flex-1 min-w-0">
+        <div
+          className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+          style={{ backgroundColor: "var(--accent-muted)", border: "1px solid var(--accent-border)" }}
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="text-[var(--accent)]">
+            <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="1.5" />
+            <path d="M12 8v8M8 12h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center space-x-2 mb-1">
-            <span className="text-white font-semibold truncate">
+          <div className="flex items-center gap-1.5">
+            <span
+              className="text-xs font-mono truncate"
+              style={{ fontFamily: "var(--font-mono)", color: "var(--text-primary)" }}
+            >
               {mint.owner.slice(0, 6)}...{mint.owner.slice(-4)}
             </span>
-            <span className="text-gray-400 text-sm">minted</span>
-            <span className="text-purple-400 font-bold">
-              {quantity} Blind Box{quantity > 1 ? "es" : ""}
+            <span className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)" }}>
+              minted
+            </span>
+            <span className="text-xs font-medium" style={{ fontFamily: "var(--font-body)", color: "var(--accent)" }}>
+              {quantity} NFT{quantity > 1 ? "s" : ""}
             </span>
           </div>
-
-          <div className="flex items-center space-x-2 text-xs text-gray-500">
-            <span>Token ID: {tokenIds.join(", ")}</span>
-            <span>•</span>
-            <span>{timeAgo}</span>
+          <div className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
+            #{tokenIds.join(", #")} · {timeAgo}
           </div>
         </div>
       </div>
 
-      {/* Transaction Link */}
-      <a
-        href={`https://etherscan.io/tx/${mint.transactionHash}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="ml-4 text-gray-400 hover:text-purple-400 transition-colors flex-shrink-0"
-        title="View on Etherscan"
-      >
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-          />
-        </svg>
-      </a>
-    </div>
+      {mint.transactionHash && (
+        <a
+          href={`https://etherscan.io/tx/${mint.transactionHash}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ml-2 flex-shrink-0 p-1 rounded"
+          style={{ color: "var(--text-muted)" }}
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path
+              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </a>
+      )}
+    </motion.div>
   );
-}
-
-function useTimeAgo(timestamp: number): string {
-  const seconds = Math.floor((Date.now() - timestamp) / 1000);
-
-  if (seconds < 60) return `${seconds}s ago`;
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-  return `${Math.floor(seconds / 86400)}d ago`;
 }

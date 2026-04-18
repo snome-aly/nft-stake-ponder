@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-// 这是一个盲盒NFT 总供应量有100个  每人最多mint 20个 每mint一个需要1个ETH费用  一次可批量mint
+// 这是一个盲盒NFT 总供应量有100个  每人最多mint 20个 每mint一个需要0.001 ETH费用  一次可批量mint
 // NFT 具有稀有度（Common 50个 / Rare 30个 / Epic 15个 / Legendary 5个），稀有度在铸造完成后揭示
 // 为了稀有度数量分配精确  使用洗牌算法分配稀有度 稀有度数组再部署的时候传入
 // 揭示稀有度需要随机公平  所以采用chainlink的VRF获得一个随机数 配合tokenId 在稀有度数组上偏移获得稀有度
@@ -39,7 +39,7 @@ contract StakableNFT is ERC721, ERC721Pausable, AccessControl, ReentrancyGuard, 
     // ============ 状态变量 ============
     uint256 public constant MAX_SUPPLY = 100; // 总供应量
     uint256 public constant MAX_PER_ADDRESS = 20; // 每地址最大铸造数
-    uint256 public constant MINT_PRICE = 1 ether; // 铸造价格
+    uint256 public constant MINT_PRICE = 0.001 ether; // 铸造价格
     uint256 public constant MAX_MULTIPLIER = 100000;
 
     uint256 public totalMinted; // 已铸造数量

@@ -1,0 +1,558 @@
+/* ============================================
+   Font Imports
+   ============================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+/**
+ * Premium NFT Gallery Design System
+ * Graphite palette with muted violet/cyan accents
+ * A restrained, portfolio-grade aesthetic
+ */
+
+/* ============================================
+   Design Tokens
+   ============================================ */
+
+:root {
+  /* Backgrounds - Layered graphite */
+  --bg-base: #18181b;
+  --bg-surface: #1f1f23;
+  --bg-elevated: #27272a;
+  --bg-card: #1f1f23;
+  --bg-overlay: rgba(0, 0, 0, 0.6);
+
+  /* Text - Warm off-white */
+  --text-primary: #fafaf9;
+  --text-secondary: #a1a1aa;
+  --text-tertiary: #71717a;
+  --text-muted: #52525b;
+
+  /* Borders */
+  --border-subtle: #27272a;
+  --border-default: #323238;
+  --border-strong: #3f3f46;
+
+  /* Accent - Muted violet */
+  --accent: #8b5cf6;
+  --accent-hover: #a78bfa;
+  --accent-muted: rgba(139, 92, 246, 0.15);
+  --accent-border: rgba(139, 92, 246, 0.3);
+
+  /* Cyan highlight */
+  --cyan: #22d3ee;
+  --cyan-muted: rgba(34, 211, 238, 0.12);
+
+  /* Status */
+  --success: #10b981;
+  --success-muted: rgba(16, 185, 129, 0.12);
+  --warning: #f59e0b;
+  --warning-muted: rgba(245, 158, 11, 0.12);
+  --error: #ef4444;
+  --error-muted: rgba(239, 68, 68, 0.12);
+
+  /* Rarity */
+  --rarity-common: #71717a;
+  --rarity-common-bg: rgba(113, 113, 122, 0.1);
+  --rarity-rare: #60a5fa;
+  --rarity-rare-bg: rgba(96, 165, 250, 0.1);
+  --rarity-epic: #a78bfa;
+  --rarity-epic-bg: rgba(167, 139, 250, 0.1);
+  --rarity-legendary: #fbbf24;
+  --rarity-legendary-bg: rgba(251, 191, 36, 0.1);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+  --shadow-accent: 0 4px 12px rgba(139, 92, 246, 0.25);
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* Typography */
+  --font-display: "Syne", system-ui, sans-serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+/* ============================================
+   Typography Scale
+   ============================================ */
+
+.text-display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.text-heading {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.text-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.text-body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: 0;
+}
+
+.text-label {
+  font-family: var(--font-body);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+}
+
+.text-caption {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 0.8125rem;
+  color: var(--text-tertiary);
+}
+
+.text-mono {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+}
+
+/* ============================================
+   Layout
+   ============================================ */
+
+.container-premium {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+}
+
+.container-wide {
+  max-width: 1400px;
+}
+
+.section-padding {
+  padding: var(--space-12) 0;
+}
+
+/* ============================================
+   Backgrounds
+   ============================================ */
+
+.bg-base {
+  background-color: var(--bg-base);
+}
+
+.bg-surface {
+  background-color: var(--bg-surface);
+}
+
+.bg-elevated {
+  background-color: var(--bg-elevated);
+}
+
+/* ============================================
+   Cards
+   ============================================ */
+
+.card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  transition: border-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
+}
+
+.card:hover {
+  border-color: var(--border-default);
+}
+
+.card-interactive:hover {
+  border-color: var(--accent-border);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+
+/* Base button */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.875rem;
+  letter-spacing: 0.01em;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 150ms ease;
+  white-space: nowrap;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Primary - Muted violet */
+.btn-primary {
+  background-color: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
+  box-shadow: var(--shadow-accent);
+}
+
+/* Secondary - Graphite surface */
+.btn-secondary {
+  background-color: var(--bg-elevated);
+  color: var(--text-primary);
+  border-color: var(--border-default);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--border-subtle);
+  border-color: var(--border-strong);
+}
+
+/* Ghost */
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: transparent;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background-color: var(--bg-elevated);
+  color: var(--text-primary);
+}
+
+/* Accent outline */
+.btn-accent {
+  background: transparent;
+  color: var(--accent);
+  border-color: var(--accent-border);
+}
+
+.btn-accent:hover:not(:disabled) {
+  background-color: var(--accent-muted);
+}
+
+/* Icon button */
+.btn-icon {
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+/* Sizes */
+.btn-sm {
+  padding: var(--space-2) var(--space-3);
+  font-size: 0.8125rem;
+}
+
+.btn-lg {
+  padding: var(--space-4) var(--space-6);
+  font-size: 1rem;
+}
+
+/* ============================================
+   Form Controls
+   ============================================ */
+
+.input {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-muted);
+}
+
+.input::placeholder {
+  color: var(--text-muted);
+}
+
+/* ============================================
+   Badges
+   ============================================ */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  border-radius: 100px;
+  border: 1px solid;
+}
+
+.badge-default {
+  background-color: var(--bg-elevated);
+  border-color: var(--border-subtle);
+  color: var(--text-secondary);
+}
+
+.badge-accent {
+  background-color: var(--accent-muted);
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
+
+.badge-success {
+  background-color: var(--success-muted);
+  border-color: rgba(16, 185, 129, 0.25);
+  color: var(--success);
+}
+
+.badge-warning {
+  background-color: var(--warning-muted);
+  border-color: rgba(245, 158, 11, 0.25);
+  color: var(--warning);
+}
+
+.badge-error {
+  background-color: var(--error-muted);
+  border-color: rgba(239, 68, 68, 0.25);
+  color: var(--error);
+}
+
+/* ============================================
+   Rarity Badges
+   ============================================ */
+
+.rarity-common {
+  background-color: var(--rarity-common-bg);
+  border-color: rgba(113, 113, 122, 0.2);
+  color: var(--rarity-common);
+}
+
+.rarity-rare {
+  background-color: var(--rarity-rare-bg);
+  border-color: rgba(96, 165, 250, 0.2);
+  color: var(--rarity-rare);
+}
+
+.rarity-epic {
+  background-color: var(--rarity-epic-bg);
+  border-color: rgba(167, 139, 250, 0.2);
+  color: var(--rarity-epic);
+}
+
+.rarity-legendary {
+  background-color: var(--rarity-legendary-bg);
+  border-color: rgba(251, 191, 36, 0.2);
+  color: var(--rarity-legendary);
+}
+
+/* ============================================
+   Progress
+   ============================================ */
+
+.progress {
+  height: 4px;
+  background-color: var(--bg-elevated);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: var(--accent);
+  border-radius: 2px;
+  transition: width 600ms ease;
+}
+
+.progress-bar-cyan {
+  background: linear-gradient(90deg, var(--accent), var(--cyan));
+}
+
+/* ============================================
+   Dividers
+   ============================================ */
+
+.divider {
+  height: 1px;
+  background-color: var(--border-subtle);
+  margin: var(--space-6) 0;
+}
+
+.divider-gradient {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-default) 20%, var(--border-default) 80%, transparent);
+}
+
+/* ============================================
+   Scrollbar
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ============================================
+   Selection
+   ============================================ */
+
+::selection {
+  background-color: var(--accent-muted);
+  color: var(--text-primary);
+}
+
+/* ============================================
+   Focus
+   ============================================ */
+
+.focus-ring:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--bg-base), 0 0 0 4px var(--accent);
+}
+
+/* ============================================
+   Animations
+   ============================================ */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out forwards;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* ============================================
+   Glass Card (use sparingly)
+   ============================================ */
+
+.glass-card {
+  background: rgba(31, 31, 35, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+}
+
+/* ============================================
+   Status Indicators
+   ============================================ */
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.status-dot-success {
+  background-color: var(--success);
+}
+
+.status-dot-warning {
+  background-color: var(--warning);
+}
+
+.status-dot-error {
+  background-color: var(--error);
+}
+
+.status-dot-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+
+.text-accent { color: var(--accent); }
+.text-cyan { color: var(--cyan); }
+.text-success { color: var(--success); }
+.text-warning { color: var(--warning); }
+.text-error { color: var(--error); }
+
+.bg-accent { background-color: var(--accent); }
+.bg-accent-muted { background-color: var(--accent-muted); }
+.bg-cyan-muted { background-color: var(--cyan-muted); }
+
+.border-accent { border-color: var(--accent-border); }
+
+.truncate-address {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+}
