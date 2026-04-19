@@ -88,23 +88,37 @@ const deployGovernance: DeployFunction = async function (hre: HardhatRuntimeEnvi
   // ============ 5. Bootstrap 投票权 ============
   console.log("\n🗳️ Bootstrap Initial Votes...");
 
-  // 给自己 mint 一些代币用于投票
-  const mintAmount = hre.ethers.parseEther("100000"); // 100k
-  const balance = await rewardToken.balanceOf(deployer);
-  if (balance < mintAmount) {
-    console.log("   + Minting 100k RWRD to deployer...");
-    // 注意：deployer 需要有 MINTER_ROLE，这通常在 03_deploy_reward_token 中设置了
-    await rewardToken.mint(deployer, mintAmount).then(tx => tx.wait());
-  }
+  const shouldBootstrapVotes =
+    hre.network.name === "hardhat" ||
+    hre.network.name === "localhost" ||
+    process.env.BOOTSTRAP_GOVERNANCE_VOTES === "true";
 
-  // 委托给自己
-  const currentVotes = await rewardToken.getVotes(deployer);
-  if (currentVotes === 0n) {
-    console.log("   + Delegating to self...");
-    await rewardToken.delegate(deployer).then(tx => tx.wait());
-    console.log("   ✅ Delegation complete");
+  if (shouldBootstrapVotes) {
+    // 本地治理烟测需要初始票权；线上测试网默认不预铸假票，避免作品集展示数据失真。
+    const mintAmount = hre.ethers.parseEther("100000"); // 100k
+    const balance = await rewardToken.balanceOf(deployer);
+    if (balance < mintAmount) {
+      console.log("   + Minting 100k RWRD to deployer for local governance testing...");
+      // 注意：deployer 需要有 MINTER_ROLE，这通常在 03_deploy_reward_token 中设置了
+      await rewardToken.mint(deployer, mintAmount).then(tx => tx.wait());
+    }
+
+    // 委托给自己
+    const currentVotes = await rewardToken.getVotes(deployer);
+    if (currentVotes === 0n) {
+      console.log("   + Delegating to self...");
+      await rewardToken.delegate(deployer).then(tx => tx.wait());
+      console.log("   ✅ Delegation complete");
+    } else {
+      console.log(`   ✅ 已有投票权: ${hre.ethers.formatEther(currentVotes)}`);
+    }
   } else {
-    console.log(`   ✅ 已有投票权: ${hre.ethers.formatEther(currentVotes)}`);
+    console.log("   ↳ 跳过线上网络初始 100k RWRD 投票权预铸");
+    console.log("   ↳ 如需演示治理，可设置 BOOTSTRAP_GOVERNANCE_VOTES=true 后重新部署");
+    const currentVotes = await rewardToken.getVotes(deployer);
+    if (currentVotes > 0n) {
+      console.log(`   ✅ 当前已有投票权: ${hre.ethers.formatEther(currentVotes)}`);
+    }
   }
 
   console.log("\n🎉 Governance 部署与组装完成！");

@@ -23,41 +23,76 @@ export type Proposal = {
   targets: string[];
   values: string[];
   calldatas: string[];
-  status?: string; // Derived client-side status
+  status?: string;
+  forVotes?: string;
+  againstVotes?: string;
+  abstainVotes?: string;
+  quorumVotes?: string;
 };
 
 const StatusBadge = ({ status }: { status: string }) => {
-  let styleClass = "bg-gray-500/20 text-gray-400 border-gray-500/30";
+  let style: React.CSSProperties = {
+    backgroundColor: "rgba(113, 113, 122, 0.2)",
+    color: "#a1a1aa",
+    borderColor: "rgba(113, 113, 122, 0.3)",
+  };
 
   switch (status) {
     case "Active":
-      styleClass = "bg-blue-500/20 text-blue-300 border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.4)] animate-pulse";
+      style = {
+        backgroundColor: "rgba(59, 130, 246, 0.2)",
+        color: "#93c5fd",
+        borderColor: "rgba(59, 130, 246, 0.4)",
+        boxShadow: "0 0 12px rgba(59, 130, 246, 0.3)",
+      };
       break;
     case "Succeeded":
-      styleClass = "bg-green-500/20 text-green-400 border-green-500/50 shadow-[0_0_10px_rgba(74,222,128,0.2)]";
+      style = {
+        backgroundColor: "rgba(16, 185, 129, 0.2)",
+        color: "#6ee7b7",
+        borderColor: "rgba(16, 185, 129, 0.4)",
+        boxShadow: "0 0 8px rgba(16, 185, 129, 0.15)",
+      };
       break;
     case "Queued":
-      styleClass = "bg-orange-500/20 text-orange-400 border-orange-500/50 shadow-[0_0_10px_rgba(251,146,60,0.2)]";
+      style = {
+        backgroundColor: "rgba(251, 146, 60, 0.2)",
+        color: "#fdba74",
+        borderColor: "rgba(251, 146, 60, 0.4)",
+        boxShadow: "0 0 8px rgba(251, 146, 60, 0.15)",
+      };
       break;
     case "Executed":
-      styleClass = "bg-purple-500/20 text-purple-400 border-purple-500/50 shadow-[0_0_10px_rgba(168,85,247,0.2)]";
+      style = {
+        backgroundColor: "rgba(139, 92, 246, 0.2)",
+        color: "#c4b5fd",
+        borderColor: "rgba(139, 92, 246, 0.4)",
+        boxShadow: "0 0 8px rgba(139, 92, 246, 0.15)",
+      };
       break;
     case "Defeated":
-      styleClass = "bg-red-500/20 text-red-500 border-red-500/50";
+      style = {
+        backgroundColor: "rgba(239, 68, 68, 0.2)",
+        color: "#fca5a5",
+        borderColor: "rgba(239, 68, 68, 0.4)",
+      };
       break;
     case "Canceled":
-      styleClass = "bg-gray-500/20 text-gray-500 border-gray-500/50";
+      style = {
+        backgroundColor: "rgba(113, 113, 122, 0.2)",
+        color: "#a1a1aa",
+        borderColor: "rgba(113, 113, 122, 0.4)",
+      };
       break;
   }
 
   return (
-    <div className={`px-2 py-0.5 rounded border text-[10px] font-black tracking-widest uppercase ${styleClass}`}>
+    <div className="px-2 py-0.5 rounded border text-[10px] font-black tracking-wider uppercase shrink-0" style={style}>
       {status}
     </div>
   );
 };
 
-// Define action types for type safety
 export type ProposalAction = { type: "vote"; support: 0 | 1 | 2 } | { type: "queue" } | { type: "execute" };
 
 export const ProposalCard = ({
@@ -67,84 +102,153 @@ export const ProposalCard = ({
   proposal: Proposal;
   onAction: (action: ProposalAction) => void;
 }) => {
-  // We now use the Derived Status calculated in page.tsx
-  // This eliminates 1 RPC call per card! 🚀
   const stateMap = ["Pending", "Active", "Canceled", "Defeated", "Succeeded", "Queued", "Expired", "Executed"];
   const realStatus = proposal.status || stateMap[proposal.state] || "Unknown";
 
-  // Args construction moved to page.tsx to keep Card pure UI
+  const forVotes = Number(BigInt(proposal.forVotes || 0));
+  const againstVotes = Number(BigInt(proposal.againstVotes || 0));
+  const abstainVotes = Number(BigInt(proposal.abstainVotes || 0));
+  const totalVotes = forVotes + againstVotes + abstainVotes;
+  const forPercent = totalVotes > 0 ? (forVotes / totalVotes) * 100 : 0;
+  const againstPercent = totalVotes > 0 ? (againstVotes / totalVotes) * 100 : 0;
+
+  const formatCompact = (n: number) => {
+    if (n === 0) return "0";
+    if (n >= 1e24) return `${(n / 1e24).toFixed(1)}Y`;
+    if (n >= 1e21) return `${(n / 1e21).toFixed(1)}Z`;
+    if (n >= 1e18) return `${(n / 1e18).toFixed(1)}E`;
+    if (n >= 1e15) return `${(n / 1e15).toFixed(1)}P`;
+    if (n >= 1e12) return `${(n / 1e12).toFixed(1)}T`;
+    if (n >= 1e9) return `${(n / 1e9).toFixed(1)}B`;
+    if (n >= 1e6) return `${(n / 1e6).toFixed(1)}M`;
+    if (n >= 1e3) return `${(n / 1e3).toFixed(1)}K`;
+    return n.toFixed(0);
+  };
+
+  const showVoteStats = ["Active", "Succeeded", "Defeated", "Queued", "Executed"].includes(realStatus);
 
   return (
-    <div className="card glass-medium shadow-md mb-6 border border-white/10 transition-all hover:shadow-xl hover:-translate-y-1">
-      <div className="card-body p-6">
-        {/* Header: Status & ID */}
-        <div className="flex justify-between items-start mb-4">
-          <div className="flex flex-col">
-            <span className="text-xs font-mono opacity-50 mb-1">
-              ID: {proposal.id.slice(0, 6)}...{proposal.id.slice(-4)}
-            </span>
-            <h3 className="font-bold text-xl leading-tight">{proposal.description}</h3>
+    <div
+      className="rounded-lg transition-all duration-300 hover:shadow-md"
+      style={{
+        backgroundColor: "var(--bg-surface)",
+        border: "1px solid var(--border-default)",
+      }}
+    >
+      <div className="p-3 flex flex-col gap-2">
+        {/* Header Row */}
+        <div className="flex justify-between items-start gap-2">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              <StatusBadge status={realStatus} />
+              <span className="text-[10px] font-mono" style={{ color: "var(--text-muted)" }}>
+                {proposal.id.slice(0, 6)}...{proposal.id.slice(-4)}
+              </span>
+            </div>
+            <h3
+              className="font-bold text-sm leading-snug truncate"
+              style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
+              title={proposal.description}
+            >
+              {proposal.description}
+            </h3>
           </div>
-          <StatusBadge status={realStatus} />
         </div>
 
-        {/* Meta Info */}
-        <div className="flex flex-wrap gap-4 text-sm opacity-70 mb-6 bg-base-100/30 rounded-lg p-3 backdrop-blur-sm">
+        {/* Meta Row */}
+        <div
+          className="flex items-center gap-3 text-[11px]"
+          style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)" }}
+        >
           <div className="flex items-center gap-1">
-            <span className="font-semibold">Proposer:</span>
             <Address address={proposal.proposer} size="xs" />
           </div>
-          <div className="flex items-center gap-1" title="Voting Period">
-            <CalendarIcon className="w-4 h-4" />
+          <div className="flex items-center gap-1">
+            <CalendarIcon className="w-3 h-3" style={{ color: "var(--text-muted)" }} />
             <span>
-              Block {proposal.startBlock} - {proposal.endBlock}
+              {Number(proposal.startBlock).toLocaleString()}-{Number(proposal.endBlock).toLocaleString()}
             </span>
           </div>
-        </div>
-
-        {/* Action Bar */}
-        <div className="card-actions justify-end border-t border-base-200 pt-4 gap-2">
-          {realStatus === "Active" && (
-            <>
-              <button
-                className="btn btn-success btn-sm text-white gap-2"
-                onClick={() => onAction({ type: "vote", support: 1 })}
-              >
-                <CheckCircleIcon className="w-4 h-4" />
-                Support
-              </button>
-              <button
-                className="btn btn-error btn-sm text-white gap-2"
-                onClick={() => onAction({ type: "vote", support: 0 })}
-              >
-                <XCircleIcon className="w-4 h-4" />
-                Against
-              </button>
-            </>
-          )}
-
-          {realStatus === "Succeeded" && (
-            <button className="btn btn-warning btn-sm gap-2" onClick={() => onAction({ type: "queue" })}>
-              <QueueListIcon className="w-4 h-4" />
-              Queue
-            </button>
-          )}
-
-          {realStatus === "Queued" && (
-            <button className="btn btn-primary btn-sm gap-2" onClick={() => onAction({ type: "execute" })}>
-              <PlayCircleIcon className="w-4 h-4" />
-              Execute
-            </button>
-          )}
-
-          {/* Pending State or Others */}
           {realStatus === "Pending" && (
-            <div className="flex items-center gap-2 text-warning text-sm">
-              <ClockIcon className="w-4 h-4" />
-              <span>Voting starts at block {proposal.startBlock}</span>
+            <div className="flex items-center gap-1" style={{ color: "var(--warning)" }}>
+              <ClockIcon className="w-3 h-3" />
+              <span>Starts block {Number(proposal.startBlock).toLocaleString()}</span>
             </div>
           )}
         </div>
+
+        {/* Vote Stats */}
+        {showVoteStats && (
+          <div className="flex items-center gap-3">
+            <div
+              className="flex-1 flex h-1.5 rounded-full overflow-hidden"
+              style={{ backgroundColor: "var(--bg-base)" }}
+            >
+              {forPercent > 0 && <div style={{ width: `${forPercent}%`, backgroundColor: "var(--success)" }} />}
+              {againstPercent > 0 && <div style={{ width: `${againstPercent}%`, backgroundColor: "var(--error)" }} />}
+            </div>
+            <div className="flex items-center gap-1.5 text-[10px]" style={{ fontFamily: "var(--font-body)" }}>
+              <span style={{ color: "var(--success)" }}>✓</span>
+              <span className="font-semibold" style={{ color: "var(--text-secondary)" }}>
+                {formatCompact(forVotes)}
+              </span>
+              <span style={{ color: "var(--error)" }}>✗</span>
+              <span className="font-semibold" style={{ color: "var(--text-secondary)" }}>
+                {formatCompact(againstVotes)}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Action Row */}
+        {realStatus === "Active" && (
+          <div className="flex items-center justify-end gap-1.5">
+            <button
+              className="btn btn-xs gap-1 text-white"
+              style={{ backgroundColor: "var(--success)", border: "none", fontFamily: "var(--font-body)" }}
+              onClick={() => onAction({ type: "vote", support: 1 })}
+            >
+              <CheckCircleIcon className="w-3 h-3" />
+              For
+            </button>
+            <button
+              className="btn btn-xs gap-1 text-white"
+              style={{ backgroundColor: "var(--error)", border: "none", fontFamily: "var(--font-body)" }}
+              onClick={() => onAction({ type: "vote", support: 0 })}
+            >
+              <XCircleIcon className="w-3 h-3" />
+              Against
+            </button>
+          </div>
+        )}
+        {realStatus === "Succeeded" && (
+          <div className="flex items-center justify-end">
+            <button
+              className="btn btn-xs gap-1 text-white"
+              style={{ backgroundColor: "var(--warning)", border: "none", fontFamily: "var(--font-body)" }}
+              onClick={() => onAction({ type: "queue" })}
+            >
+              <QueueListIcon className="w-3 h-3" />
+              Queue
+            </button>
+          </div>
+        )}
+        {realStatus === "Queued" && (
+          <div className="flex items-center justify-end">
+            <button
+              className="btn btn-xs gap-1 text-white"
+              style={{
+                background: "linear-gradient(135deg, var(--accent), var(--cyan))",
+                border: "none",
+                fontFamily: "var(--font-body)",
+              }}
+              onClick={() => onAction({ type: "execute" })}
+            >
+              <PlayCircleIcon className="w-3 h-3" />
+              Execute
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

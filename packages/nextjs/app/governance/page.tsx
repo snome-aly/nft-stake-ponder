@@ -4,13 +4,14 @@ import { useEffect, useMemo, useState } from "react";
 import { CreateProposal } from "./_components/CreateProposal";
 import { ProposalAction, ProposalCard } from "./_components/ProposalCard";
 import { VotingPower } from "./_components/VotingPower";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { gql, request } from "graphql-request";
 import type { NextPage } from "next";
 import { keccak256, toBytes } from "viem";
 import { useBlockNumber } from "wagmi";
 import { ChevronLeftIcon, ChevronRightIcon, FunnelIcon } from "@heroicons/react/24/outline";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
+import { notification } from "~~/utils/scaffold-eth";
 
 const STATUS_OPTIONS = ["All", "Pending", "Active", "Succeeded", "Defeated", "Queued", "Executed", "Canceled"];
 
@@ -56,6 +57,7 @@ const GovernancePage: NextPage = () => {
   const [statusFilter, setStatusFilter] = useState("All");
   const { data: currentBlock } = useBlockNumber({ watch: true });
   const [filterBlock, setFilterBlock] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (currentBlock && !filterBlock) setFilterBlock(currentBlock.toString());
@@ -173,25 +175,49 @@ const GovernancePage: NextPage = () => {
   const { writeContractAsync } = useScaffoldWriteContract({ contractName: "MyGovernor" });
 
   const handleProposalAction = async (proposal: any, action: ProposalAction) => {
-    switch (action.type) {
-      case "vote":
-        await writeContractAsync({
-          functionName: "castVote",
-          args: [BigInt(proposal.id), action.support],
-        });
-        break;
-      case "queue":
-        await writeContractAsync({
-          functionName: "queue",
-          args: getProposalArgs(proposal),
-        });
-        break;
-      case "execute":
-        await writeContractAsync({
-          functionName: "execute",
-          args: getProposalArgs(proposal),
-        });
-        break;
+    try {
+      switch (action.type) {
+        case "vote": {
+          await writeContractAsync({
+            functionName: "castVote",
+            args: [BigInt(proposal.id), action.support],
+          });
+          queryClient.invalidateQueries({ queryKey: ["proposals"] });
+          break;
+        }
+        case "queue": {
+          await writeContractAsync({
+            functionName: "queue",
+            args: getProposalArgs(proposal),
+          });
+          queryClient.invalidateQueries({ queryKey: ["proposals"] });
+          break;
+        }
+        case "execute": {
+          await writeContractAsync({
+            functionName: "execute",
+            args: getProposalArgs(proposal),
+          });
+          queryClient.invalidateQueries({ queryKey: ["proposals"] });
+          break;
+        }
+      }
+    } catch (err: any) {
+      // Parse error message for user-friendly feedback
+      const errMsg = err?.reason || err?.message || "";
+      if (errMsg.includes("GovernorAlreadyCastVote")) {
+        notification.error("You have already voted on this proposal.");
+      } else if (errMsg.includes("GovernorNotActive")) {
+        notification.error("This proposal is not currently active for voting.");
+      } else if (errMsg.includes("Queueable")) {
+        notification.error("This proposal has already been queued.");
+      } else if (errMsg.includes("AlreadyExecuted")) {
+        notification.error("This proposal has already been executed.");
+      } else if (errMsg.includes("BelowProposalThreshold")) {
+        notification.error("You do not have enough voting power to perform this action.");
+      } else {
+        notification.error("Transaction failed. Please try again.");
+      }
     }
   };
 
@@ -204,71 +230,98 @@ const GovernancePage: NextPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-base-300 bg-grid-pattern relative overflow-hidden">
-      {/* Background Decor */}
-      <div className="absolute -top-32 -left-32 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float-slow"></div>
-      <div className="absolute top-1/2 -right-32 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float"></div>
+    <div
+      className="min-h-screen relative overflow-hidden"
+      style={{
+        backgroundColor: "var(--bg-base)",
+        backgroundImage: `radial-gradient(ellipse at 80% 20%, rgba(139,92,246,0.06) 0%, transparent 50%), radial-gradient(ellipse at 20% 80%, rgba(34,211,238,0.03) 0%, transparent 50%)`,
+      }}
+    >
+      <div
+        className="absolute inset-0 opacity-[0.02]"
+        style={{
+          backgroundImage: `linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)`,
+          backgroundSize: "60px 60px",
+        }}
+      />
 
-      <div className="container mx-auto px-4 py-12 relative z-10">
-        <div className="text-center mb-12 animate-slide-in-up">
-          <h1 className="text-5xl font-black mb-4 tracking-tight">
-            DAO <span className="text-gradient-purple">Governance</span>
+      <div className="container mx-auto px-4 pt-8 pb-10 relative z-10">
+        <div className="mb-8 animate-slide-in-up text-center">
+          <h1 className="mb-3" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
+            <span className="block text-4xl font-bold mb-1" style={{ color: "var(--text-primary)", lineHeight: 1.1 }}>
+              DAO Governance
+            </span>
           </h1>
-          <p className="text-lg opacity-60 max-w-4xl mx-auto font-light">
+          <p
+            className="mx-auto max-w-3xl text-center text-sm"
+            style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)", lineHeight: 1.7 }}
+          >
             Participate in the decision-making process. Vote on proposals and shape the future of the protocol.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          {/* Left Column: Dashboard */}
-          <div className="lg:col-span-4 space-y-8 animate-slide-in">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-1 h-8 bg-purple-500 rounded-full"></div>
-              <h2 className="text-2xl font-bold tracking-tight">Dashboard</h2>
+        {/* Section Headers */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 mb-6">
+          <div className="lg:col-span-4 flex items-center gap-3">
+            <div className="w-1.5 h-6 rounded-full" style={{ backgroundColor: "var(--accent)" }} />
+            <h2
+              className="text-lg font-semibold tracking-tight"
+              style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
+            >
+              Dashboard
+            </h2>
+          </div>
+          <div className="lg:col-span-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
+            <div className="flex items-center gap-3">
+              <div className="w-1.5 h-6 rounded-full" style={{ backgroundColor: "var(--cyan)" }} />
+              <h2
+                className="text-lg font-semibold tracking-tight"
+                style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
+              >
+                Proposals
+              </h2>
             </div>
-            <div className="glass-light rounded-2xl p-1 shadow-lg ring-1 ring-white/10">
-              <VotingPower />
-            </div>
-            <div className="glass-light rounded-2xl p-1 shadow-lg ring-1 ring-white/10">
-              <CreateProposal />
+            <div className="flex items-center gap-2">
+              <FunnelIcon className="w-4 h-4" style={{ color: "var(--text-tertiary)" }} />
+              <select
+                className="select select-sm select-bordered text-xs font-semibold governance-select"
+                style={{
+                  fontFamily: "var(--font-body)",
+                  backgroundColor: "var(--bg-elevated)",
+                  borderColor: "var(--border-default)",
+                  color: "var(--text-secondary)",
+                }}
+                value={statusFilter}
+                onChange={e => handleFilterChange(e.target.value)}
+              >
+                {STATUS_OPTIONS.map(s => (
+                  <option key={s} value={s} style={{ backgroundColor: "var(--bg-elevated)" }}>
+                    {s}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
+        </div>
 
-          {/* Right Column: Proposals */}
+        {/* Content Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+          {/* Left Column: Dashboard Cards */}
+          <div className="lg:col-span-4 space-y-6 animate-slide-in">
+            <VotingPower />
+            <CreateProposal />
+          </div>
+
+          {/* Right Column: Proposal List */}
           <div className="lg:col-span-8 animate-slide-in" style={{ animationDelay: "0.1s" }}>
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-              <div className="flex items-center gap-3">
-                <div className="w-1 h-8 bg-blue-500 rounded-full"></div>
-                <h2 className="text-2xl font-bold tracking-tight">Proposals</h2>
-              </div>
-
-              {/* Filter Dropdown */}
-              <div className="flex items-center gap-2">
-                <FunnelIcon className="w-5 h-5 text-base-content/50" />
-                <select
-                  className="select select-sm select-bordered glass-medium w-full max-w-xs text-xs font-semibold focus:ring-2 focus:ring-purple-500"
-                  value={statusFilter}
-                  onChange={e => handleFilterChange(e.target.value)}
-                >
-                  {STATUS_OPTIONS.map(s => (
-                    <option key={s} value={s}>
-                      {s}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
             {isPonderLoading && !proposals.length ? (
-              <div className="flex justify-center py-20 min-h-[600px]">
+              <div className="flex justify-center py-20 min-h-[400px]">
                 <div className="loading loading-ring loading-lg text-primary"></div>
               </div>
             ) : (
-              <div className="space-y-6 min-h-[600px]">
+              <div className="space-y-4 min-h-[400px]">
                 {processedProposals.map((p: any) => (
-                  <div key={p.id} className="transform transition-all duration-300 hover:-translate-y-1">
-                    <ProposalCard proposal={p} onAction={action => handleProposalAction(p, action)} />
-                  </div>
+                  <ProposalCard key={p.id} proposal={p} onAction={action => handleProposalAction(p, action)} />
                 ))}
 
                 {!processedProposals.length && !isPonderLoading && (

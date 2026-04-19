@@ -15,14 +15,13 @@ export const CreateProposal = () => {
   const [rewardValue, setRewardValue] = useState("");
   const [description, setDescription] = useState("");
 
-  const { data: poolInfo } = useDeployedContractInfo("NFTStakingPool");
-  const { writeContractAsync: proposeAsync, isMining } = useScaffoldWriteContract("MyGovernor");
+  const { data: poolInfo } = useDeployedContractInfo({ contractName: "NFTStakingPool" });
+  const { writeContractAsync: proposeAsync, isMining } = useScaffoldWriteContract({ contractName: "MyGovernor" });
 
   const handlePropose = async () => {
     if (!poolInfo || !rewardValue || !description) return;
 
     try {
-      // Encode setBaseReward(uint256)
       const calldata = encodeFunctionData({
         abi: poolInfo.abi,
         functionName: "setBaseReward",
@@ -31,15 +30,9 @@ export const CreateProposal = () => {
 
       await proposeAsync({
         functionName: "propose",
-        args: [
-          [poolInfo.address], // targets
-          [0n], // values
-          [calldata], // calldatas
-          description, // description
-        ],
+        args: [[poolInfo.address], [0n], [calldata], description],
       });
 
-      // Clear inputs
       setRewardValue("");
       setDescription("");
     } catch (e) {
@@ -48,81 +41,159 @@ export const CreateProposal = () => {
   };
 
   return (
-    <div className="card glass-medium shadow-xl mb-6 border-t-4 border-primary">
-      <div className="card-body">
-        <div className="flex items-center gap-2 mb-4">
-          <PlusCircleIcon className="w-8 h-8 text-purple-500 -mt-1" />
-          <h2 className="card-title text-2xl">Create Proposal</h2>
+    <div
+      className="rounded-xl shadow-lg"
+      style={{
+        backgroundColor: "var(--bg-surface)",
+        border: "1px solid var(--border-default)",
+        borderTop: "2px solid var(--accent)",
+      }}
+    >
+      <div className="card-body p-5 gap-4">
+        <div className="flex items-center gap-2.5">
+          <PlusCircleIcon className="w-6 h-6 shrink-0" style={{ color: "var(--accent)" }} />
+          <h2
+            className="text-base font-semibold tracking-wide"
+            style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
+          >
+            Create Proposal
+          </h2>
         </div>
 
-        <p className="text-sm opacity-60 mb-6">
-          Submit a new proposal to update the Staking Pool configuration. Currently supports updating the base reward
-          rate.
+        <p
+          className="text-sm leading-relaxed px-1"
+          style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)" }}
+        >
+          Submit a new proposal to update the Staking Pool configuration. Supports updating the base reward rate.
         </p>
 
         {/* Target Information */}
         {poolInfo && (
-          <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 text-xs font-mono text-blue-300 flex items-center gap-2">
-            <CodeBracketIcon className="w-4 h-4 text-blue-400" />
-            Target: <span className="opacity-90">{poolInfo.address}</span>
+          <div
+            className="rounded-lg p-3"
+            style={{
+              border: "1px solid rgba(139, 92, 246, 0.2)",
+              backgroundColor: "rgba(139, 92, 246, 0.08)",
+            }}
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <CodeBracketIcon className="h-4 w-4 shrink-0" style={{ color: "var(--accent)" }} />
+              <span
+                className="text-[11px] font-bold uppercase tracking-wider"
+                style={{ color: "var(--accent)", fontFamily: "var(--font-body)" }}
+              >
+                Target
+              </span>
+            </div>
+            <div
+              className="font-mono text-xs break-words leading-relaxed rounded px-2.5 py-2"
+              style={{
+                backgroundColor: "rgba(0,0,0,0.3)",
+                color: "var(--text-secondary)",
+                fontFamily: "var(--font-mono)",
+              }}
+            >
+              {poolInfo.address}
+            </div>
           </div>
         )}
 
-        <div className="form-control w-full group">
-          <label className="label">
-            <div className="label-text flex items-center gap-2 font-semibold">
-              <CurrencyDollarIcon className="w-4 h-4" />
+        <div className="form-control gap-1.5">
+          <label className="label px-1 py-0">
+            <div
+              className="label-text flex items-center gap-1.5 text-sm font-semibold"
+              style={{ fontFamily: "var(--font-body)", color: "var(--text-secondary)" }}
+            >
+              <CurrencyDollarIcon className="w-3.5 h-3.5" style={{ color: "var(--success)" }} />
               New Base Reward
             </div>
+            <span
+              className="label-text-alt text-[11px]"
+              style={{ color: "var(--text-muted)", fontFamily: "var(--font-body)" }}
+            >
+              Tokens per second
+            </span>
           </label>
           <input
             type="number"
             placeholder="e.g. 500"
-            className="input input-bordered w-full transition-all rounded-lg [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            className="input input-bordered input-sm w-full governance-input transition-all rounded-lg [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none]"
+            style={{
+              backgroundColor: "var(--bg-elevated)",
+              borderColor: "var(--border-default)",
+              color: "var(--text-primary)",
+              fontFamily: "var(--font-body)",
+            }}
             value={rewardValue}
             onChange={e => setRewardValue(e.target.value)}
           />
-          <label className="label">
-            <span className="label-text-alt opacity-50">Units: Tokens per second (scaled)</span>
-          </label>
         </div>
 
-        <div className="form-control w-full mt-6">
-          <label className="label">
-            <div className="label-text flex items-center gap-2 font-semibold text-lg">
-              <DocumentTextIcon className="w-5 h-5 text-pink-500" />
+        <div className="form-control gap-1.5">
+          <label className="label px-1 py-0">
+            <div
+              className="label-text flex items-center gap-1.5 text-sm font-semibold"
+              style={{ fontFamily: "var(--font-body)", color: "var(--text-secondary)" }}
+            >
+              <DocumentTextIcon className="w-3.5 h-3.5" style={{ color: "var(--rarity-epic)" }} />
               Description
             </div>
-            <span className="badge badge-ghost badge-sm font-mono opacity-60">Markdown Supported</span>
+            <span
+              className="badge badge-ghost badge-xs font-mono"
+              style={{ color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}
+            >
+              Markdown
+            </span>
           </label>
           <textarea
-            className="textarea textarea-bordered h-48 w-full transition-all text-base leading-relaxed p-4 shadow-sm rounded-lg"
-            placeholder="# Proposal Title&#10;&#10;**Summary**&#10;Describe the reason for this update...&#10;&#10;**Motivation**&#10;Why now?"
+            className="textarea textarea-bordered w-full governance-input transition-all text-sm leading-relaxed p-3 rounded-lg min-h-[8rem] max-h-48 resize-y"
+            style={{
+              backgroundColor: "var(--bg-elevated)",
+              borderColor: "var(--border-default)",
+              color: "var(--text-primary)",
+              fontFamily: "var(--font-body)",
+            }}
+            placeholder={
+              "# Proposal Title\n\n**Summary**\nDescribe the reason for this update...\n\n**Motivation**\nWhy now?"
+            }
             value={description}
             onChange={e => setDescription(e.target.value)}
           ></textarea>
-          <label className="label">
-            <span className="label-text-alt opacity-50 flex items-center gap-1">
-              <span className="text-warning">*</span> Be specific about the changes.
+          <label className="label px-1 py-0">
+            <span
+              className="label-text-alt text-[11px] flex items-center gap-1"
+              style={{ color: "var(--warning)", fontFamily: "var(--font-body)" }}
+            >
+              <span>*</span> Be specific about the changes.
             </span>
-            <span className="label-text-alt opacity-40 font-mono">{description.length} chars</span>
+            <span
+              className="label-text-alt text-[11px] font-mono"
+              style={{ color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}
+            >
+              {description.length} chars
+            </span>
           </label>
         </div>
 
-        <div className="card-actions justify-end mt-8">
+        <div className="card-actions justify-end pt-2">
           <button
-            className="btn btn-primary btn-wide gap-2"
+            className="btn btn-sm gap-2 px-5 text-white"
+            style={{
+              background: "linear-gradient(135deg, var(--accent), var(--cyan))",
+              border: "none",
+              fontFamily: "var(--font-body)",
+            }}
             onClick={handlePropose}
             disabled={!poolInfo || !rewardValue || !description || isMining}
           >
             {isMining ? (
               <>
-                <span className="loading loading-spinner"></span>
+                <span className="loading loading-spinner loading-xs"></span>
                 <span>Proposing...</span>
               </>
             ) : (
               <>
-                <PaperAirplaneIcon className="w-5 h-5" />
+                <PaperAirplaneIcon className="w-4 h-4" />
                 <span>Submit Proposal</span>
               </>
             )}
