@@ -5,9 +5,9 @@
 import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
 const deployedContracts = {
-  31337: {
+  11155111: {
     MyGovernor: {
-      address: "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+      address: "0xd28990d7a5e83C38fCAcEC3eE1da5f81AD53B7EB",
       abi: [
         {
           inputs: [
@@ -1718,10 +1718,10 @@ const deployedContracts = {
         timelock: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
         updateTimelock: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
       },
-      deployedOnBlock: 14,
+      deployedOnBlock: 10692050,
     },
     NFTStakingPool: {
-      address: "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+      address: "0xC498064677650C0E9d1dbfD9B73Ed553FB1cC1a0",
       abi: [
         {
           inputs: [
@@ -2312,10 +2312,10 @@ const deployedContracts = {
         transferOwnership: "@openzeppelin/contracts/access/Ownable.sol",
         paused: "@openzeppelin/contracts/utils/Pausable.sol",
       },
-      deployedOnBlock: 9,
+      deployedOnBlock: 10692047,
     },
     RewardToken: {
-      address: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+      address: "0x4A42d30B419a86Ec3e1806C18665f9c4483F75D8",
       abi: [
         {
           inputs: [],
@@ -3608,10 +3608,10 @@ const deployedContracts = {
         revokeRole: "@openzeppelin/contracts/access/AccessControl.sol",
         supportsInterface: "@openzeppelin/contracts/access/AccessControl.sol",
       },
-      deployedOnBlock: 6,
+      deployedOnBlock: 10692045,
     },
     StakableNFT: {
-      address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      address: "0xFD39Cf65d3f8d2A920ED7E576b9022c820C19269",
       abi: [
         {
           inputs: [],
@@ -5043,10 +5043,10 @@ const deployedContracts = {
         revokeRole: "@openzeppelin/contracts/access/AccessControl.sol",
         eip712Domain: "@openzeppelin/contracts/utils/cryptography/EIP712.sol",
       },
-      deployedOnBlock: 1,
+      deployedOnBlock: 10692040,
     },
     Timelock: {
-      address: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+      address: "0xE321edF1d55AE9D2aB41872b88487CD19f32A2e1",
       abi: [
         {
           inputs: [
@@ -6075,7 +6075,7 @@ const deployedContracts = {
         supportsInterface: "@openzeppelin/contracts/governance/TimelockController.sol",
         updateDelay: "@openzeppelin/contracts/governance/TimelockController.sol",
       },
-      deployedOnBlock: 12,
+      deployedOnBlock: 10692049,
     },
   },
 } as const;

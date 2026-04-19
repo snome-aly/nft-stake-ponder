@@ -1,0 +1,1005 @@
+{
+  "address": "0xC498064677650C0E9d1dbfD9B73Ed553FB1cC1a0",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_stakableNFT",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_rewardToken",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "EnforcedPause",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ExpectedPause",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableInvalidOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableUnauthorizedAccount",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ReentrancyGuardReentrantCall",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "oldReward",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "newReward",
+          "type": "uint256"
+        }
+      ],
+      "name": "BaseRewardUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "Paused",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "RewardClaimed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "Staked",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "Unpaused",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "reward",
+          "type": "uint256"
+        }
+      ],
+      "name": "Unstaked",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "baseRewardPerSecond",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "tokenIds",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "batchCalculatePendingReward",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "rewards",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "tokenIds",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "batchClaimReward",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "tokenIds",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "batchStake",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "tokenIds",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256",
+          "name": "deadline",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint8[]",
+          "name": "vs",
+          "type": "uint8[]"
+        },
+        {
+          "internalType": "bytes32[]",
+          "name": "rs",
+          "type": "bytes32[]"
+        },
+        {
+          "internalType": "bytes32[]",
+          "name": "ss",
+          "type": "bytes32[]"
+        }
+      ],
+      "name": "batchStakeWithPermit",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "calculatePendingReward",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "claimReward",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getStakeInfo",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "stakedAt",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "lastClaimTime",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct NFTStakingPool.StakeInfo",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getStaker",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "isStaked",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "pause",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "paused",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "rewardToken",
+      "outputs": [
+        {
+          "internalType": "contract IRewardToken",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "newReward",
+          "type": "uint256"
+        }
+      ],
+      "name": "setBaseReward",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "stakableNFT",
+      "outputs": [
+        {
+          "internalType": "contract IStakableNFT",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "stake",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "stakeInfo",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "stakedAt",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "lastClaimTime",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "deadline",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint8",
+          "name": "v",
+          "type": "uint8"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "r",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "s",
+          "type": "bytes32"
+        }
+      ],
+      "name": "stakeWithPermit",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "unpause",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "unstake",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x54f5d1e1c1d01a1190014a0e7be72926081ed21a8bb2ae95fd1c0192d8fa0bf8",
+  "receipt": {
+    "to": null,
+    "from": "0x979F0e0a791724DbFAA2560639Ed9eb805B40dFE",
+    "contractAddress": "0xC498064677650C0E9d1dbfD9B73Ed553FB1cC1a0",
+    "transactionIndex": 74,
+    "gasUsed": "1288977",
+    "logsBloom": "0x0000000000000000000000000000000000000000000000000080000020000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000002000000000000000000080000000000000000000000000000000040000000000000000000000000000c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000800000000020000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x04cc3c8943f4dedab8091b078cb0b74826d4c1cbb72e862d202e0b804655404c",
+    "transactionHash": "0x54f5d1e1c1d01a1190014a0e7be72926081ed21a8bb2ae95fd1c0192d8fa0bf8",
+    "logs": [
+      {
+        "transactionIndex": 74,
+        "blockNumber": 10692047,
+        "transactionHash": "0x54f5d1e1c1d01a1190014a0e7be72926081ed21a8bb2ae95fd1c0192d8fa0bf8",
+        "address": "0xC498064677650C0E9d1dbfD9B73Ed553FB1cC1a0",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x000000000000000000000000979f0e0a791724dbfaa2560639ed9eb805b40dfe"
+        ],
+        "data": "0x",
+        "logIndex": 504,
+        "blockHash": "0x04cc3c8943f4dedab8091b078cb0b74826d4c1cbb72e862d202e0b804655404c"
+      }
+    ],
+    "blockNumber": 10692047,
+    "cumulativeGasUsed": "18981026",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0xFD39Cf65d3f8d2A920ED7E576b9022c820C19269",
+    "0x4A42d30B419a86Ec3e1806C18665f9c4483F75D8"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "212ac44f9c87fd3905153b7ded1a9ab9",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.24+commit.e11b9ed9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_stakableNFT\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_rewardToken\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"EnforcedPause\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ExpectedPause\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ReentrancyGuardReentrantCall\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"oldReward\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"newReward\",\"type\":\"uint256\"}],\"name\":\"BaseRewardUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"Paused\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"RewardClaimed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"Staked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"Unpaused\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"reward\",\"type\":\"uint256\"}],\"name\":\"Unstaked\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"baseRewardPerSecond\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"}],\"name\":\"batchCalculatePendingReward\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"rewards\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"}],\"name\":\"batchClaimReward\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"}],\"name\":\"batchStake\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256\",\"name\":\"deadline\",\"type\":\"uint256\"},{\"internalType\":\"uint8[]\",\"name\":\"vs\",\"type\":\"uint8[]\"},{\"internalType\":\"bytes32[]\",\"name\":\"rs\",\"type\":\"bytes32[]\"},{\"internalType\":\"bytes32[]\",\"name\":\"ss\",\"type\":\"bytes32[]\"}],\"name\":\"batchStakeWithPermit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"calculatePendingReward\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"claimReward\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"getStakeInfo\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"stakedAt\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"lastClaimTime\",\"type\":\"uint256\"}],\"internalType\":\"struct NFTStakingPool.StakeInfo\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"getStaker\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"isStaked\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"pause\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"paused\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"rewardToken\",\"outputs\":[{\"internalType\":\"contract IRewardToken\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"newReward\",\"type\":\"uint256\"}],\"name\":\"setBaseReward\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"stakableNFT\",\"outputs\":[{\"internalType\":\"contract IStakableNFT\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"stake\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"stakeInfo\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"stakedAt\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"lastClaimTime\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"deadline\",\"type\":\"uint256\"},{\"internalType\":\"uint8\",\"name\":\"v\",\"type\":\"uint8\"},{\"internalType\":\"bytes32\",\"name\":\"r\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"s\",\"type\":\"bytes32\"}],\"name\":\"stakeWithPermit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"unpause\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"unstake\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"- \\u7528\\u6237\\u8d28\\u62bc StakableNFT \\u53ef\\u83b7\\u5f97 RWRD \\u4ee3\\u5e01\\u5956\\u52b1 - \\u5956\\u52b1\\u6839\\u636e\\u8d28\\u62bc\\u65f6\\u95f4\\u548c NFT \\u7a00\\u6709\\u5ea6\\u8ba1\\u7b97 - \\u652f\\u6301\\u968f\\u65f6\\u9886\\u53d6\\u5956\\u52b1\\u548c\\u89e3\\u9664\\u8d28\\u62bc \\u5b89\\u5168\\u673a\\u5236\\uff1a - ReentrancyGuard\\uff1a\\u9632\\u91cd\\u5165\\u653b\\u51fb - Pausable\\uff1a\\u7d27\\u6025\\u6682\\u505c\\u529f\\u80fd - Checks-Effects-Interactions \\u6a21\\u5f0f \\u7ecf\\u6d4e\\u6a21\\u578b\\uff1a - \\u57fa\\u7840\\u6392\\u653e\\uff1a1 RWRD/\\u5929/NFT - \\u7a00\\u6709\\u5ea6\\u52a0\\u6210\\uff1aCommon 1x, Rare 1.5x, Epic 2x, Legendary 3x\",\"errors\":{\"EnforcedPause()\":[{\"details\":\"The operation failed because the contract is paused.\"}],\"ExpectedPause()\":[{\"details\":\"The operation failed because the contract is not paused.\"}],\"OwnableInvalidOwner(address)\":[{\"details\":\"The owner is not a valid owner account. (eg. `address(0)`)\"}],\"OwnableUnauthorizedAccount(address)\":[{\"details\":\"The caller account is not authorized to perform an operation.\"}],\"ReentrancyGuardReentrantCall()\":[{\"details\":\"Unauthorized reentrant call.\"}]},\"events\":{\"BaseRewardUpdated(uint256,uint256)\":{\"params\":{\"newReward\":\"\\u65b0\\u7684\\u5956\\u52b1\\u901f\\u7387\",\"oldReward\":\"\\u65e7\\u7684\\u5956\\u52b1\\u901f\\u7387\"}},\"Paused(address)\":{\"details\":\"Emitted when the pause is triggered by `account`.\"},\"RewardClaimed(address,uint256,uint256)\":{\"params\":{\"amount\":\"\\u9886\\u53d6\\u7684\\u5956\\u52b1\\u6570\\u91cf\",\"tokenId\":\"NFT ID\",\"user\":\"\\u9886\\u53d6\\u8005\\u5730\\u5740\"}},\"Staked(address,uint256,uint256)\":{\"params\":{\"timestamp\":\"\\u8d28\\u62bc\\u65f6\\u95f4\\u6233\",\"tokenId\":\"NFT ID\",\"user\":\"\\u8d28\\u62bc\\u8005\\u5730\\u5740\"}},\"Unpaused(address)\":{\"details\":\"Emitted when the pause is lifted by `account`.\"},\"Unstaked(address,uint256,uint256,uint256)\":{\"params\":{\"reward\":\"\\u672c\\u6b21\\u83b7\\u5f97\\u7684\\u5956\\u52b1\\u6570\\u91cf\",\"timestamp\":\"\\u89e3\\u62bc\\u65f6\\u95f4\\u6233\",\"tokenId\":\"NFT ID\",\"user\":\"\\u8d28\\u62bc\\u8005\\u5730\\u5740\"}}},\"kind\":\"dev\",\"methods\":{\"batchCalculatePendingReward(uint256[])\":{\"params\":{\"tokenIds\":\"NFT ID \\u6570\\u7ec4\"},\"returns\":{\"rewards\":\"\\u5956\\u52b1\\u6570\\u7ec4\"}},\"batchClaimReward(uint256[])\":{\"details\":\"- \\u6240\\u6709 NFT \\u5fc5\\u987b\\u5c5e\\u4e8e\\u8c03\\u7528\\u8005 - \\u53ea\\u94f8\\u9020\\u4e00\\u6b21\\u4ee3\\u5e01\\uff08\\u7d2f\\u52a0\\u6240\\u6709\\u5956\\u52b1\\uff09 - \\u66f4\\u65b0\\u6240\\u6709 NFT \\u7684\\u6700\\u540e\\u9886\\u53d6\\u65f6\\u95f4 - \\u590d\\u7528 _claimReward \\u5185\\u90e8\\u51fd\\u6570\\uff0c\\u907f\\u514d\\u4ee3\\u7801\\u91cd\\u590d\",\"params\":{\"tokenIds\":\"NFT ID \\u6570\\u7ec4\"}},\"batchStake(uint256[])\":{\"details\":\"- \\u6240\\u6709 NFT \\u5fc5\\u987b\\u5c5e\\u4e8e\\u8c03\\u7528\\u8005 - \\u6240\\u6709 NFT \\u5fc5\\u987b\\u672a\\u88ab\\u8d28\\u62bc - \\u7528\\u6237\\u5fc5\\u987b\\u5df2 approve \\u672c\\u5408\\u7ea6 - \\u5408\\u7ea6\\u672a\\u6682\\u505c - \\u590d\\u7528 _stake \\u5185\\u90e8\\u51fd\\u6570\\uff0c\\u907f\\u514d\\u4ee3\\u7801\\u91cd\\u590d\",\"params\":{\"tokenIds\":\"NFT ID \\u6570\\u7ec4\"}},\"batchStakeWithPermit(uint256[],uint256,uint8[],bytes32[],bytes32[])\":{\"details\":\"- \\u6279\\u91cf\\u8d28\\u62bc\\u7684 gasless \\u7248\\u672c - \\u6bcf\\u4e2a NFT \\u9700\\u8981\\u72ec\\u7acb\\u7684\\u7b7e\\u540d - \\u6240\\u6709\\u7b7e\\u540d\\u4f7f\\u7528\\u76f8\\u540c\\u7684 deadline\",\"params\":{\"deadline\":\"\\u7b7e\\u540d\\u8fc7\\u671f\\u65f6\\u95f4\",\"rs\":\"\\u7b7e\\u540d\\u53c2\\u6570 r \\u6570\\u7ec4\",\"ss\":\"\\u7b7e\\u540d\\u53c2\\u6570 s \\u6570\\u7ec4\",\"tokenIds\":\"NFT ID \\u6570\\u7ec4\",\"vs\":\"\\u7b7e\\u540d\\u53c2\\u6570 v \\u6570\\u7ec4\"}},\"calculatePendingReward(uint256)\":{\"details\":\"- \\u516c\\u5f0f\\uff1areward = timeStaked \\u00d7 BASE_REWARD_PER_SECOND \\u00d7 multiplier / 10000 - \\u672a\\u8d28\\u62bc\\u8fd4\\u56de 0 - \\u672a\\u63ed\\u793a\\u7684 NFT multiplier \\u4e3a 0\\uff0c\\u5956\\u52b1\\u4e3a 0\",\"params\":{\"tokenId\":\"NFT ID\"},\"returns\":{\"_0\":\"\\u5f85\\u9886\\u53d6\\u5956\\u52b1\\u6570\\u91cf\\uff08wei \\u5355\\u4f4d\\uff09\"}},\"claimReward(uint256)\":{\"details\":\"- \\u8c03\\u7528\\u8005\\u5fc5\\u987b\\u662f\\u8d28\\u62bc\\u8005 - \\u4ec5\\u9886\\u53d6\\u5956\\u52b1\\uff0c\\u4e0d\\u89e3\\u62bc NFT - \\u66f4\\u65b0\\u6700\\u540e\\u9886\\u53d6\\u65f6\\u95f4 \\u64cd\\u4f5c\\u6d41\\u7a0b\\uff1a 1. \\u9a8c\\u8bc1\\u8d28\\u62bc\\u8005\\u8eab\\u4efd 2. \\u8ba1\\u7b97\\u5f85\\u9886\\u53d6\\u5956\\u52b1 3. \\u66f4\\u65b0\\u6700\\u540e\\u9886\\u53d6\\u65f6\\u95f4 4. \\u94f8\\u9020\\u5956\\u52b1\\u4ee3\\u5e01 5. \\u89e6\\u53d1 RewardClaimed \\u4e8b\\u4ef6\",\"params\":{\"tokenId\":\"NFT ID\"}},\"constructor\":{\"details\":\"\\u90e8\\u7f72\\u540e\\u9700\\u8981\\u7531 RewardToken \\u7684 owner \\u6388\\u4e88\\u672c\\u5408\\u7ea6 MINTER_ROLE\",\"params\":{\"_rewardToken\":\"RewardToken \\u5408\\u7ea6\\u5730\\u5740\",\"_stakableNFT\":\"StakableNFT \\u5408\\u7ea6\\u5730\\u5740\"}},\"getStakeInfo(uint256)\":{\"params\":{\"tokenId\":\"NFT ID\"},\"returns\":{\"_0\":\"\\u8d28\\u62bc\\u4fe1\\u606f\\u7ed3\\u6784\\u4f53\"}},\"getStaker(uint256)\":{\"params\":{\"tokenId\":\"NFT ID\"},\"returns\":{\"_0\":\"\\u8d28\\u62bc\\u8005\\u5730\\u5740\\uff08\\u672a\\u8d28\\u62bc\\u8fd4\\u56de address(0)\\uff09\"}},\"isStaked(uint256)\":{\"params\":{\"tokenId\":\"NFT ID\"},\"returns\":{\"_0\":\"\\u662f\\u5426\\u5df2\\u8d28\\u62bc\"}},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"pause()\":{\"details\":\"\\u4ec5 owner \\u53ef\\u8c03\\u7528\\uff0c\\u6682\\u505c\\u540e\\u65e0\\u6cd5\\u8d28\\u62bc\"},\"paused()\":{\"details\":\"Returns true if the contract is paused, and false otherwise.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.\"},\"setBaseReward(uint256)\":{\"details\":\"\\u4ec5 owner (Timelock) \\u53ef\\u8c03\\u7528\",\"params\":{\"newReward\":\"\\u65b0\\u7684\\u5956\\u52b1\\u901f\\u7387\"}},\"stake(uint256)\":{\"details\":\"- \\u7528\\u6237\\u5fc5\\u987b\\u662f NFT \\u7684\\u6240\\u6709\\u8005 - NFT \\u5fc5\\u987b\\u672a\\u88ab\\u8d28\\u62bc - \\u7528\\u6237\\u5fc5\\u987b\\u5df2 approve \\u672c\\u5408\\u7ea6 - \\u5408\\u7ea6\\u672a\\u6682\\u505c \\u64cd\\u4f5c\\u6d41\\u7a0b\\uff1a 1. \\u9a8c\\u8bc1 NFT \\u6240\\u6709\\u6743 2. \\u9a8c\\u8bc1\\u672a\\u88ab\\u8d28\\u62bc 3. \\u8f6c\\u79fb NFT \\u5230\\u5408\\u7ea6 4. \\u8bb0\\u5f55\\u8d28\\u62bc\\u4fe1\\u606f 5. \\u89e6\\u53d1 Staked \\u4e8b\\u4ef6\",\"params\":{\"tokenId\":\"NFT ID\"}},\"stakeWithPermit(uint256,uint256,uint8,bytes32,bytes32)\":{\"details\":\"- \\u7528\\u6237\\u79bb\\u7ebf\\u7b7e\\u540d Permit\\uff0c\\u65e0\\u9700\\u9884\\u5148 approve - \\u5408\\u7ea6\\u81ea\\u52a8\\u8c03\\u7528 permit \\u5b8c\\u6210\\u6388\\u6743 - \\u7136\\u540e\\u6267\\u884c\\u8d28\\u62bc - \\u7528\\u6237\\u53ea\\u9700\\u4e00\\u7b14\\u4ea4\\u6613\\uff0c\\u4e14\\u53ef\\u4ee5\\u7531\\u4ed6\\u4eba\\u4ee3\\u4ed8 gas \\u4f7f\\u7528\\u6d41\\u7a0b\\uff1a 1. \\u7528\\u6237\\u79bb\\u7ebf\\u7b7e\\u540d Permit\\uff08\\u65e0\\u9700 gas\\uff09 2. \\u7528\\u6237\\u6216 Relayer \\u8c03\\u7528\\u6b64\\u51fd\\u6570\\uff08\\u9700\\u8981 gas\\uff09 3. \\u5408\\u7ea6\\u81ea\\u52a8\\u5b8c\\u6210\\uff1apermit \\u2192 stake \\u524d\\u7aef\\u793a\\u4f8b\\uff1a ```typescript // \\u7528\\u6237\\u79bb\\u7ebf\\u7b7e\\u540d\\uff08\\u65e0 gas\\uff09 const domain = {   name: 'Stakable NFT',   version: '1',   chainId: await signer.getChainId(),   verifyingContract: stakableNFT.address }; const types = {   Permit: [     { name: 'spender', type: 'address' },     { name: 'tokenId', type: 'uint256' },     { name: 'nonce', type: 'uint256' },     { name: 'deadline', type: 'uint256' }   ] }; const value = {   spender: stakingPool.address,   tokenId: tokenId,   nonce: await stakableNFT.nonces(userAddress),   deadline: deadline }; const signature = await signer._signTypedData(domain, types, value); const { v, r, s } = ethers.utils.splitSignature(signature); // \\u63d0\\u4ea4\\u8d28\\u62bc\\uff08\\u53ef\\u4ee5\\u7531 Relayer \\u4ee3\\u4ed8 gas\\uff09 await stakingPool.stakeWithPermit(tokenId, deadline, v, r, s); ```\",\"params\":{\"deadline\":\"\\u7b7e\\u540d\\u8fc7\\u671f\\u65f6\\u95f4\",\"r\":\"\\u7b7e\\u540d\\u53c2\\u6570 r\",\"s\":\"\\u7b7e\\u540d\\u53c2\\u6570 s\",\"tokenId\":\"NFT ID\",\"v\":\"\\u7b7e\\u540d\\u53c2\\u6570 v\"}},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"},\"unpause()\":{\"details\":\"\\u4ec5 owner \\u53ef\\u8c03\\u7528\"},\"unstake(uint256)\":{\"details\":\"- \\u8c03\\u7528\\u8005\\u5fc5\\u987b\\u662f\\u8d28\\u62bc\\u8005 - \\u81ea\\u52a8\\u8ba1\\u7b97\\u5e76\\u53d1\\u653e\\u5956\\u52b1 - NFT \\u5f52\\u8fd8\\u7528\\u6237 - \\u6e05\\u9664\\u8d28\\u62bc\\u8bb0\\u5f55 \\u64cd\\u4f5c\\u6d41\\u7a0b\\uff1a 1. \\u9a8c\\u8bc1\\u8d28\\u62bc\\u8005\\u8eab\\u4efd 2. \\u8ba1\\u7b97\\u5f85\\u9886\\u53d6\\u5956\\u52b1 3. \\u6e05\\u9664\\u8d28\\u62bc\\u8bb0\\u5f55 4. \\u53d1\\u653e\\u5956\\u52b1\\uff08\\u5982\\u679c\\u6709\\uff09 5. \\u5f52\\u8fd8 NFT 6. \\u89e6\\u53d1 Unstaked \\u4e8b\\u4ef6\",\"params\":{\"tokenId\":\"NFT ID\"}}},\"stateVariables\":{\"baseRewardPerSecond\":{\"details\":\"\\u521d\\u59cb\\u503c\\uff1a1000000000000000000 / 86400 \\u2248 11574074074074\"}},\"title\":\"NFTStakingPool\",\"version\":1},\"userdoc\":{\"events\":{\"BaseRewardUpdated(uint256,uint256)\":{\"notice\":\"\\u57fa\\u7840\\u5956\\u52b1\\u901f\\u7387\\u66f4\\u65b0\\u4e8b\\u4ef6\"},\"RewardClaimed(address,uint256,uint256)\":{\"notice\":\"\\u5956\\u52b1\\u9886\\u53d6\\u4e8b\\u4ef6\"},\"Staked(address,uint256,uint256)\":{\"notice\":\"NFT \\u8d28\\u62bc\\u4e8b\\u4ef6\"},\"Unstaked(address,uint256,uint256,uint256)\":{\"notice\":\"NFT \\u89e3\\u62bc\\u4e8b\\u4ef6\"}},\"kind\":\"user\",\"methods\":{\"baseRewardPerSecond()\":{\"notice\":\"\\u57fa\\u7840\\u5956\\u52b1\\u901f\\u7387\\uff1a1 RWRD/\\u5929 = 1e18 / 86400 wei/\\u79d2\"},\"batchCalculatePendingReward(uint256[])\":{\"notice\":\"\\u6279\\u91cf\\u67e5\\u8be2\\u5f85\\u9886\\u53d6\\u5956\\u52b1\"},\"batchClaimReward(uint256[])\":{\"notice\":\"\\u6279\\u91cf\\u9886\\u53d6\\u5956\\u52b1\"},\"batchStake(uint256[])\":{\"notice\":\"\\u6279\\u91cf\\u8d28\\u62bc NFT\"},\"batchStakeWithPermit(uint256[],uint256,uint8[],bytes32[],bytes32[])\":{\"notice\":\"\\u6279\\u91cf\\u4f7f\\u7528 Permit \\u8d28\\u62bc NFT (Gasless \\u6279\\u91cf\\u8d28\\u62bc)\"},\"calculatePendingReward(uint256)\":{\"notice\":\"\\u8ba1\\u7b97\\u5f85\\u9886\\u53d6\\u5956\\u52b1\"},\"claimReward(uint256)\":{\"notice\":\"\\u9886\\u53d6\\u5956\\u52b1\"},\"constructor\":{\"notice\":\"\\u90e8\\u7f72 NFTStakingPool \\u5408\\u7ea6\"},\"getStakeInfo(uint256)\":{\"notice\":\"\\u83b7\\u53d6\\u8d28\\u62bc\\u4fe1\\u606f\"},\"getStaker(uint256)\":{\"notice\":\"\\u83b7\\u53d6\\u8d28\\u62bc\\u8005\\u5730\\u5740\"},\"isStaked(uint256)\":{\"notice\":\"\\u68c0\\u67e5 NFT \\u662f\\u5426\\u5df2\\u8d28\\u62bc\"},\"pause()\":{\"notice\":\"\\u6682\\u505c\\u5408\\u7ea6\"},\"rewardToken()\":{\"notice\":\"RewardToken \\u5408\\u7ea6\\u5b9e\\u4f8b\"},\"setBaseReward(uint256)\":{\"notice\":\"\\u8bbe\\u7f6e\\u57fa\\u7840\\u5956\\u52b1\\u901f\\u7387 (DAO \\u53ef\\u6cbb\\u7406\\u53c2\\u6570)\"},\"stakableNFT()\":{\"notice\":\"StakableNFT \\u5408\\u7ea6\\u5b9e\\u4f8b\"},\"stake(uint256)\":{\"notice\":\"\\u8d28\\u62bc NFT\"},\"stakeInfo(uint256)\":{\"notice\":\"\\u8d28\\u62bc\\u4fe1\\u606f\\u6620\\u5c04 tokenId => StakeInfo\"},\"stakeWithPermit(uint256,uint256,uint8,bytes32,bytes32)\":{\"notice\":\"\\u4f7f\\u7528 Permit \\u8d28\\u62bc NFT (Gasless \\u8d28\\u62bc)\"},\"unpause()\":{\"notice\":\"\\u6062\\u590d\\u5408\\u7ea6\"},\"unstake(uint256)\":{\"notice\":\"\\u89e3\\u62bc NFT\"}},\"notice\":\"NFT \\u8d28\\u62bc\\u6c60\\u5408\\u7ea6\\uff0c\\u7ba1\\u7406\\u8d28\\u62bc\\u3001\\u89e3\\u62bc\\u548c\\u5956\\u52b1\\u5206\\u53d1\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/NFTStakingPool.sol\":\"NFTStakingPool\"},\"evmVersion\":\"cancun\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (access/Ownable.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {Context} from \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * The initial owner is set to the address provided by the deployer. This can\\n * later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    /**\\n     * @dev The caller account is not authorized to perform an operation.\\n     */\\n    error OwnableUnauthorizedAccount(address account);\\n\\n    /**\\n     * @dev The owner is not a valid owner account. (eg. `address(0)`)\\n     */\\n    error OwnableInvalidOwner(address owner);\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the address provided by the deployer as the initial owner.\\n     */\\n    constructor(address initialOwner) {\\n        if (initialOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(initialOwner);\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        _checkOwner();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if the sender is not the owner.\\n     */\\n    function _checkOwner() internal view virtual {\\n        if (owner() != _msgSender()) {\\n            revert OwnableUnauthorizedAccount(_msgSender());\\n        }\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby disabling any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        if (newOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.1) (utils/Context.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n\\n    function _contextSuffixLength() internal view virtual returns (uint256) {\\n        return 0;\\n    }\\n}\\n\",\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Pausable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.3.0) (utils/Pausable.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {Context} from \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which allows children to implement an emergency stop\\n * mechanism that can be triggered by an authorized account.\\n *\\n * This module is used through inheritance. It will make available the\\n * modifiers `whenNotPaused` and `whenPaused`, which can be applied to\\n * the functions of your contract. Note that they will not be pausable by\\n * simply including this module, only once the modifiers are put in place.\\n */\\nabstract contract Pausable is Context {\\n    bool private _paused;\\n\\n    /**\\n     * @dev Emitted when the pause is triggered by `account`.\\n     */\\n    event Paused(address account);\\n\\n    /**\\n     * @dev Emitted when the pause is lifted by `account`.\\n     */\\n    event Unpaused(address account);\\n\\n    /**\\n     * @dev The operation failed because the contract is paused.\\n     */\\n    error EnforcedPause();\\n\\n    /**\\n     * @dev The operation failed because the contract is not paused.\\n     */\\n    error ExpectedPause();\\n\\n    /**\\n     * @dev Modifier to make a function callable only when the contract is not paused.\\n     *\\n     * Requirements:\\n     *\\n     * - The contract must not be paused.\\n     */\\n    modifier whenNotPaused() {\\n        _requireNotPaused();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Modifier to make a function callable only when the contract is paused.\\n     *\\n     * Requirements:\\n     *\\n     * - The contract must be paused.\\n     */\\n    modifier whenPaused() {\\n        _requirePaused();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Returns true if the contract is paused, and false otherwise.\\n     */\\n    function paused() public view virtual returns (bool) {\\n        return _paused;\\n    }\\n\\n    /**\\n     * @dev Throws if the contract is paused.\\n     */\\n    function _requireNotPaused() internal view virtual {\\n        if (paused()) {\\n            revert EnforcedPause();\\n        }\\n    }\\n\\n    /**\\n     * @dev Throws if the contract is not paused.\\n     */\\n    function _requirePaused() internal view virtual {\\n        if (!paused()) {\\n            revert ExpectedPause();\\n        }\\n    }\\n\\n    /**\\n     * @dev Triggers stopped state.\\n     *\\n     * Requirements:\\n     *\\n     * - The contract must not be paused.\\n     */\\n    function _pause() internal virtual whenNotPaused {\\n        _paused = true;\\n        emit Paused(_msgSender());\\n    }\\n\\n    /**\\n     * @dev Returns to normal state.\\n     *\\n     * Requirements:\\n     *\\n     * - The contract must be paused.\\n     */\\n    function _unpause() internal virtual whenPaused {\\n        _paused = false;\\n        emit Unpaused(_msgSender());\\n    }\\n}\\n\",\"keccak256\":\"0xdb484371dfbb848cb6f5d70464e9ac9b2900e4164ead76bbce4fef0b44bcc68f\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/ReentrancyGuard.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.1.0) (utils/ReentrancyGuard.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Contract module that helps prevent reentrant calls to a function.\\n *\\n * Inheriting from `ReentrancyGuard` will make the {nonReentrant} modifier\\n * available, which can be applied to functions to make sure there are no nested\\n * (reentrant) calls to them.\\n *\\n * Note that because there is a single `nonReentrant` guard, functions marked as\\n * `nonReentrant` may not call one another. This can be worked around by making\\n * those functions `private`, and then adding `external` `nonReentrant` entry\\n * points to them.\\n *\\n * TIP: If EIP-1153 (transient storage) is available on the chain you're deploying at,\\n * consider using {ReentrancyGuardTransient} instead.\\n *\\n * TIP: If you would like to learn more about reentrancy and alternative ways\\n * to protect against it, check out our blog post\\n * https://blog.openzeppelin.com/reentrancy-after-istanbul/[Reentrancy After Istanbul].\\n */\\nabstract contract ReentrancyGuard {\\n    // Booleans are more expensive than uint256 or any type that takes up a full\\n    // word because each write operation emits an extra SLOAD to first read the\\n    // slot's contents, replace the bits taken up by the boolean, and then write\\n    // back. This is the compiler's defense against contract upgrades and\\n    // pointer aliasing, and it cannot be disabled.\\n\\n    // The values being non-zero value makes deployment a bit more expensive,\\n    // but in exchange the refund on every call to nonReentrant will be lower in\\n    // amount. Since refunds are capped to a percentage of the total\\n    // transaction's gas, it is best to keep them low in cases like this one, to\\n    // increase the likelihood of the full refund coming into effect.\\n    uint256 private constant NOT_ENTERED = 1;\\n    uint256 private constant ENTERED = 2;\\n\\n    uint256 private _status;\\n\\n    /**\\n     * @dev Unauthorized reentrant call.\\n     */\\n    error ReentrancyGuardReentrantCall();\\n\\n    constructor() {\\n        _status = NOT_ENTERED;\\n    }\\n\\n    /**\\n     * @dev Prevents a contract from calling itself, directly or indirectly.\\n     * Calling a `nonReentrant` function from another `nonReentrant`\\n     * function is not supported. It is possible to prevent this from happening\\n     * by making the `nonReentrant` function external, and making it call a\\n     * `private` function that does the actual work.\\n     */\\n    modifier nonReentrant() {\\n        _nonReentrantBefore();\\n        _;\\n        _nonReentrantAfter();\\n    }\\n\\n    function _nonReentrantBefore() private {\\n        // On the first call to nonReentrant, _status will be NOT_ENTERED\\n        if (_status == ENTERED) {\\n            revert ReentrancyGuardReentrantCall();\\n        }\\n\\n        // Any calls to nonReentrant after this point will fail\\n        _status = ENTERED;\\n    }\\n\\n    function _nonReentrantAfter() private {\\n        // By storing the original value once again, a refund is triggered (see\\n        // https://eips.ethereum.org/EIPS/eip-2200)\\n        _status = NOT_ENTERED;\\n    }\\n\\n    /**\\n     * @dev Returns true if the reentrancy guard is currently set to \\\"entered\\\", which indicates there is a\\n     * `nonReentrant` function in the call stack.\\n     */\\n    function _reentrancyGuardEntered() internal view returns (bool) {\\n        return _status == ENTERED;\\n    }\\n}\\n\",\"keccak256\":\"0x11a5a79827df29e915a12740caf62fe21ebe27c08c9ae3e09abe9ee3ba3866d3\",\"license\":\"MIT\"},\"contracts/NFTStakingPool.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.20;\\n\\nimport \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\nimport \\\"@openzeppelin/contracts/utils/ReentrancyGuard.sol\\\";\\nimport \\\"@openzeppelin/contracts/utils/Pausable.sol\\\";\\n\\n/**\\n * @title IStakableNFT\\n * @notice StakableNFT \\u5408\\u7ea6\\u63a5\\u53e3\\n */\\ninterface IStakableNFT {\\n    /**\\n     * @notice \\u83b7\\u53d6 NFT \\u6240\\u6709\\u8005\\n     * @param tokenId NFT ID\\n     * @return NFT \\u6240\\u6709\\u8005\\u5730\\u5740\\n     */\\n    function ownerOf(uint256 tokenId) external view returns (address);\\n\\n    /**\\n     * @notice \\u8f6c\\u79fb NFT\\n     * @param from \\u53d1\\u9001\\u8005\\u5730\\u5740\\n     * @param to \\u63a5\\u6536\\u8005\\u5730\\u5740\\n     * @param tokenId NFT ID\\n     */\\n    function transferFrom(address from, address to, uint256 tokenId) external;\\n\\n    /**\\n     * @notice \\u83b7\\u53d6 NFT \\u5956\\u52b1\\u500d\\u7387\\n     * @param tokenId NFT ID\\n     * @return \\u5956\\u52b1\\u500d\\u7387\\uff08\\u57fa\\u6570 10000\\uff09\\n     * @dev \\u672a\\u63ed\\u793a\\u524d\\u8fd4\\u56de 0\\n     */\\n    function getTokenRewardMultiplier(uint256 tokenId) external view returns (uint256);\\n\\n    /**\\n     * @notice ERC721 Permit - gasless approval\\n     * @param spender \\u88ab\\u6388\\u6743\\u8005\\u5730\\u5740\\n     * @param tokenId NFT ID\\n     * @param deadline \\u7b7e\\u540d\\u8fc7\\u671f\\u65f6\\u95f4\\n     * @param v \\u7b7e\\u540d\\u53c2\\u6570 v\\n     * @param r \\u7b7e\\u540d\\u53c2\\u6570 r\\n     * @param s \\u7b7e\\u540d\\u53c2\\u6570 s\\n     */\\n    function permit(\\n        address spender,\\n        uint256 tokenId,\\n        uint256 deadline,\\n        uint8 v,\\n        bytes32 r,\\n        bytes32 s\\n    ) external;\\n}\\n\\n/**\\n * @title IRewardToken\\n * @notice RewardToken \\u5408\\u7ea6\\u63a5\\u53e3\\n */\\ninterface IRewardToken {\\n    /**\\n     * @notice \\u94f8\\u9020\\u5956\\u52b1\\u4ee3\\u5e01\\n     * @param to \\u63a5\\u6536\\u5730\\u5740\\n     * @param amount \\u94f8\\u9020\\u6570\\u91cf\\n     * @dev \\u8c03\\u7528\\u524d\\u9700\\u8981 StakingPool \\u5df2\\u83b7\\u5f97 MINTER_ROLE\\n     */\\n    function mint(address to, uint256 amount) external;\\n}\\n\\n/**\\n * @title NFTStakingPool\\n * @notice NFT \\u8d28\\u62bc\\u6c60\\u5408\\u7ea6\\uff0c\\u7ba1\\u7406\\u8d28\\u62bc\\u3001\\u89e3\\u62bc\\u548c\\u5956\\u52b1\\u5206\\u53d1\\n * @dev\\n * - \\u7528\\u6237\\u8d28\\u62bc StakableNFT \\u53ef\\u83b7\\u5f97 RWRD \\u4ee3\\u5e01\\u5956\\u52b1\\n * - \\u5956\\u52b1\\u6839\\u636e\\u8d28\\u62bc\\u65f6\\u95f4\\u548c NFT \\u7a00\\u6709\\u5ea6\\u8ba1\\u7b97\\n * - \\u652f\\u6301\\u968f\\u65f6\\u9886\\u53d6\\u5956\\u52b1\\u548c\\u89e3\\u9664\\u8d28\\u62bc\\n *\\n * \\u5b89\\u5168\\u673a\\u5236\\uff1a\\n * - ReentrancyGuard\\uff1a\\u9632\\u91cd\\u5165\\u653b\\u51fb\\n * - Pausable\\uff1a\\u7d27\\u6025\\u6682\\u505c\\u529f\\u80fd\\n * - Checks-Effects-Interactions \\u6a21\\u5f0f\\n *\\n * \\u7ecf\\u6d4e\\u6a21\\u578b\\uff1a\\n * - \\u57fa\\u7840\\u6392\\u653e\\uff1a1 RWRD/\\u5929/NFT\\n * - \\u7a00\\u6709\\u5ea6\\u52a0\\u6210\\uff1aCommon 1x, Rare 1.5x, Epic 2x, Legendary 3x\\n */\\ncontract NFTStakingPool is Ownable, ReentrancyGuard, Pausable {\\n    // ============ \\u7ed3\\u6784\\u4f53 ============\\n\\n    /**\\n     * @notice NFT \\u8d28\\u62bc\\u4fe1\\u606f\\n     * @param owner \\u8d28\\u62bc\\u8005\\u5730\\u5740\\uff08address(0) \\u8868\\u793a\\u672a\\u8d28\\u62bc\\uff09\\n     * @param stakedAt \\u8d28\\u62bc\\u65f6\\u95f4\\u6233\\uff08\\u7528\\u4e8e\\u7edf\\u8ba1\\u8d28\\u62bc\\u65f6\\u957f\\uff09\\n     * @param lastClaimTime \\u6700\\u540e\\u9886\\u53d6\\u5956\\u52b1\\u65f6\\u95f4\\uff08\\u7528\\u4e8e\\u8ba1\\u7b97\\u5f85\\u9886\\u53d6\\u5956\\u52b1\\uff09\\n     */\\n    struct StakeInfo {\\n        address owner;\\n        uint256 stakedAt;\\n        uint256 lastClaimTime;\\n    }\\n\\n    // ============ \\u72b6\\u6001\\u53d8\\u91cf ============\\n\\n    /// @notice \\u8d28\\u62bc\\u4fe1\\u606f\\u6620\\u5c04 tokenId => StakeInfo\\n    mapping(uint256 => StakeInfo) public stakeInfo;\\n\\n    /// @notice StakableNFT \\u5408\\u7ea6\\u5b9e\\u4f8b\\n    IStakableNFT public immutable stakableNFT;\\n\\n    /// @notice RewardToken \\u5408\\u7ea6\\u5b9e\\u4f8b\\n    IRewardToken public immutable rewardToken;\\n\\n    /// @notice \\u57fa\\u7840\\u5956\\u52b1\\u901f\\u7387\\uff1a1 RWRD/\\u5929 = 1e18 / 86400 wei/\\u79d2\\n    /// @dev \\u521d\\u59cb\\u503c\\uff1a1000000000000000000 / 86400 \\u2248 11574074074074\\n    uint256 public baseRewardPerSecond = 11574074074074;\\n\\n    // ============ \\u4e8b\\u4ef6 ============\\n\\n    /**\\n     * @notice NFT \\u8d28\\u62bc\\u4e8b\\u4ef6\\n     * @param user \\u8d28\\u62bc\\u8005\\u5730\\u5740\\n     * @param tokenId NFT ID\\n     * @param timestamp \\u8d28\\u62bc\\u65f6\\u95f4\\u6233\\n     */\\n    event Staked(address indexed user, uint256 indexed tokenId, uint256 timestamp);\\n\\n    /**\\n     * @notice NFT \\u89e3\\u62bc\\u4e8b\\u4ef6\\n     * @param user \\u8d28\\u62bc\\u8005\\u5730\\u5740\\n     * @param tokenId NFT ID\\n     * @param timestamp \\u89e3\\u62bc\\u65f6\\u95f4\\u6233\\n     * @param reward \\u672c\\u6b21\\u83b7\\u5f97\\u7684\\u5956\\u52b1\\u6570\\u91cf\\n     */\\n    event Unstaked(address indexed user, uint256 indexed tokenId, uint256 timestamp, uint256 reward);\\n\\n    /**\\n     * @notice \\u5956\\u52b1\\u9886\\u53d6\\u4e8b\\u4ef6\\n     * @param user \\u9886\\u53d6\\u8005\\u5730\\u5740\\n     * @param tokenId NFT ID\\n     * @param amount \\u9886\\u53d6\\u7684\\u5956\\u52b1\\u6570\\u91cf\\n     */\\n    event RewardClaimed(address indexed user, uint256 indexed tokenId, uint256 amount);\\n\\n    /**\\n     * @notice \\u57fa\\u7840\\u5956\\u52b1\\u901f\\u7387\\u66f4\\u65b0\\u4e8b\\u4ef6\\n     * @param oldReward \\u65e7\\u7684\\u5956\\u52b1\\u901f\\u7387\\n     * @param newReward \\u65b0\\u7684\\u5956\\u52b1\\u901f\\u7387\\n     */\\n    event BaseRewardUpdated(uint256 oldReward, uint256 newReward);\\n\\n    // ============ \\u6784\\u9020\\u51fd\\u6570 ============\\n\\n    /**\\n     * @notice \\u90e8\\u7f72 NFTStakingPool \\u5408\\u7ea6\\n     * @param _stakableNFT StakableNFT \\u5408\\u7ea6\\u5730\\u5740\\n     * @param _rewardToken RewardToken \\u5408\\u7ea6\\u5730\\u5740\\n     * @dev \\u90e8\\u7f72\\u540e\\u9700\\u8981\\u7531 RewardToken \\u7684 owner \\u6388\\u4e88\\u672c\\u5408\\u7ea6 MINTER_ROLE\\n     */\\n    constructor(address _stakableNFT, address _rewardToken) Ownable(msg.sender) {\\n        require(_stakableNFT != address(0), \\\"Invalid StakableNFT address\\\");\\n        require(_rewardToken != address(0), \\\"Invalid RewardToken address\\\");\\n\\n        stakableNFT = IStakableNFT(_stakableNFT);\\n        rewardToken = IRewardToken(_rewardToken);\\n    }\\n\\n    // ============ \\u5916\\u90e8\\u51fd\\u6570 ============\\n\\n    /**\\n     * @notice \\u8d28\\u62bc NFT\\n     * @param tokenId NFT ID\\n     * @dev\\n     * - \\u7528\\u6237\\u5fc5\\u987b\\u662f NFT \\u7684\\u6240\\u6709\\u8005\\n     * - NFT \\u5fc5\\u987b\\u672a\\u88ab\\u8d28\\u62bc\\n     * - \\u7528\\u6237\\u5fc5\\u987b\\u5df2 approve \\u672c\\u5408\\u7ea6\\n     * - \\u5408\\u7ea6\\u672a\\u6682\\u505c\\n     *\\n     * \\u64cd\\u4f5c\\u6d41\\u7a0b\\uff1a\\n     * 1. \\u9a8c\\u8bc1 NFT \\u6240\\u6709\\u6743\\n     * 2. \\u9a8c\\u8bc1\\u672a\\u88ab\\u8d28\\u62bc\\n     * 3. \\u8f6c\\u79fb NFT \\u5230\\u5408\\u7ea6\\n     * 4. \\u8bb0\\u5f55\\u8d28\\u62bc\\u4fe1\\u606f\\n     * 5. \\u89e6\\u53d1 Staked \\u4e8b\\u4ef6\\n     */\\n    function stake(uint256 tokenId) external nonReentrant whenNotPaused {\\n        // \\u666e\\u901a\\u8d28\\u62bc\\uff1a\\u5fc5\\u987b\\u662f NFT \\u6240\\u6709\\u8005\\n        require(stakableNFT.ownerOf(tokenId) == msg.sender, \\\"Not NFT owner\\\");\\n        _stake(tokenId);\\n    }\\n\\n    /**\\n     * @notice \\u5185\\u90e8\\u8d28\\u62bc\\u903b\\u8f91\\n     * @param tokenId NFT ID\\n     * @dev\\n     * - \\u83b7\\u53d6 NFT \\u5f53\\u524d\\u6240\\u6709\\u8005\\n     * - \\u652f\\u6301 Relayer \\u4ee3\\u4ed8 gas\\uff08\\u901a\\u8fc7 Permit\\uff09\\n     * - transferFrom \\u4f1a\\u81ea\\u52a8\\u68c0\\u67e5\\u6388\\u6743\\n     */\\n    function _stake(uint256 tokenId) internal {\\n        // \\u83b7\\u53d6 NFT \\u5f53\\u524d\\u6240\\u6709\\u8005\\uff08\\u652f\\u6301 Relayer \\u573a\\u666f\\uff09\\n        address nftOwner = stakableNFT.ownerOf(tokenId);\\n\\n        // Checks\\n        require(nftOwner != address(0), \\\"Invalid token\\\");\\n        require(stakeInfo[tokenId].owner == address(0), \\\"Already staked\\\");\\n\\n        // \\u68c0\\u67e5 NFT \\u662f\\u5426\\u5df2\\u63ed\\u793a\\uff08\\u672a\\u63ed\\u793a\\u7684 NFT multiplier \\u4e3a 0\\uff09\\n        uint256 multiplier = stakableNFT.getTokenRewardMultiplier(tokenId);\\n        require(multiplier > 0, \\\"NFT not revealed yet\\\");\\n\\n        // Effects\\n        stakeInfo[tokenId] = StakeInfo({\\n            owner: nftOwner,\\n            stakedAt: block.timestamp,\\n            lastClaimTime: block.timestamp\\n        });\\n\\n        // Interactions\\n        // transferFrom \\u4f1a\\u81ea\\u52a8\\u9a8c\\u8bc1\\u6388\\u6743\\uff08\\u666e\\u901a approve \\u6216 Permit\\uff09\\n        stakableNFT.transferFrom(nftOwner, address(this), tokenId);\\n\\n        emit Staked(nftOwner, tokenId, block.timestamp);\\n    }\\n\\n    /**\\n     * @notice \\u89e3\\u62bc NFT\\n     * @param tokenId NFT ID\\n     * @dev\\n     * - \\u8c03\\u7528\\u8005\\u5fc5\\u987b\\u662f\\u8d28\\u62bc\\u8005\\n     * - \\u81ea\\u52a8\\u8ba1\\u7b97\\u5e76\\u53d1\\u653e\\u5956\\u52b1\\n     * - NFT \\u5f52\\u8fd8\\u7528\\u6237\\n     * - \\u6e05\\u9664\\u8d28\\u62bc\\u8bb0\\u5f55\\n     *\\n     * \\u64cd\\u4f5c\\u6d41\\u7a0b\\uff1a\\n     * 1. \\u9a8c\\u8bc1\\u8d28\\u62bc\\u8005\\u8eab\\u4efd\\n     * 2. \\u8ba1\\u7b97\\u5f85\\u9886\\u53d6\\u5956\\u52b1\\n     * 3. \\u6e05\\u9664\\u8d28\\u62bc\\u8bb0\\u5f55\\n     * 4. \\u53d1\\u653e\\u5956\\u52b1\\uff08\\u5982\\u679c\\u6709\\uff09\\n     * 5. \\u5f52\\u8fd8 NFT\\n     * 6. \\u89e6\\u53d1 Unstaked \\u4e8b\\u4ef6\\n     */\\n    function unstake(uint256 tokenId) external nonReentrant {\\n        StakeInfo storage info = stakeInfo[tokenId];\\n\\n        // Checks\\n        require(info.owner == msg.sender, \\\"Not staker\\\");\\n\\n        // Effects\\n        uint256 reward = calculatePendingReward(tokenId);\\n        delete stakeInfo[tokenId];\\n\\n        // Interactions\\n        if (reward > 0) {\\n            rewardToken.mint(msg.sender, reward);\\n        }\\n        stakableNFT.transferFrom(address(this), msg.sender, tokenId);\\n\\n        emit Unstaked(msg.sender, tokenId, block.timestamp, reward);\\n    }\\n\\n    /**\\n     * @notice \\u9886\\u53d6\\u5956\\u52b1\\n     * @param tokenId NFT ID\\n     * @dev\\n     * - \\u8c03\\u7528\\u8005\\u5fc5\\u987b\\u662f\\u8d28\\u62bc\\u8005\\n     * - \\u4ec5\\u9886\\u53d6\\u5956\\u52b1\\uff0c\\u4e0d\\u89e3\\u62bc NFT\\n     * - \\u66f4\\u65b0\\u6700\\u540e\\u9886\\u53d6\\u65f6\\u95f4\\n     *\\n     * \\u64cd\\u4f5c\\u6d41\\u7a0b\\uff1a\\n     * 1. \\u9a8c\\u8bc1\\u8d28\\u62bc\\u8005\\u8eab\\u4efd\\n     * 2. \\u8ba1\\u7b97\\u5f85\\u9886\\u53d6\\u5956\\u52b1\\n     * 3. \\u66f4\\u65b0\\u6700\\u540e\\u9886\\u53d6\\u65f6\\u95f4\\n     * 4. \\u94f8\\u9020\\u5956\\u52b1\\u4ee3\\u5e01\\n     * 5. \\u89e6\\u53d1 RewardClaimed \\u4e8b\\u4ef6\\n     */\\n    function claimReward(uint256 tokenId) external nonReentrant {\\n        uint256 reward = _claimReward(tokenId);\\n\\n        // Interactions\\n        if (reward > 0) {\\n            rewardToken.mint(msg.sender, reward);\\n        }\\n    }\\n\\n    /**\\n     * @notice \\u5185\\u90e8\\u9886\\u53d6\\u5956\\u52b1\\u903b\\u8f91\\n     * @param tokenId NFT ID\\n     * @return reward \\u9886\\u53d6\\u7684\\u5956\\u52b1\\u6570\\u91cf\\n     */\\n    function _claimReward(uint256 tokenId) internal returns (uint256 reward) {\\n        StakeInfo storage info = stakeInfo[tokenId];\\n\\n        // Checks\\n        require(info.owner == msg.sender, \\\"Not staker\\\");\\n\\n        reward = calculatePendingReward(tokenId);\\n        require(reward > 0, \\\"No reward to claim\\\");\\n\\n        // Effects\\n        info.lastClaimTime = block.timestamp;\\n\\n        emit RewardClaimed(msg.sender, tokenId, reward);\\n    }\\n\\n    /**\\n     * @notice \\u6279\\u91cf\\u8d28\\u62bc NFT\\n     * @param tokenIds NFT ID \\u6570\\u7ec4\\n     * @dev\\n     * - \\u6240\\u6709 NFT \\u5fc5\\u987b\\u5c5e\\u4e8e\\u8c03\\u7528\\u8005\\n     * - \\u6240\\u6709 NFT \\u5fc5\\u987b\\u672a\\u88ab\\u8d28\\u62bc\\n     * - \\u7528\\u6237\\u5fc5\\u987b\\u5df2 approve \\u672c\\u5408\\u7ea6\\n     * - \\u5408\\u7ea6\\u672a\\u6682\\u505c\\n     * - \\u590d\\u7528 _stake \\u5185\\u90e8\\u51fd\\u6570\\uff0c\\u907f\\u514d\\u4ee3\\u7801\\u91cd\\u590d\\n     */\\n    function batchStake(uint256[] calldata tokenIds) external nonReentrant whenNotPaused {\\n        uint256 length = tokenIds.length;\\n        require(length > 0, \\\"Empty array\\\");\\n\\n        // \\u6279\\u91cf\\u8d28\\u62bc\\uff1a\\u6240\\u6709 NFT \\u5fc5\\u987b\\u5c5e\\u4e8e\\u8c03\\u7528\\u8005\\n        for (uint256 i = 0; i < length; ) {\\n            require(stakableNFT.ownerOf(tokenIds[i]) == msg.sender, \\\"Not NFT owner\\\");\\n            unchecked {\\n                ++i;\\n            }\\n        }\\n\\n        // \\u6267\\u884c\\u8d28\\u62bc\\n        for (uint256 i = 0; i < length; ) {\\n            _stake(tokenIds[i]);\\n            unchecked {\\n                ++i;\\n            }\\n        }\\n    }\\n\\n    /**\\n     * @notice \\u6279\\u91cf\\u9886\\u53d6\\u5956\\u52b1\\n     * @param tokenIds NFT ID \\u6570\\u7ec4\\n     * @dev\\n     * - \\u6240\\u6709 NFT \\u5fc5\\u987b\\u5c5e\\u4e8e\\u8c03\\u7528\\u8005\\n     * - \\u53ea\\u94f8\\u9020\\u4e00\\u6b21\\u4ee3\\u5e01\\uff08\\u7d2f\\u52a0\\u6240\\u6709\\u5956\\u52b1\\uff09\\n     * - \\u66f4\\u65b0\\u6240\\u6709 NFT \\u7684\\u6700\\u540e\\u9886\\u53d6\\u65f6\\u95f4\\n     * - \\u590d\\u7528 _claimReward \\u5185\\u90e8\\u51fd\\u6570\\uff0c\\u907f\\u514d\\u4ee3\\u7801\\u91cd\\u590d\\n     */\\n    function batchClaimReward(uint256[] calldata tokenIds) external nonReentrant {\\n        uint256 length = tokenIds.length;\\n        require(length > 0, \\\"Empty array\\\");\\n\\n        uint256 totalReward = 0;\\n\\n        for (uint256 i = 0; i < length; ) {\\n            uint256 reward = _claimReward(tokenIds[i]);\\n            totalReward += reward;\\n            unchecked {\\n                ++i;\\n            }\\n        }\\n\\n        // Interactions\\n        if (totalReward > 0) {\\n            rewardToken.mint(msg.sender, totalReward);\\n        }\\n    }\\n\\n    /**\\n     * @notice \\u4f7f\\u7528 Permit \\u8d28\\u62bc NFT (Gasless \\u8d28\\u62bc)\\n     * @param tokenId NFT ID\\n     * @param deadline \\u7b7e\\u540d\\u8fc7\\u671f\\u65f6\\u95f4\\n     * @param v \\u7b7e\\u540d\\u53c2\\u6570 v\\n     * @param r \\u7b7e\\u540d\\u53c2\\u6570 r\\n     * @param s \\u7b7e\\u540d\\u53c2\\u6570 s\\n     * @dev\\n     * - \\u7528\\u6237\\u79bb\\u7ebf\\u7b7e\\u540d Permit\\uff0c\\u65e0\\u9700\\u9884\\u5148 approve\\n     * - \\u5408\\u7ea6\\u81ea\\u52a8\\u8c03\\u7528 permit \\u5b8c\\u6210\\u6388\\u6743\\n     * - \\u7136\\u540e\\u6267\\u884c\\u8d28\\u62bc\\n     * - \\u7528\\u6237\\u53ea\\u9700\\u4e00\\u7b14\\u4ea4\\u6613\\uff0c\\u4e14\\u53ef\\u4ee5\\u7531\\u4ed6\\u4eba\\u4ee3\\u4ed8 gas\\n     *\\n     * \\u4f7f\\u7528\\u6d41\\u7a0b\\uff1a\\n     * 1. \\u7528\\u6237\\u79bb\\u7ebf\\u7b7e\\u540d Permit\\uff08\\u65e0\\u9700 gas\\uff09\\n     * 2. \\u7528\\u6237\\u6216 Relayer \\u8c03\\u7528\\u6b64\\u51fd\\u6570\\uff08\\u9700\\u8981 gas\\uff09\\n     * 3. \\u5408\\u7ea6\\u81ea\\u52a8\\u5b8c\\u6210\\uff1apermit \\u2192 stake\\n     *\\n     * \\u524d\\u7aef\\u793a\\u4f8b\\uff1a\\n     * ```typescript\\n     * // \\u7528\\u6237\\u79bb\\u7ebf\\u7b7e\\u540d\\uff08\\u65e0 gas\\uff09\\n     * const domain = {\\n     *   name: 'Stakable NFT',\\n     *   version: '1',\\n     *   chainId: await signer.getChainId(),\\n     *   verifyingContract: stakableNFT.address\\n     * };\\n     * const types = {\\n     *   Permit: [\\n     *     { name: 'spender', type: 'address' },\\n     *     { name: 'tokenId', type: 'uint256' },\\n     *     { name: 'nonce', type: 'uint256' },\\n     *     { name: 'deadline', type: 'uint256' }\\n     *   ]\\n     * };\\n     * const value = {\\n     *   spender: stakingPool.address,\\n     *   tokenId: tokenId,\\n     *   nonce: await stakableNFT.nonces(userAddress),\\n     *   deadline: deadline\\n     * };\\n     * const signature = await signer._signTypedData(domain, types, value);\\n     * const { v, r, s } = ethers.utils.splitSignature(signature);\\n     *\\n     * // \\u63d0\\u4ea4\\u8d28\\u62bc\\uff08\\u53ef\\u4ee5\\u7531 Relayer \\u4ee3\\u4ed8 gas\\uff09\\n     * await stakingPool.stakeWithPermit(tokenId, deadline, v, r, s);\\n     * ```\\n     */\\n    function stakeWithPermit(\\n        uint256 tokenId,\\n        uint256 deadline,\\n        uint8 v,\\n        bytes32 r,\\n        bytes32 s\\n    ) external nonReentrant whenNotPaused {\\n        // 1. \\u5148\\u6267\\u884c permit\\uff08\\u81ea\\u52a8\\u6388\\u6743\\uff09\\n        stakableNFT.permit(address(this), tokenId, deadline, v, r, s);\\n\\n        // 2. \\u7136\\u540e\\u8d28\\u62bc\\n        _stake(tokenId);\\n    }\\n\\n    /**\\n     * @notice \\u6279\\u91cf\\u4f7f\\u7528 Permit \\u8d28\\u62bc NFT (Gasless \\u6279\\u91cf\\u8d28\\u62bc)\\n     * @param tokenIds NFT ID \\u6570\\u7ec4\\n     * @param deadline \\u7b7e\\u540d\\u8fc7\\u671f\\u65f6\\u95f4\\n     * @param vs \\u7b7e\\u540d\\u53c2\\u6570 v \\u6570\\u7ec4\\n     * @param rs \\u7b7e\\u540d\\u53c2\\u6570 r \\u6570\\u7ec4\\n     * @param ss \\u7b7e\\u540d\\u53c2\\u6570 s \\u6570\\u7ec4\\n     * @dev\\n     * - \\u6279\\u91cf\\u8d28\\u62bc\\u7684 gasless \\u7248\\u672c\\n     * - \\u6bcf\\u4e2a NFT \\u9700\\u8981\\u72ec\\u7acb\\u7684\\u7b7e\\u540d\\n     * - \\u6240\\u6709\\u7b7e\\u540d\\u4f7f\\u7528\\u76f8\\u540c\\u7684 deadline\\n     */\\n    function batchStakeWithPermit(\\n        uint256[] calldata tokenIds,\\n        uint256 deadline,\\n        uint8[] calldata vs,\\n        bytes32[] calldata rs,\\n        bytes32[] calldata ss\\n    ) external nonReentrant whenNotPaused {\\n        uint256 length = tokenIds.length;\\n        require(length > 0, \\\"Empty array\\\");\\n        require(length == vs.length && length == rs.length && length == ss.length, \\\"Array length mismatch\\\");\\n\\n        for (uint256 i = 0; i < length; ) {\\n            // 1. \\u6267\\u884c permit\\n            stakableNFT.permit(address(this), tokenIds[i], deadline, vs[i], rs[i], ss[i]);\\n\\n            // 2. \\u8d28\\u62bc\\n            _stake(tokenIds[i]);\\n\\n            unchecked {\\n                ++i;\\n            }\\n        }\\n    }\\n\\n    // ============ \\u89c6\\u56fe\\u51fd\\u6570 ============\\n\\n    /**\\n     * @notice \\u8ba1\\u7b97\\u5f85\\u9886\\u53d6\\u5956\\u52b1\\n     * @param tokenId NFT ID\\n     * @return \\u5f85\\u9886\\u53d6\\u5956\\u52b1\\u6570\\u91cf\\uff08wei \\u5355\\u4f4d\\uff09\\n     * @dev\\n     * - \\u516c\\u5f0f\\uff1areward = timeStaked \\u00d7 BASE_REWARD_PER_SECOND \\u00d7 multiplier / 10000\\n     * - \\u672a\\u8d28\\u62bc\\u8fd4\\u56de 0\\n     * - \\u672a\\u63ed\\u793a\\u7684 NFT multiplier \\u4e3a 0\\uff0c\\u5956\\u52b1\\u4e3a 0\\n     */\\n    function calculatePendingReward(uint256 tokenId) public view returns (uint256) {\\n        StakeInfo storage info = stakeInfo[tokenId];\\n\\n        // \\u672a\\u8d28\\u62bc\\u8fd4\\u56de 0\\n        if (info.owner == address(0)) {\\n            return 0;\\n        }\\n\\n        // \\u8ba1\\u7b97\\u8d28\\u62bc\\u65f6\\u957f\\uff08\\u79d2\\uff09\\n        uint256 timeStaked = block.timestamp - info.lastClaimTime;\\n\\n        // \\u83b7\\u53d6\\u7a00\\u6709\\u5ea6\\u500d\\u7387\\n        uint256 multiplier = stakableNFT.getTokenRewardMultiplier(tokenId);\\n\\n        // \\u516c\\u5f0f\\uff1a\\u65f6\\u957f \\u00d7 \\u57fa\\u7840\\u901f\\u7387 \\u00d7 \\u500d\\u7387 / 10000\\n        return (timeStaked * baseRewardPerSecond * multiplier) / 10000;\\n    }\\n\\n    /**\\n     * @notice \\u83b7\\u53d6\\u8d28\\u62bc\\u4fe1\\u606f\\n     * @param tokenId NFT ID\\n     * @return \\u8d28\\u62bc\\u4fe1\\u606f\\u7ed3\\u6784\\u4f53\\n     */\\n    function getStakeInfo(uint256 tokenId) external view returns (StakeInfo memory) {\\n        return stakeInfo[tokenId];\\n    }\\n\\n    /**\\n     * @notice \\u6279\\u91cf\\u67e5\\u8be2\\u5f85\\u9886\\u53d6\\u5956\\u52b1\\n     * @param tokenIds NFT ID \\u6570\\u7ec4\\n     * @return rewards \\u5956\\u52b1\\u6570\\u7ec4\\n     */\\n    function batchCalculatePendingReward(uint256[] calldata tokenIds) external view returns (uint256[] memory rewards) {\\n        uint256 length = tokenIds.length;\\n        rewards = new uint256[](length);\\n\\n        for (uint256 i = 0; i < length; ) {\\n            rewards[i] = calculatePendingReward(tokenIds[i]);\\n            unchecked {\\n                ++i;\\n            }\\n        }\\n\\n        return rewards;\\n    }\\n\\n    /**\\n     * @notice \\u68c0\\u67e5 NFT \\u662f\\u5426\\u5df2\\u8d28\\u62bc\\n     * @param tokenId NFT ID\\n     * @return \\u662f\\u5426\\u5df2\\u8d28\\u62bc\\n     */\\n    function isStaked(uint256 tokenId) external view returns (bool) {\\n        return stakeInfo[tokenId].owner != address(0);\\n    }\\n\\n    /**\\n     * @notice \\u83b7\\u53d6\\u8d28\\u62bc\\u8005\\u5730\\u5740\\n     * @param tokenId NFT ID\\n     * @return \\u8d28\\u62bc\\u8005\\u5730\\u5740\\uff08\\u672a\\u8d28\\u62bc\\u8fd4\\u56de address(0)\\uff09\\n     */\\n    function getStaker(uint256 tokenId) external view returns (address) {\\n        return stakeInfo[tokenId].owner;\\n    }\\n\\n    // ============ \\u7ba1\\u7406\\u51fd\\u6570 ============\\n\\n    /**\\n     * @notice \\u6682\\u505c\\u5408\\u7ea6\\n     * @dev \\u4ec5 owner \\u53ef\\u8c03\\u7528\\uff0c\\u6682\\u505c\\u540e\\u65e0\\u6cd5\\u8d28\\u62bc\\n     */\\n    function pause() external onlyOwner {\\n        _pause();\\n    }\\n\\n    /**\\n     * @notice \\u6062\\u590d\\u5408\\u7ea6\\n     * @dev \\u4ec5 owner \\u53ef\\u8c03\\u7528\\n     */\\n    function unpause() external onlyOwner {\\n        _unpause();\\n    }\\n\\n    /**\\n     * @notice \\u8bbe\\u7f6e\\u57fa\\u7840\\u5956\\u52b1\\u901f\\u7387 (DAO \\u53ef\\u6cbb\\u7406\\u53c2\\u6570)\\n     * @param newReward \\u65b0\\u7684\\u5956\\u52b1\\u901f\\u7387\\n     * @dev \\u4ec5 owner (Timelock) \\u53ef\\u8c03\\u7528\\n     */\\n    function setBaseReward(uint256 newReward) external onlyOwner {\\n        uint256 oldReward = baseRewardPerSecond;\\n        baseRewardPerSecond = newReward;\\n        emit BaseRewardUpdated(oldReward, newReward);\\n    }\\n}\\n\",\"keccak256\":\"0x97c347f5e6bc9bcfafdeb54fb57b9431a9462881679e3d33b6ddd7a4db5c7e3b\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x60c0346101cb57620016fa90601f38839003908101601f19168201906001600160401b038211838310176101cf57808391604095869485528339810103126101cb57610056602061004f836101e3565b92016101e3565b9033156101b4575f8054336001600160a01b03198216811783558551946001600160a01b0394909385939192918416907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09080a360018055650a86cc92e3da6004551692831561017257501690811561012e5760805260a052516115029081620001f88239608051818181610236015281816103dd01528181610825015281816109b301528181610a3b01528181610c84015281816110af01526111d5015260a051818181610134015281816107030152610d450152f35b825162461bcd60e51b815260206004820152601b60248201527f496e76616c696420526577617264546f6b656e206164647265737300000000006044820152606490fd5b62461bcd60e51b815260206004820152601b60248201527f496e76616c6964205374616b61626c654e4654206164647265737300000000006044820152606490fd5b8251631e4fbdf760e01b81525f6004820152602490fd5b5f80fd5b634e487b7160e01b5f52604160045260245ffd5b51906001600160a01b03821682036101cb5756fe60406080815260049081361015610014575f80fd5b5f915f3560e01c9081630373a23a14610e4c5781630981348214610dd15781632e17de7814610c1a5781633f4ba83a14610bb05781634e53357214610b6a5781635c975abb14610b46578163715018a614610aed5781638456cb5914610a925781638da5cb5b14610a6a5781638e94dcdc14610a26578163a694fc3a1461096a57838263ae169a501461093257508163baa51f86146108fd578163c2127793146107c7578163c760da041461069b578163cdab753e146105a0578163d430e34a14610576578163d9a7c1f914610558578163dd31493314610328578163e3c998fe146102f557838263ecd9ba821461020157508163f2fde38b14610167575063f7c618c114610121575f80fd5b34610163578160031936011261016357517f00000000000000000000000000000000000000000000000000000000000000006001600160a01b03168152602090f35b5080fd5b919050346101fd5760203660031901126101fd576001600160a01b038235818116939192908490036101f95761019b611143565b83156101e35750505f54826bffffffffffffffffffffffff60a01b8216175f55167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e05f80a380f35b51631e4fbdf760e01b8152908101849052602490fd5b8480fd5b8280fd5b9150346101635760a03660031901126101635780359260443560ff811681036102f15761022c61116e565b610234611191565b7f00000000000000000000000000000000000000000000000000000000000000006001600160a01b031692833b156101f9578251637ac2ff7b60e01b81523091810191825260208201879052602435604083015260ff9092166060820152606435608082015260843560a08201529092849184919082908490829060c00103925af19081156102e857506102d4575b506102cd826111af565b6001805580f35b6102dd90610efd565b61016357815f6102c3565b513d84823e3d90fd5b8380fd5b9050346101fd5760203660031901126101fd5735825260036020908152918190205490516001600160a01b039091168152f35b9050346101fd5760a03660031901126101fd5767ffffffffffffffff9181358381116101f95761035b9036908401610e9c565b939091602435604435838111610554576103789036908701610e9c565b90606435858111610550576103909036908901610e9c565b97909560843590811161054c576103aa9036908301610e9c565b6103b261116e565b6103ba611191565b6103c58b1515610fc7565b848b1480610543575b8061053a575b156104ff5793987f00000000000000000000000000000000000000000000000000000000000000006001600160a01b031694908c5b8d8d8210610418576001805580f35b8c6104328f61042a8f86928391611001565b35928a611001565b359060ff821682036101fd5761044984868f611001565b359061045685888a611001565b35918b3b156101f9578d51637ac2ff7b60e01b815230818c019081526020810193909352604083018e905260ff9094166060830152608082015260a081019190915282908290819060c0010381838d5af180156104f557918f92918e926104d7575b50506104cb83600194936104d193611001565b356111af565b01610409565b9092506104e49150610efd565b6104f1578c8b8f5f6104b8565b8d80fd5b8b513d84823e3d90fd5b865162461bcd60e51b81526020818501526015602482015274082e4e4c2f240d8cadccee8d040dad2e6dac2e8c6d605b1b6044820152606490fd5b50808b146103d4565b50898b146103ce565b8a80fd5b8980fd5b8780fd5b9050346101fd57826003193601126101fd5760209250549051908152f35b82843461059d57602036600319011261059d575061059660209235611064565b9051908152f35b80fd5b83915034610163576020806003193601126101fd57813567ffffffffffffffff81116102f15782846105d6879336908401610e9c565b926105e084611025565b916105ed86519384610f11565b8483526105f985611025565b8388019590601f1901368737845b81811061064d575050505083519485948186019282875251809352850193925b82811061063657505050500390f35b835185528695509381019392810192600101610627565b6106676106618284869c99989a9b9c611001565b35611064565b875182101561068857600582901b8801870152949796959394600101610607565b634e487b7160e01b865260328552602486fd5b83833461016357602036600319011261016357823567ffffffffffffffff81116101fd576106cc9036908501610e9c565b6106d792919261116e565b6106e2811515610fc7565b839284915b80831061078957505050829382610701575b836001805580f35b7f00000000000000000000000000000000000000000000000000000000000000006001600160a01b031692833b156101f95782516340c10f1960e01b815233928101928352602083019190915292849184919082908490829060400103925af19081156102e85750610775575b80806106f9565b61077e90610efd565b61059d57808261076e565b9091936107a061079a868486611001565b3561142c565b81018091116107b4579360010191906106e7565b634e487b7160e01b865260118752602486fd5b919050346101fd5760209160206003193601126102f157803567ffffffffffffffff81116101f9576107fc9036908301610e9c565b92909361080761116e565b61080f611191565b61081a841515610fc7565b6001600160a01b03907f0000000000000000000000000000000000000000000000000000000000000000821690875b86811061087b57888888825b81811061086457836001805580f35b806108756104cb6001938587611001565b01610855565b61088681888a611001565b85516331a9108f60e11b81529035878201528281602481875afa9081156108f357600192916108c0918c916108c6575b5086163314610f8b565b01610849565b6108e69150853d87116108ec575b6108de8183610f11565b810190610f6c565b5f6108b6565b503d6108d4565b86513d8c823e3d90fd5b9050346101fd5760203660031901126101fd5735825260036020908152918190205490516001600160a01b0390911615158152f35b809184346109665760203660031901126109665761094e61116e565b610958823561142c565b918261070157836001805580f35b5050fd5b9050346101fd5760203660031901126101fd5780359061098861116e565b610990611191565b82516331a9108f60e11b81529081018290526001600160a01b03906020816024817f000000000000000000000000000000000000000000000000000000000000000086165afa938415610a1d5750926109f7916102cd9486926109fc575b50163314610f8b565b6111af565b610a1691925060203d6020116108ec576108de8183610f11565b905f6109ee565b513d86823e3d90fd5b505034610163578160031936011261016357517f00000000000000000000000000000000000000000000000000000000000000006001600160a01b03168152602090f35b505034610163578160031936011261016357905490516001600160a01b039091168152602090f35b50503461016357816003193601126101635760207f62e78cea01bee320cd4e420270b5ea74000d11b0c9f74754ebdbfc544b05a25891610ad0611143565b610ad8611191565b600160ff19600254161760025551338152a180f35b833461059d578060031936011261059d57610b06611143565b5f80546001600160a01b0319811682556001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a380f35b50503461016357816003193601126101635760209060ff6002541690519015158152f35b9050346101fd5760203660031901126101fd57606092829135815260036020522060018060a01b0381541691600260018301549201549181519384526020840152820152f35b9050346101fd57826003193601126101fd57610bca611143565b6002549060ff821615610c0c575060ff1916600255513381527f5db9ee0a495bf2e6ff9c91a7834c1ba4fdd244a5e8aa4e537bd38aeae4b073aa90602090a180f35b8251638dfc202b60e01b8152fd5b905034610dcd576020366003190112610dcd57803591610c3861116e565b825f5260036020528360018060a01b0392610c5984845f2054163314610f33565b610c6285611064565b93855f5260036020525f6002858220828155826001820155015584610d3f575b7f000000000000000000000000000000000000000000000000000000000000000016803b156101fd5783516323b872dd60e01b81523092810192835233602084015260408301879052918391839182908490829060600103925af18015610d3557610d21575b5050807f204fccf0d92ed8d48f204adb39b2e81e92bad0dedb93f5716ca9478cfb57de0091519242845260208401523392a36001805580f35b610d2a90610efd565b6102f157835f610ce8565b83513d84823e3d90fd5b809192507f000000000000000000000000000000000000000000000000000000000000000016803b15610dcd5783516340c10f1960e01b8152338482019081526020810187905290915f9183919082908490829060400103925af18015610dc357610dae575b50908591610c82565b610dba91929650610efd565b5f94905f610da5565b84513d5f823e3d90fd5b5f80fd5b8234610dcd576020366003190112610dcd576060915f828051610df381610ecd565b8281528260208201520152355f526003602052805f20908051610e1581610ecd565b60018060a01b0383541692838252826002600183015492602085019384520154920191825282519384525160208401525190820152f35b8234610dcd576020366003190112610dcd57817f8290e204bc397edeaced2935fa66c26008b9c7a12ff6e2085af5be25785c53929235610e8a611143565b808254925582519182526020820152a1005b9181601f84011215610dcd5782359167ffffffffffffffff8311610dcd576020808501948460051b010111610dcd57565b6060810190811067ffffffffffffffff821117610ee957604052565b634e487b7160e01b5f52604160045260245ffd5b67ffffffffffffffff8111610ee957604052565b90601f8019910116810190811067ffffffffffffffff821117610ee957604052565b15610f3a57565b60405162461bcd60e51b815260206004820152600a6024820152692737ba1039ba30b5b2b960b11b6044820152606490fd5b90816020910312610dcd57516001600160a01b0381168103610dcd5790565b15610f9257565b60405162461bcd60e51b815260206004820152600d60248201526c2737ba1027232a1037bbb732b960991b6044820152606490fd5b15610fce57565b60405162461bcd60e51b815260206004820152600b60248201526a456d70747920617272617960a81b6044820152606490fd5b91908110156110115760051b0190565b634e487b7160e01b5f52603260045260245ffd5b67ffffffffffffffff8111610ee95760051b60200190565b8181029291811591840414171561105057565b634e487b7160e01b5f52601160045260245ffd5b5f81815260036020526040902080546001600160a01b03919082161561113c576002015442039142831161105057602090602460405180948193635750212d60e01b835260048301527f0000000000000000000000000000000000000000000000000000000000000000165afa908115611131575f916110fd575b506110f9906110f4612710936004549061103d565b61103d565b0490565b90506020813d602011611129575b8161111860209383610f11565b81010312610dcd57516127106110df565b3d915061110b565b6040513d5f823e3d90fd5b5050505f90565b5f546001600160a01b0316330361115657565b60405163118cdaa760e01b8152336004820152602490fd5b60026001541461117f576002600155565b604051633ee5aeb560e01b8152600490fd5b60ff6002541661119d57565b60405163d93c066560e01b8152600490fd5b604080516331a9108f60e11b815260048082018490526001600160a01b039260209290917f00000000000000000000000000000000000000000000000000000000000000008516918481602481865afa908115610dc3575f9161140f575b508581169586156113dc57875f526003865280855f2054166113a8578451635750212d60e01b81528381018990528681602481885afa90811561139e575f91611371575b501561133757600285519161126583610ecd565b888352878301428152878401914283528b5f5260038a52885f209451166bffffffffffffffffffffffff60a01b85541617845551600184015551910155823b15610dcd5783516323b872dd60e01b81526001600160a01b0390911691810191825230602083015260408201879052915f9183919082908490829060600103925af1801561132d57907f1449c6dd7851abc30abf37f57715f492010519147cc2652fbc38202c18a6ee9093929161131e575b5051428152a3565b61132790610efd565b5f611316565b82513d5f823e3d90fd5b845162461bcd60e51b81528084018790526014602482015273139195081b9bdd081c995d99585b1959081e595d60621b6044820152606490fd5b90508681813d8311611397575b6113888183610f11565b81010312610dcd57515f611251565b503d61137e565b86513d5f823e3d90fd5b845162461bcd60e51b8152808401879052600e60248201526d105b1c9958591e481cdd185ad95960921b6044820152606490fd5b845162461bcd60e51b8152808401879052600d60248201526c24b73b30b634b2103a37b5b2b760991b6044820152606490fd5b6114269150853d87116108ec576108de8183610f11565b5f61120d565b90815f52600360205260405f209161144e60018060a01b038454163314610f33565b61145781611064565b928315611492576002429101556040518381527ff01da32686223933d8a18a391060918c7f11a3648639edd87ae013e2e273174360203392a3565b60405162461bcd60e51b81526020600482015260126024820152714e6f2072657761726420746f20636c61696d60701b6044820152606490fdfea26469706673582212206b0c94f7896b023d7ac1383a0aed32168e953341e0809acc19b9fd7c5830562964736f6c63430008180033",
+  "deployedBytecode": "0x60406080815260049081361015610014575f80fd5b5f915f3560e01c9081630373a23a14610e4c5781630981348214610dd15781632e17de7814610c1a5781633f4ba83a14610bb05781634e53357214610b6a5781635c975abb14610b46578163715018a614610aed5781638456cb5914610a925781638da5cb5b14610a6a5781638e94dcdc14610a26578163a694fc3a1461096a57838263ae169a501461093257508163baa51f86146108fd578163c2127793146107c7578163c760da041461069b578163cdab753e146105a0578163d430e34a14610576578163d9a7c1f914610558578163dd31493314610328578163e3c998fe146102f557838263ecd9ba821461020157508163f2fde38b14610167575063f7c618c114610121575f80fd5b34610163578160031936011261016357517f00000000000000000000000000000000000000000000000000000000000000006001600160a01b03168152602090f35b5080fd5b919050346101fd5760203660031901126101fd576001600160a01b038235818116939192908490036101f95761019b611143565b83156101e35750505f54826bffffffffffffffffffffffff60a01b8216175f55167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e05f80a380f35b51631e4fbdf760e01b8152908101849052602490fd5b8480fd5b8280fd5b9150346101635760a03660031901126101635780359260443560ff811681036102f15761022c61116e565b610234611191565b7f00000000000000000000000000000000000000000000000000000000000000006001600160a01b031692833b156101f9578251637ac2ff7b60e01b81523091810191825260208201879052602435604083015260ff9092166060820152606435608082015260843560a08201529092849184919082908490829060c00103925af19081156102e857506102d4575b506102cd826111af565b6001805580f35b6102dd90610efd565b61016357815f6102c3565b513d84823e3d90fd5b8380fd5b9050346101fd5760203660031901126101fd5735825260036020908152918190205490516001600160a01b039091168152f35b9050346101fd5760a03660031901126101fd5767ffffffffffffffff9181358381116101f95761035b9036908401610e9c565b939091602435604435838111610554576103789036908701610e9c565b90606435858111610550576103909036908901610e9c565b97909560843590811161054c576103aa9036908301610e9c565b6103b261116e565b6103ba611191565b6103c58b1515610fc7565b848b1480610543575b8061053a575b156104ff5793987f00000000000000000000000000000000000000000000000000000000000000006001600160a01b031694908c5b8d8d8210610418576001805580f35b8c6104328f61042a8f86928391611001565b35928a611001565b359060ff821682036101fd5761044984868f611001565b359061045685888a611001565b35918b3b156101f9578d51637ac2ff7b60e01b815230818c019081526020810193909352604083018e905260ff9094166060830152608082015260a081019190915282908290819060c0010381838d5af180156104f557918f92918e926104d7575b50506104cb83600194936104d193611001565b356111af565b01610409565b9092506104e49150610efd565b6104f1578c8b8f5f6104b8565b8d80fd5b8b513d84823e3d90fd5b865162461bcd60e51b81526020818501526015602482015274082e4e4c2f240d8cadccee8d040dad2e6dac2e8c6d605b1b6044820152606490fd5b50808b146103d4565b50898b146103ce565b8a80fd5b8980fd5b8780fd5b9050346101fd57826003193601126101fd5760209250549051908152f35b82843461059d57602036600319011261059d575061059660209235611064565b9051908152f35b80fd5b83915034610163576020806003193601126101fd57813567ffffffffffffffff81116102f15782846105d6879336908401610e9c565b926105e084611025565b916105ed86519384610f11565b8483526105f985611025565b8388019590601f1901368737845b81811061064d575050505083519485948186019282875251809352850193925b82811061063657505050500390f35b835185528695509381019392810192600101610627565b6106676106618284869c99989a9b9c611001565b35611064565b875182101561068857600582901b8801870152949796959394600101610607565b634e487b7160e01b865260328552602486fd5b83833461016357602036600319011261016357823567ffffffffffffffff81116101fd576106cc9036908501610e9c565b6106d792919261116e565b6106e2811515610fc7565b839284915b80831061078957505050829382610701575b836001805580f35b7f00000000000000000000000000000000000000000000000000000000000000006001600160a01b031692833b156101f95782516340c10f1960e01b815233928101928352602083019190915292849184919082908490829060400103925af19081156102e85750610775575b80806106f9565b61077e90610efd565b61059d57808261076e565b9091936107a061079a868486611001565b3561142c565b81018091116107b4579360010191906106e7565b634e487b7160e01b865260118752602486fd5b919050346101fd5760209160206003193601126102f157803567ffffffffffffffff81116101f9576107fc9036908301610e9c565b92909361080761116e565b61080f611191565b61081a841515610fc7565b6001600160a01b03907f0000000000000000000000000000000000000000000000000000000000000000821690875b86811061087b57888888825b81811061086457836001805580f35b806108756104cb6001938587611001565b01610855565b61088681888a611001565b85516331a9108f60e11b81529035878201528281602481875afa9081156108f357600192916108c0918c916108c6575b5086163314610f8b565b01610849565b6108e69150853d87116108ec575b6108de8183610f11565b810190610f6c565b5f6108b6565b503d6108d4565b86513d8c823e3d90fd5b9050346101fd5760203660031901126101fd5735825260036020908152918190205490516001600160a01b0390911615158152f35b809184346109665760203660031901126109665761094e61116e565b610958823561142c565b918261070157836001805580f35b5050fd5b9050346101fd5760203660031901126101fd5780359061098861116e565b610990611191565b82516331a9108f60e11b81529081018290526001600160a01b03906020816024817f000000000000000000000000000000000000000000000000000000000000000086165afa938415610a1d5750926109f7916102cd9486926109fc575b50163314610f8b565b6111af565b610a1691925060203d6020116108ec576108de8183610f11565b905f6109ee565b513d86823e3d90fd5b505034610163578160031936011261016357517f00000000000000000000000000000000000000000000000000000000000000006001600160a01b03168152602090f35b505034610163578160031936011261016357905490516001600160a01b039091168152602090f35b50503461016357816003193601126101635760207f62e78cea01bee320cd4e420270b5ea74000d11b0c9f74754ebdbfc544b05a25891610ad0611143565b610ad8611191565b600160ff19600254161760025551338152a180f35b833461059d578060031936011261059d57610b06611143565b5f80546001600160a01b0319811682556001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a380f35b50503461016357816003193601126101635760209060ff6002541690519015158152f35b9050346101fd5760203660031901126101fd57606092829135815260036020522060018060a01b0381541691600260018301549201549181519384526020840152820152f35b9050346101fd57826003193601126101fd57610bca611143565b6002549060ff821615610c0c575060ff1916600255513381527f5db9ee0a495bf2e6ff9c91a7834c1ba4fdd244a5e8aa4e537bd38aeae4b073aa90602090a180f35b8251638dfc202b60e01b8152fd5b905034610dcd576020366003190112610dcd57803591610c3861116e565b825f5260036020528360018060a01b0392610c5984845f2054163314610f33565b610c6285611064565b93855f5260036020525f6002858220828155826001820155015584610d3f575b7f000000000000000000000000000000000000000000000000000000000000000016803b156101fd5783516323b872dd60e01b81523092810192835233602084015260408301879052918391839182908490829060600103925af18015610d3557610d21575b5050807f204fccf0d92ed8d48f204adb39b2e81e92bad0dedb93f5716ca9478cfb57de0091519242845260208401523392a36001805580f35b610d2a90610efd565b6102f157835f610ce8565b83513d84823e3d90fd5b809192507f000000000000000000000000000000000000000000000000000000000000000016803b15610dcd5783516340c10f1960e01b8152338482019081526020810187905290915f9183919082908490829060400103925af18015610dc357610dae575b50908591610c82565b610dba91929650610efd565b5f94905f610da5565b84513d5f823e3d90fd5b5f80fd5b8234610dcd576020366003190112610dcd576060915f828051610df381610ecd565b8281528260208201520152355f526003602052805f20908051610e1581610ecd565b60018060a01b0383541692838252826002600183015492602085019384520154920191825282519384525160208401525190820152f35b8234610dcd576020366003190112610dcd57817f8290e204bc397edeaced2935fa66c26008b9c7a12ff6e2085af5be25785c53929235610e8a611143565b808254925582519182526020820152a1005b9181601f84011215610dcd5782359167ffffffffffffffff8311610dcd576020808501948460051b010111610dcd57565b6060810190811067ffffffffffffffff821117610ee957604052565b634e487b7160e01b5f52604160045260245ffd5b67ffffffffffffffff8111610ee957604052565b90601f8019910116810190811067ffffffffffffffff821117610ee957604052565b15610f3a57565b60405162461bcd60e51b815260206004820152600a6024820152692737ba1039ba30b5b2b960b11b6044820152606490fd5b90816020910312610dcd57516001600160a01b0381168103610dcd5790565b15610f9257565b60405162461bcd60e51b815260206004820152600d60248201526c2737ba1027232a1037bbb732b960991b6044820152606490fd5b15610fce57565b60405162461bcd60e51b815260206004820152600b60248201526a456d70747920617272617960a81b6044820152606490fd5b91908110156110115760051b0190565b634e487b7160e01b5f52603260045260245ffd5b67ffffffffffffffff8111610ee95760051b60200190565b8181029291811591840414171561105057565b634e487b7160e01b5f52601160045260245ffd5b5f81815260036020526040902080546001600160a01b03919082161561113c576002015442039142831161105057602090602460405180948193635750212d60e01b835260048301527f0000000000000000000000000000000000000000000000000000000000000000165afa908115611131575f916110fd575b506110f9906110f4612710936004549061103d565b61103d565b0490565b90506020813d602011611129575b8161111860209383610f11565b81010312610dcd57516127106110df565b3d915061110b565b6040513d5f823e3d90fd5b5050505f90565b5f546001600160a01b0316330361115657565b60405163118cdaa760e01b8152336004820152602490fd5b60026001541461117f576002600155565b604051633ee5aeb560e01b8152600490fd5b60ff6002541661119d57565b60405163d93c066560e01b8152600490fd5b604080516331a9108f60e11b815260048082018490526001600160a01b039260209290917f00000000000000000000000000000000000000000000000000000000000000008516918481602481865afa908115610dc3575f9161140f575b508581169586156113dc57875f526003865280855f2054166113a8578451635750212d60e01b81528381018990528681602481885afa90811561139e575f91611371575b501561133757600285519161126583610ecd565b888352878301428152878401914283528b5f5260038a52885f209451166bffffffffffffffffffffffff60a01b85541617845551600184015551910155823b15610dcd5783516323b872dd60e01b81526001600160a01b0390911691810191825230602083015260408201879052915f9183919082908490829060600103925af1801561132d57907f1449c6dd7851abc30abf37f57715f492010519147cc2652fbc38202c18a6ee9093929161131e575b5051428152a3565b61132790610efd565b5f611316565b82513d5f823e3d90fd5b845162461bcd60e51b81528084018790526014602482015273139195081b9bdd081c995d99585b1959081e595d60621b6044820152606490fd5b90508681813d8311611397575b6113888183610f11565b81010312610dcd57515f611251565b503d61137e565b86513d5f823e3d90fd5b845162461bcd60e51b8152808401879052600e60248201526d105b1c9958591e481cdd185ad95960921b6044820152606490fd5b845162461bcd60e51b8152808401879052600d60248201526c24b73b30b634b2103a37b5b2b760991b6044820152606490fd5b6114269150853d87116108ec576108de8183610f11565b5f61120d565b90815f52600360205260405f209161144e60018060a01b038454163314610f33565b61145781611064565b928315611492576002429101556040518381527ff01da32686223933d8a18a391060918c7f11a3648639edd87ae013e2e273174360203392a3565b60405162461bcd60e51b81526020600482015260126024820152714e6f2072657761726420746f20636c61696d60701b6044820152606490fdfea26469706673582212206b0c94f7896b023d7ac1383a0aed32168e953341e0809acc19b9fd7c5830562964736f6c63430008180033",
+  "devdoc": {
+    "details": "- 用户质押 StakableNFT 可获得 RWRD 代币奖励 - 奖励根据质押时间和 NFT 稀有度计算 - 支持随时领取奖励和解除质押 安全机制： - ReentrancyGuard：防重入攻击 - Pausable：紧急暂停功能 - Checks-Effects-Interactions 模式 经济模型： - 基础排放：1 RWRD/天/NFT - 稀有度加成：Common 1x, Rare 1.5x, Epic 2x, Legendary 3x",
+    "errors": {
+      "EnforcedPause()": [
+        {
+          "details": "The operation failed because the contract is paused."
+        }
+      ],
+      "ExpectedPause()": [
+        {
+          "details": "The operation failed because the contract is not paused."
+        }
+      ],
+      "OwnableInvalidOwner(address)": [
+        {
+          "details": "The owner is not a valid owner account. (eg. `address(0)`)"
+        }
+      ],
+      "OwnableUnauthorizedAccount(address)": [
+        {
+          "details": "The caller account is not authorized to perform an operation."
+        }
+      ],
+      "ReentrancyGuardReentrantCall()": [
+        {
+          "details": "Unauthorized reentrant call."
+        }
+      ]
+    },
+    "events": {
+      "BaseRewardUpdated(uint256,uint256)": {
+        "params": {
+          "newReward": "新的奖励速率",
+          "oldReward": "旧的奖励速率"
+        }
+      },
+      "Paused(address)": {
+        "details": "Emitted when the pause is triggered by `account`."
+      },
+      "RewardClaimed(address,uint256,uint256)": {
+        "params": {
+          "amount": "领取的奖励数量",
+          "tokenId": "NFT ID",
+          "user": "领取者地址"
+        }
+      },
+      "Staked(address,uint256,uint256)": {
+        "params": {
+          "timestamp": "质押时间戳",
+          "tokenId": "NFT ID",
+          "user": "质押者地址"
+        }
+      },
+      "Unpaused(address)": {
+        "details": "Emitted when the pause is lifted by `account`."
+      },
+      "Unstaked(address,uint256,uint256,uint256)": {
+        "params": {
+          "reward": "本次获得的奖励数量",
+          "timestamp": "解押时间戳",
+          "tokenId": "NFT ID",
+          "user": "质押者地址"
+        }
+      }
+    },
+    "kind": "dev",
+    "methods": {
+      "batchCalculatePendingReward(uint256[])": {
+        "params": {
+          "tokenIds": "NFT ID 数组"
+        },
+        "returns": {
+          "rewards": "奖励数组"
+        }
+      },
+      "batchClaimReward(uint256[])": {
+        "details": "- 所有 NFT 必须属于调用者 - 只铸造一次代币（累加所有奖励） - 更新所有 NFT 的最后领取时间 - 复用 _claimReward 内部函数，避免代码重复",
+        "params": {
+          "tokenIds": "NFT ID 数组"
+        }
+      },
+      "batchStake(uint256[])": {
+        "details": "- 所有 NFT 必须属于调用者 - 所有 NFT 必须未被质押 - 用户必须已 approve 本合约 - 合约未暂停 - 复用 _stake 内部函数，避免代码重复",
+        "params": {
+          "tokenIds": "NFT ID 数组"
+        }
+      },
+      "batchStakeWithPermit(uint256[],uint256,uint8[],bytes32[],bytes32[])": {
+        "details": "- 批量质押的 gasless 版本 - 每个 NFT 需要独立的签名 - 所有签名使用相同的 deadline",
+        "params": {
+          "deadline": "签名过期时间",
+          "rs": "签名参数 r 数组",
+          "ss": "签名参数 s 数组",
+          "tokenIds": "NFT ID 数组",
+          "vs": "签名参数 v 数组"
+        }
+      },
+      "calculatePendingReward(uint256)": {
+        "details": "- 公式：reward = timeStaked × BASE_REWARD_PER_SECOND × multiplier / 10000 - 未质押返回 0 - 未揭示的 NFT multiplier 为 0，奖励为 0",
+        "params": {
+          "tokenId": "NFT ID"
+        },
+        "returns": {
+          "_0": "待领取奖励数量（wei 单位）"
+        }
+      },
+      "claimReward(uint256)": {
+        "details": "- 调用者必须是质押者 - 仅领取奖励，不解押 NFT - 更新最后领取时间 操作流程： 1. 验证质押者身份 2. 计算待领取奖励 3. 更新最后领取时间 4. 铸造奖励代币 5. 触发 RewardClaimed 事件",
+        "params": {
+          "tokenId": "NFT ID"
+        }
+      },
+      "constructor": {
+        "details": "部署后需要由 RewardToken 的 owner 授予本合约 MINTER_ROLE",
+        "params": {
+          "_rewardToken": "RewardToken 合约地址",
+          "_stakableNFT": "StakableNFT 合约地址"
+        }
+      },
+      "getStakeInfo(uint256)": {
+        "params": {
+          "tokenId": "NFT ID"
+        },
+        "returns": {
+          "_0": "质押信息结构体"
+        }
+      },
+      "getStaker(uint256)": {
+        "params": {
+          "tokenId": "NFT ID"
+        },
+        "returns": {
+          "_0": "质押者地址（未质押返回 address(0)）"
+        }
+      },
+      "isStaked(uint256)": {
+        "params": {
+          "tokenId": "NFT ID"
+        },
+        "returns": {
+          "_0": "是否已质押"
+        }
+      },
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "pause()": {
+        "details": "仅 owner 可调用，暂停后无法质押"
+      },
+      "paused()": {
+        "details": "Returns true if the contract is paused, and false otherwise."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+      },
+      "setBaseReward(uint256)": {
+        "details": "仅 owner (Timelock) 可调用",
+        "params": {
+          "newReward": "新的奖励速率"
+        }
+      },
+      "stake(uint256)": {
+        "details": "- 用户必须是 NFT 的所有者 - NFT 必须未被质押 - 用户必须已 approve 本合约 - 合约未暂停 操作流程： 1. 验证 NFT 所有权 2. 验证未被质押 3. 转移 NFT 到合约 4. 记录质押信息 5. 触发 Staked 事件",
+        "params": {
+          "tokenId": "NFT ID"
+        }
+      },
+      "stakeWithPermit(uint256,uint256,uint8,bytes32,bytes32)": {
+        "details": "- 用户离线签名 Permit，无需预先 approve - 合约自动调用 permit 完成授权 - 然后执行质押 - 用户只需一笔交易，且可以由他人代付 gas 使用流程： 1. 用户离线签名 Permit（无需 gas） 2. 用户或 Relayer 调用此函数（需要 gas） 3. 合约自动完成：permit → stake 前端示例： ```typescript // 用户离线签名（无 gas） const domain = {   name: 'Stakable NFT',   version: '1',   chainId: await signer.getChainId(),   verifyingContract: stakableNFT.address }; const types = {   Permit: [     { name: 'spender', type: 'address' },     { name: 'tokenId', type: 'uint256' },     { name: 'nonce', type: 'uint256' },     { name: 'deadline', type: 'uint256' }   ] }; const value = {   spender: stakingPool.address,   tokenId: tokenId,   nonce: await stakableNFT.nonces(userAddress),   deadline: deadline }; const signature = await signer._signTypedData(domain, types, value); const { v, r, s } = ethers.utils.splitSignature(signature); // 提交质押（可以由 Relayer 代付 gas） await stakingPool.stakeWithPermit(tokenId, deadline, v, r, s); ```",
+        "params": {
+          "deadline": "签名过期时间",
+          "r": "签名参数 r",
+          "s": "签名参数 s",
+          "tokenId": "NFT ID",
+          "v": "签名参数 v"
+        }
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      },
+      "unpause()": {
+        "details": "仅 owner 可调用"
+      },
+      "unstake(uint256)": {
+        "details": "- 调用者必须是质押者 - 自动计算并发放奖励 - NFT 归还用户 - 清除质押记录 操作流程： 1. 验证质押者身份 2. 计算待领取奖励 3. 清除质押记录 4. 发放奖励（如果有） 5. 归还 NFT 6. 触发 Unstaked 事件",
+        "params": {
+          "tokenId": "NFT ID"
+        }
+      }
+    },
+    "stateVariables": {
+      "baseRewardPerSecond": {
+        "details": "初始值：1000000000000000000 / 86400 ≈ 11574074074074"
+      }
+    },
+    "title": "NFTStakingPool",
+    "version": 1
+  },
+  "userdoc": {
+    "events": {
+      "BaseRewardUpdated(uint256,uint256)": {
+        "notice": "基础奖励速率更新事件"
+      },
+      "RewardClaimed(address,uint256,uint256)": {
+        "notice": "奖励领取事件"
+      },
+      "Staked(address,uint256,uint256)": {
+        "notice": "NFT 质押事件"
+      },
+      "Unstaked(address,uint256,uint256,uint256)": {
+        "notice": "NFT 解押事件"
+      }
+    },
+    "kind": "user",
+    "methods": {
+      "baseRewardPerSecond()": {
+        "notice": "基础奖励速率：1 RWRD/天 = 1e18 / 86400 wei/秒"
+      },
+      "batchCalculatePendingReward(uint256[])": {
+        "notice": "批量查询待领取奖励"
+      },
+      "batchClaimReward(uint256[])": {
+        "notice": "批量领取奖励"
+      },
+      "batchStake(uint256[])": {
+        "notice": "批量质押 NFT"
+      },
+      "batchStakeWithPermit(uint256[],uint256,uint8[],bytes32[],bytes32[])": {
+        "notice": "批量使用 Permit 质押 NFT (Gasless 批量质押)"
+      },
+      "calculatePendingReward(uint256)": {
+        "notice": "计算待领取奖励"
+      },
+      "claimReward(uint256)": {
+        "notice": "领取奖励"
+      },
+      "constructor": {
+        "notice": "部署 NFTStakingPool 合约"
+      },
+      "getStakeInfo(uint256)": {
+        "notice": "获取质押信息"
+      },
+      "getStaker(uint256)": {
+        "notice": "获取质押者地址"
+      },
+      "isStaked(uint256)": {
+        "notice": "检查 NFT 是否已质押"
+      },
+      "pause()": {
+        "notice": "暂停合约"
+      },
+      "rewardToken()": {
+        "notice": "RewardToken 合约实例"
+      },
+      "setBaseReward(uint256)": {
+        "notice": "设置基础奖励速率 (DAO 可治理参数)"
+      },
+      "stakableNFT()": {
+        "notice": "StakableNFT 合约实例"
+      },
+      "stake(uint256)": {
+        "notice": "质押 NFT"
+      },
+      "stakeInfo(uint256)": {
+        "notice": "质押信息映射 tokenId => StakeInfo"
+      },
+      "stakeWithPermit(uint256,uint256,uint8,bytes32,bytes32)": {
+        "notice": "使用 Permit 质押 NFT (Gasless 质押)"
+      },
+      "unpause()": {
+        "notice": "恢复合约"
+      },
+      "unstake(uint256)": {
+        "notice": "解押 NFT"
+      }
+    },
+    "notice": "NFT 质押池合约，管理质押、解押和奖励分发",
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 388,
+        "contract": "contracts/NFTStakingPool.sol:NFTStakingPool",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 9034,
+        "contract": "contracts/NFTStakingPool.sol:NFTStakingPool",
+        "label": "_status",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 8924,
+        "contract": "contracts/NFTStakingPool.sol:NFTStakingPool",
+        "label": "_paused",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_bool"
+      },
+      {
+        "astId": 17894,
+        "contract": "contracts/NFTStakingPool.sol:NFTStakingPool",
+        "label": "stakeInfo",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_mapping(t_uint256,t_struct(StakeInfo)17888_storage)"
+      },
+      {
+        "astId": 17906,
+        "contract": "contracts/NFTStakingPool.sol:NFTStakingPool",
+        "label": "baseRewardPerSecond",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_uint256"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_mapping(t_uint256,t_struct(StakeInfo)17888_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => struct NFTStakingPool.StakeInfo)",
+        "numberOfBytes": "32",
+        "value": "t_struct(StakeInfo)17888_storage"
+      },
+      "t_struct(StakeInfo)17888_storage": {
+        "encoding": "inplace",
+        "label": "struct NFTStakingPool.StakeInfo",
+        "members": [
+          {
+            "astId": 17883,
+            "contract": "contracts/NFTStakingPool.sol:NFTStakingPool",
+            "label": "owner",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address"
+          },
+          {
+            "astId": 17885,
+            "contract": "contracts/NFTStakingPool.sol:NFTStakingPool",
+            "label": "stakedAt",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 17887,
+            "contract": "contracts/NFTStakingPool.sol:NFTStakingPool",
+            "label": "lastClaimTime",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "96"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

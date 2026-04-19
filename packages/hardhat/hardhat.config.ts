@@ -91,18 +91,19 @@ const config: HardhatUserConfig = {
       // 4: 0, // rinkeby 使用账户 0
       // 或者使用具体地址
       // mainnet: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+      sepolia: "0x979F0e0a791724DbFAA2560639Ed9eb805B40dFE",
     },
     operator: {
       default: 1, // 默认使用账户索引 1 作为操作员
       // 生产环境使用具体地址
-      // mainnet: "0x...",
-      // sepolia: "0x...",
+      // mainnet: "0xcA5490a5F1Eb7Fbf3404Af3b2042b223ef7883b8",
+      sepolia: "0xcA5490a5F1Eb7Fbf3404Af3b2042b223ef7883b8",
     },
     pauser: {
       default: 2, // 默认使用账户索引 2 作为安全员
       // 生产环境使用具体地址
-      // mainnet: "0x...",
-      // sepolia: "0x...",
+      // mainnet: "0xA04e4a3a5C4fB027446Bba2a38D054F48bdf78eE",
+      sepolia: "0xA04e4a3a5C4fB027446Bba2a38D054F48bdf78eE",
     },
   },
 

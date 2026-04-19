@@ -66,14 +66,24 @@ const networks = {
 };
 
 /**
- * 获取所有已部署的合约名称
+ * 获取当前目标网络的部署信息
  *
- * 从 deployedContracts.ts 中提取当前网络上所有已部署合约的名称
- * 这样可以自动索引所有部署的合约，无需手动配置
- *
- * 例如：["YourContract", "NFTContract", "StakableNFT"]
+ * Ponder 需要从 ABI 字面量推导事件类型，所以这里保留本地部署产物里的 ABI 类型，
+ * 运行时地址和部署区块仍然来自 scaffold.config.ts 中的当前目标网络。
  */
-const contractNames = Object.keys(deployedContracts[targetNetwork.id]);
+type LocalContracts = (typeof deployedContracts)[31337];
+
+const localContracts = deployedContracts[31337];
+const deployedContractsByChain = deployedContracts as typeof deployedContracts & Partial<Record<number, LocalContracts>>;
+const targetContracts = deployedContractsByChain[targetNetwork.id];
+
+if (!targetContracts) {
+  throw new Error(
+    `[Ponder] No deployed contracts found for ${targetNetwork.name} (${targetNetwork.id}). ` +
+      "Run yarn deploy --network sepolia before starting Ponder on Sepolia, " +
+      "or put chains.hardhat first in scaffold.config.ts for local indexing.",
+  );
+}
 
 /**
  * 合约配置对象
@@ -91,52 +101,40 @@ const contractNames = Object.keys(deployedContracts[targetNetwork.id]);
  *   }
  * }
  *
- * 使用 Object.fromEntries 和 map 动态生成配置
- * 这样当添加新合约时，Ponder 会自动开始索引
+ * 合约名称需要静态保留，方便 Ponder 从 key 和 ABI 中推导事件类型。
  */
-const contracts = Object.fromEntries(contractNames.map((contractName) => {
-  return [contractName, {
-    // 合约所在的网络（必须匹配 networks 中定义的网络名称）
-    network: targetNetwork.name as string,
-
-    // 合约 ABI - 定义了合约的接口（函数、事件等）
-    abi: deployedContracts[targetNetwork.id][contractName].abi,
-
-    // 合约地址 - 可以是多种格式：
-    // 1. 单个地址字符串："0x1234..."
-    // 2. 地址对象：{ [chainId]: "0x1234..." } 用于多链部署
-    // 3. 工厂配置：用于索引由工厂合约创建的子合约
-    address: deployedContracts[targetNetwork.id][contractName].address,
-
-    // 开始索引的区块号
-    // - 从合约部署区块开始可以节省索引时间
-    // - 如果未设置，默认从区块 0 开始（会很慢）
-    // - 对于已部署的合约，应该设置为实际部署区块号
-    startBlock: deployedContracts[targetNetwork.id][contractName].deployedOnBlock || 0,
-
-    // 💡 可选配置（未使用但可配置）：
-
-    // endBlock: 1000000,                  // 结束索引的区块号（可选）
-    // maxBlockRange: 10000,               // 单次查询的最大区块范围
-
-    // 工厂合约配置（用于索引工厂创建的子合约）：
-    // factory: {
-    //   address: "0xFactoryAddress",       // 工厂合约地址
-    //   event: "ContractCreated",          // 创建子合约的事件名称
-    //   parameter: "contractAddress",      // 事件中包含子合约地址的参数名
-    // },
-
-    // 过滤器配置（只索引特定条件的事件）：
-    // filter: {
-    //   event: "Transfer",                 // 事件名称
-    //   args: {                            // 事件参数过滤
-    //     from: "0x1234...",               // 只索引来自特定地址的转账
-    //   },
-    // },
-
-    // includeTransactionReceipts: false,  // 是否包含交易回执数据
-  }];
-}));
+const contracts = {
+  MyGovernor: {
+    network: targetNetwork.name,
+    abi: localContracts.MyGovernor.abi,
+    address: targetContracts.MyGovernor.address,
+    startBlock: targetContracts.MyGovernor.deployedOnBlock || 0,
+  },
+  NFTStakingPool: {
+    network: targetNetwork.name,
+    abi: localContracts.NFTStakingPool.abi,
+    address: targetContracts.NFTStakingPool.address,
+    startBlock: targetContracts.NFTStakingPool.deployedOnBlock || 0,
+  },
+  RewardToken: {
+    network: targetNetwork.name,
+    abi: localContracts.RewardToken.abi,
+    address: targetContracts.RewardToken.address,
+    startBlock: targetContracts.RewardToken.deployedOnBlock || 0,
+  },
+  StakableNFT: {
+    network: targetNetwork.name,
+    abi: localContracts.StakableNFT.abi,
+    address: targetContracts.StakableNFT.address,
+    startBlock: targetContracts.StakableNFT.deployedOnBlock || 0,
+  },
+  Timelock: {
+    network: targetNetwork.name,
+    abi: localContracts.Timelock.abi,
+    address: targetContracts.Timelock.address,
+    startBlock: targetContracts.Timelock.deployedOnBlock || 0,
+  },
+} as const;
 
 /**
  * Ponder 主配置导出

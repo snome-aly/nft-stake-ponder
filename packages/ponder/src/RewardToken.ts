@@ -17,7 +17,7 @@ ponder.on("RewardToken:DelegateChanged", async ({ event, context }) => {
 
 ponder.on("RewardToken:DelegateVotesChanged", async ({ event, context }) => {
   const { db } = context;
-  const { delegate: delegateAddress, previousBalance, newBalance } = event.args;
+  const { delegate: delegateAddress, newVotes } = event.args;
 
   /* 
      Fix "No values to set" persistence by using Delete-Insert.
@@ -36,7 +36,7 @@ ponder.on("RewardToken:DelegateVotesChanged", async ({ event, context }) => {
   // Construct pure values object
   const insertValues: any = {
       id: delegateAddress,
-      votes: newBalance,
+      votes: newVotes,
   };
   // Only add delegatedTo if it exists (avoid null/undefined issues)
   if (currentDelegatedTo) {

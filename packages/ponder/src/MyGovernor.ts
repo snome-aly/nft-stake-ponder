@@ -34,10 +34,10 @@ ponder.on("MyGovernor:ProposalCreated", async ({ event, context }) => {
   await db.insert(proposal).values({
     id: proposalId.toString(),
     proposer: proposer,
-    targets: targets,
-    values: values,
-    signatures: signatures,
-    calldatas: calldatas,
+    targets: [...targets],
+    values: [...values],
+    signatures: [...signatures],
+    calldatas: [...calldatas],
     startBlock: voteStart,
     endBlock: voteEnd,
     description: description,
@@ -88,9 +88,9 @@ ponder.on("MyGovernor:VoteCast", async ({ event, context }) => {
   
   const p = await db.find(proposal, { id: proposalId.toString() });
   if (p) {
-      let newFor = p.forVotes;
-      let newAgainst = p.againstVotes;
-      let newAbstain = p.abstainVotes;
+      let newFor = p.forVotes ?? 0n;
+      let newAgainst = p.againstVotes ?? 0n;
+      let newAbstain = p.abstainVotes ?? 0n;
 
       if (Number(support) === 0) newAgainst += weight;
       else if (Number(support) === 1) newFor += weight;
