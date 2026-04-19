@@ -77,18 +77,10 @@ export const Footer = () => {
                 Explore
               </h4>
               <ul className="space-y-2.5">
-                <li>
-                  <FooterLink href="/mint">Mint</FooterLink>
-                </li>
-                <li>
-                  <FooterLink href="/my-nfts">My NFTs</FooterLink>
-                </li>
-                <li>
-                  <FooterLink href="/stake">Stake</FooterLink>
-                </li>
-                <li>
-                  <FooterLink href="/stats">Statistics</FooterLink>
-                </li>
+                <FooterLink href="/mint">Mint</FooterLink>
+                <FooterLink href="/my-nfts">My NFTs</FooterLink>
+                <FooterLink href="/stake">Stake</FooterLink>
+                <FooterLink href="/stats">Statistics</FooterLink>
               </ul>
             </motion.div>
 
@@ -111,17 +103,11 @@ export const Footer = () => {
                 Project
               </h4>
               <ul className="space-y-2.5">
-                <li>
-                  <FooterLink href="/governance">Governance</FooterLink>
-                </li>
-                <li>
-                  <FooterLink href="https://github.com" external>
-                    GitHub
-                  </FooterLink>
-                </li>
-                <li>
-                  <FooterLink href="/docs">Documentation</FooterLink>
-                </li>
+                <FooterLink href="/governance">Governance</FooterLink>
+                <FooterLink href="https://github.com" external>
+                  GitHub
+                </FooterLink>
+                <FooterLink href="/docs">Documentation</FooterLink>
               </ul>
             </motion.div>
 
@@ -144,15 +130,9 @@ export const Footer = () => {
                 Resources
               </h4>
               <ul className="space-y-2.5">
-                <li>
-                  <FooterLink href="/guide">Guide</FooterLink>
-                </li>
-                <li>
-                  <FooterLink href="/terms">Terms</FooterLink>
-                </li>
-                <li>
-                  <FooterLink href="/privacy">Privacy</FooterLink>
-                </li>
+                <FooterLink href="/guide">Guide</FooterLink>
+                <FooterLink href="/terms">Terms</FooterLink>
+                <FooterLink href="/privacy">Privacy</FooterLink>
               </ul>
             </motion.div>
           </div>
