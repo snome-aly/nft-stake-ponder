@@ -1,52 +1,37 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { formatEther, parseEther } from "viem";
-import { useAccount, useWaitForTransactionReceipt } from "wagmi";
+import { useAccount } from "wagmi";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
 export function MintCard() {
   const { address, isConnected } = useAccount();
   const [quantity, setQuantity] = useState(1);
-  const [txHash, setTxHash] = useState<`0x${string}` | undefined>();
   const [isMintSuccess, setIsMintSuccess] = useState(false);
   const queryClient = useQueryClient();
 
-  const { data: totalMinted } = useScaffoldReadContract({
+  const { data: totalMinted, refetch: refetchTotalMinted } = useScaffoldReadContract({
     contractName: "StakableNFT",
     functionName: "totalMinted",
   });
 
-  const { data: userMinted } = useScaffoldReadContract({
+  const { data: userMinted, refetch: refetchUserMinted } = useScaffoldReadContract({
     contractName: "StakableNFT",
     functionName: "mintedCount",
     args: [address],
   });
 
-  const { data: isRevealed } = useScaffoldReadContract({
+  const { data: isRevealed, refetch: refetchIsRevealed } = useScaffoldReadContract({
     contractName: "StakableNFT",
     functionName: "isRevealed",
   });
 
-  const { writeContractAsync, isPending } = useScaffoldWriteContract({
+  const { writeContractAsync, isPending, isMining } = useScaffoldWriteContract({
     contractName: "StakableNFT",
   });
-
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: txHash,
-    query: { enabled: !!txHash },
-  });
-
-  useEffect(() => {
-    if (isConfirmed && txHash) {
-      queryClient.invalidateQueries({ queryKey: ["balance", { address }] });
-      setTxHash(undefined);
-      setIsMintSuccess(true);
-      setTimeout(() => setIsMintSuccess(false), 3000);
-    }
-  }, [isConfirmed, txHash, queryClient, address]);
 
   const maxSupply = 100;
   const maxPerAddress = 20;
@@ -83,7 +68,7 @@ export function MintCard() {
   };
 
   const handleMint = async () => {
-    if (!isConnected || isPending || isSoldOut || isMaxReached) return;
+    if (!isConnected || isPending || isMining || isSoldOut || isMaxReached) return;
 
     try {
       const hash = await writeContractAsync({
@@ -91,8 +76,19 @@ export function MintCard() {
         args: [BigInt(quantity)],
         value: totalPriceWei,
       });
-      setTxHash(hash);
+
+      if (!hash) return;
+
       setQuantity(1);
+      await Promise.all([
+        refetchTotalMinted(),
+        refetchUserMinted(),
+        refetchIsRevealed(),
+        queryClient.invalidateQueries({ queryKey: ["balance", { address }] }),
+      ]);
+
+      setIsMintSuccess(true);
+      setTimeout(() => setIsMintSuccess(false), 3000);
     } catch (error) {
       console.error("Mint failed:", error);
     }
@@ -101,7 +97,7 @@ export function MintCard() {
   const getButtonContent = () => {
     if (!isConnected) return { text: "Connect Wallet", disabled: true };
     if (isPending) return { text: "Sending...", disabled: true };
-    if (isConfirming) return { text: "Confirming...", disabled: true };
+    if (isMining) return { text: "Confirming...", disabled: true };
     if (isSoldOut) return { text: "Sold Out", disabled: true };
     if (isMaxReached) return { text: "Max Reached", disabled: true };
     return { text: `Mint ${quantity} NFT${quantity > 1 ? "s" : ""}`, disabled: false };
