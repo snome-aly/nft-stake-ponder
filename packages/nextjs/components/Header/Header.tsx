@@ -8,8 +8,10 @@ import { Logo } from "./Logo";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAccount } from "wagmi";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { ADMIN_ROLE } from "~~/constants/roles";
+import { ADMIN_ROLE, OPERATOR_ROLE } from "~~/constants/roles";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+
+const PAUSER_ROLE = "0x65d7a28e3265b37a6474929f336521b332c1681b933f6cb9f3376673440d862a" as const;
 
 /**
  * Header - Premium NFT Gallery Shell
@@ -26,6 +28,18 @@ export const Header = () => {
     args: [ADMIN_ROLE, address],
   });
 
+  const { data: isOperator } = useScaffoldReadContract({
+    contractName: "StakableNFT",
+    functionName: "hasRole",
+    args: [OPERATOR_ROLE, address],
+  });
+
+  const { data: hasPauserRole } = useScaffoldReadContract({
+    contractName: "StakableNFT",
+    functionName: "hasRole",
+    args: [PAUSER_ROLE, address],
+  });
+
   // Navigation links
   const navLinks = [
     { href: "/home", label: "Home" },
@@ -36,7 +50,7 @@ export const Header = () => {
     { href: "/governance", label: "Governance" },
   ];
 
-  if (isAdmin) {
+  if (isAdmin || isOperator || hasPauserRole) {
     navLinks.push({ href: "/admin", label: "Admin" });
   }
 

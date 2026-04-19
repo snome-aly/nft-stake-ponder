@@ -8,6 +8,9 @@ import { ADMIN_ROLE, OPERATOR_ROLE } from "~~/constants/roles";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 
+// OpenZeppelin standard PAUSER_ROLE = keccak256("PAUSER_ROLE")
+const PAUSER_ROLE = "0x65d7a28e3265b37a6474929f336521b332c1681b933f6cb9f3376673440d862a" as const;
+
 export default function AdminPage() {
   const { address, isConnected } = useAccount();
 
@@ -47,6 +50,12 @@ export default function AdminPage() {
     contractName: "StakableNFT",
     functionName: "hasRole",
     args: [OPERATOR_ROLE, address],
+  });
+
+  const { data: hasPauserRole } = useScaffoldReadContract({
+    contractName: "StakableNFT",
+    functionName: "hasRole",
+    args: [PAUSER_ROLE, address],
   });
 
   const { writeContractAsync: writeReveal, isPending: isRevealPending } = useScaffoldWriteContract({
@@ -103,7 +112,9 @@ export default function AdminPage() {
     );
   }
 
-  if (!isAdmin) {
+  const hasAdminAccess = isAdmin || isOperator || hasPauserRole;
+
+  if (!hasAdminAccess) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "var(--bg-base)" }}>
         <div className="text-center">
@@ -128,7 +139,7 @@ export default function AdminPage() {
             Access Denied
           </h2>
           <p className="text-sm mb-6" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
-            You don&apos;t have admin permissions
+            You don&apos;t have admin, operator, or pauser permissions
           </p>
           <p className="text-xs font-mono" style={{ fontFamily: "var(--font-mono)", color: "var(--text-muted)" }}>
             Connected: {address}
@@ -570,6 +581,55 @@ export default function AdminPage() {
                     }}
                   >
                     {isOperator ? "Active" : "No"}
+                  </span>
+                </div>
+
+                <div
+                  className="flex items-center justify-between p-3 rounded-lg"
+                  style={{
+                    backgroundColor: hasPauserRole ? "rgba(168,85,247,0.15)" : "var(--bg-card)",
+                    border: `1px solid ${hasPauserRole ? "rgba(168,85,247,0.3)" : "var(--border-subtle)"}`,
+                  }}
+                >
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="w-8 h-8 rounded-lg flex items-center justify-center"
+                      style={{ backgroundColor: "var(--bg-elevated)" }}
+                    >
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        style={{ color: hasPauserRole ? "#a855f7" : "var(--text-muted)" }}
+                      >
+                        <path
+                          d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    <span
+                      className="font-medium text-sm"
+                      style={{
+                        fontFamily: "var(--font-body)",
+                        color: hasPauserRole ? "#a855f7" : "var(--text-muted)",
+                      }}
+                    >
+                      Pauser
+                    </span>
+                  </div>
+                  <span
+                    className="text-xs"
+                    style={{
+                      fontFamily: "var(--font-body)",
+                      color: hasPauserRole ? "#a855f7" : "var(--text-muted)",
+                    }}
+                  >
+                    {hasPauserRole ? "Active" : "No"}
                   </span>
                 </div>
               </div>
