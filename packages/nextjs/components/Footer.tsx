@@ -7,6 +7,21 @@ import { ChatBubbleLeftRightIcon, CommandLineIcon, GlobeAltIcon } from "@heroico
  * Footer - Premium NFT Gallery
  * Clean, restrained footer with minimal decoration
  */
+const techStack = [
+  { name: "Solidity", url: "https://soliditylang.org" },
+  { name: "Hardhat", url: "https://hardhat.org" },
+  { name: "OpenZeppelin", url: "https://openzeppelin.com" },
+  { name: "Next.js", url: "https://nextjs.org" },
+  { name: "Tailwind CSS", url: "https://tailwindcss.com" },
+  { name: "TypeScript", url: "https://www.typescriptlang.org" },
+  { name: "Wagmi", url: "https://wagmi.sh" },
+  { name: "Viem", url: "https://viem.sh" },
+  { name: "Ponder", url: "https://ponder.sh" },
+  { name: "GraphQL", url: "https://graphql.org" },
+  { name: "Vercel", url: "https://vercel.com" },
+  { name: "Alchemy", url: "https://alchemy.com" },
+];
+
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
 
@@ -138,9 +153,53 @@ export const Footer = () => {
           </div>
         </div>
 
+        {/* Tech Stack */}
+        <div className="relative py-8" style={{ borderTop: "1px solid var(--border-subtle)" }}>
+          <p
+            className="absolute left-1/2 top-0 z-10 max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 px-4 py-1 text-center text-[12px]"
+            style={{
+              fontFamily: "var(--font-body)",
+              color: "var(--text-muted)",
+              backgroundColor: "var(--bg-base)",
+              lineHeight: 1.4,
+            }}
+          >
+            ⚠️ This project is for educational purposes only. Not financial advice. DYOR.
+          </p>
+          <div className="mx-auto flex max-w-6xl flex-col items-center text-center">
+            <div className="flex w-full flex-col items-center gap-3">
+              <span
+                className="text-[10px] uppercase tracking-widest"
+                style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}
+              >
+                Built with
+              </span>
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                {techStack.map(tech => (
+                  <a
+                    key={tech.name}
+                    href={tech.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-2 py-1 rounded text-[10px] font-semibold transition-all hover:scale-105"
+                    style={{
+                      fontFamily: "var(--font-body)",
+                      backgroundColor: "var(--bg-elevated)",
+                      border: "1px solid var(--border-default)",
+                      color: "var(--text-secondary)",
+                    }}
+                  >
+                    {tech.name}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Bottom */}
         <div
-          className="pt-8 flex flex-col md:flex-row justify-between items-center gap-4"
+          className="pt-6 flex flex-col md:flex-row justify-between items-center gap-4"
           style={{ borderTop: "1px solid var(--border-subtle)" }}
         >
           <p

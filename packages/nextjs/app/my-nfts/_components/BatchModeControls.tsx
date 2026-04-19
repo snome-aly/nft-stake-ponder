@@ -53,10 +53,8 @@ export function BatchModeControls({
 
         {/* Right: Batch Stake Button */}
         {isBatchMode && selectedCount > 0 && (
-          <button onClick={onBatchStake} disabled={isProcessing} className="btn btn-primary">
-            {isProcessing
-              ? `Staking ${selectedCount} NFT${selectedCount > 1 ? "s" : ""}...`
-              : `Stake Selected (${selectedCount})`}
+          <button onClick={onBatchStake} disabled={isProcessing} className="btn btn-primary btn-sm px-3">
+            {isProcessing ? `Staking ${selectedCount}...` : `Stake (${selectedCount})`}
           </button>
         )}
       </div>
