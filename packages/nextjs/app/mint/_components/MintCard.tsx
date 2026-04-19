@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { formatEther, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
+import { ponderKeys } from "~~/hooks/usePonder";
 
 export function MintCard() {
   const { address, isConnected } = useAccount();
@@ -84,6 +85,7 @@ export function MintCard() {
         refetchTotalMinted(),
         refetchUserMinted(),
         refetchIsRevealed(),
+        queryClient.invalidateQueries({ queryKey: ponderKeys.all }),
         queryClient.invalidateQueries({ queryKey: ["balance", { address }] }),
       ]);
 

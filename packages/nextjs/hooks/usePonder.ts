@@ -41,6 +41,16 @@ export type StakingEvent = {
   transactionHash: string;
 };
 
+export type MintEvent = {
+  id: string;
+  to: string;
+  startTokenId: number;
+  quantity: number;
+  timestamp: number;
+  blockNumber: number;
+  transactionHash: string;
+};
+
 export type StakingStats = {
   id: `0x${string}`;
   totalStaked: number;
@@ -63,6 +73,7 @@ export type GlobalStats = {
 type NFTsData = { nfts: { items: NFT[] } };
 type ActiveStakesData = { activeStakes: { items: ActiveStake[] } };
 type StakingEventsData = { stakingEvents: { items: StakingEvent[] } };
+type MintEventsData = { mintEvents: { items: MintEvent[] } };
 type StakingStatsData = { stakingStats: StakingStats | null };
 type GlobalStatsData = { globalStats: GlobalStats | null };
 
@@ -78,6 +89,7 @@ export const ponderKeys = {
   nfts: (address?: string) => [...ponderKeys.all, "nfts", address] as const,
   activeStakes: (address?: string) => [...ponderKeys.all, "activeStakes", address] as const,
   stakingEvents: (address?: string, type?: string) => [...ponderKeys.all, "stakingEvents", address, type] as const,
+  recentMints: (limit?: number) => [...ponderKeys.all, "recentMints", limit] as const,
   stakingStats: (address?: string) => [...ponderKeys.all, "stakingStats", address] as const,
   userAllNFTs: (address?: string) => [...ponderKeys.all, "userAllNFTs", address] as const,
   globalStats: () => [...ponderKeys.all, "globalStats"] as const,
@@ -209,6 +221,29 @@ export const fetchStakingEvents = async (
     type: options?.type,
   });
   return data.stakingEvents?.items || [];
+};
+
+/**
+ * 查询最近 Mint 事件
+ */
+export const fetchRecentMints = async (limit = 5): Promise<MintEvent[]> => {
+  const query = gql`
+    query RecentMints($limit: Int!) {
+      mintEvents(orderBy: "timestamp", orderDirection: "desc", limit: $limit) {
+        items {
+          id
+          to
+          startTokenId
+          quantity
+          timestamp
+          blockNumber
+          transactionHash
+        }
+      }
+    }
+  `;
+  const data = await request<MintEventsData>(PONDER_URL, query, { limit });
+  return data.mintEvents?.items || [];
 };
 
 /**
@@ -423,6 +458,23 @@ export function usePonderStakingEvents(
     staleTime: 10000, // 历史数据可以稍微旧一点
     gcTime: 60000,
     ...queryOptions,
+  });
+}
+
+/**
+ * Hook: 获取最近 Mint 事件
+ */
+export function usePonderRecentMints(
+  limit = 5,
+  options?: Omit<UseQueryOptions<MintEvent[], Error>, "queryKey" | "queryFn">,
+) {
+  return useQuery({
+    queryKey: ponderKeys.recentMints(limit),
+    queryFn: () => fetchRecentMints(limit),
+    staleTime: 5000,
+    gcTime: 60000,
+    refetchInterval: 5000,
+    ...options,
   });
 }
 

@@ -1,9 +1,13 @@
 "use client";
 
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { decodeFunctionData, formatUnits } from "viem";
 import {
   CalendarIcon,
   CheckCircleIcon,
   ClockIcon,
+  CurrencyDollarIcon,
   PlayCircleIcon,
   QueueListIcon,
   XCircleIcon,
@@ -95,6 +99,77 @@ const StatusBadge = ({ status }: { status: string }) => {
 
 export type ProposalAction = { type: "vote"; support: 0 | 1 | 2 } | { type: "queue" } | { type: "execute" };
 
+const stakingPoolGovernanceAbi = [
+  {
+    type: "function",
+    name: "setBaseReward",
+    inputs: [{ name: "newReward", type: "uint256" }],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+] as const;
+
+const getBaseRewardChange = (proposal: Proposal) => {
+  for (const calldata of proposal.calldatas) {
+    try {
+      const decoded = decodeFunctionData({
+        abi: stakingPoolGovernanceAbi,
+        data: calldata as `0x${string}`,
+      });
+
+      if (decoded.functionName === "setBaseReward") {
+        return decoded.args[0];
+      }
+    } catch {
+      // Ignore actions that are not setBaseReward.
+    }
+  }
+
+  return undefined;
+};
+
+const formatRewardRate = (rewardPerSecond: bigint) => {
+  const rwrdPerDay = formatUnits(rewardPerSecond * 86400n, 18);
+  const [whole, fraction = ""] = rwrdPerDay.split(".");
+  const trimmedFraction = fraction.slice(0, 4).replace(/0+$/, "");
+
+  return trimmedFraction ? `${whole}.${trimmedFraction}` : whole;
+};
+
+const stripInlineMarkdown = (value: string) =>
+  value
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/[*_`~]/g, "")
+    .trim();
+
+const getProposalContent = (description: string) => {
+  const trimmed = description.trim();
+  if (!trimmed) return { title: "Untitled Proposal", body: "" };
+
+  const lines = trimmed.split(/\r?\n/);
+  const firstContentIndex = lines.findIndex(line => line.trim().length > 0);
+  const firstContent = lines[firstContentIndex]?.trim() || "";
+  const headingMatch = firstContent.match(/^#{1,6}\s+(.+)$/);
+
+  if (headingMatch) {
+    return {
+      title: stripInlineMarkdown(headingMatch[1]),
+      body: lines
+        .filter((_, index) => index !== firstContentIndex)
+        .join("\n")
+        .trim(),
+    };
+  }
+
+  return {
+    title: stripInlineMarkdown(firstContent),
+    body: lines
+      .slice(firstContentIndex + 1)
+      .join("\n")
+      .trim(),
+  };
+};
+
 export const ProposalCard = ({
   proposal,
   onAction,
@@ -111,6 +186,8 @@ export const ProposalCard = ({
   const totalVotes = forVotes + againstVotes + abstainVotes;
   const forPercent = totalVotes > 0 ? (forVotes / totalVotes) * 100 : 0;
   const againstPercent = totalVotes > 0 ? (againstVotes / totalVotes) * 100 : 0;
+  const newBaseReward = getBaseRewardChange(proposal);
+  const proposalContent = getProposalContent(proposal.description);
 
   const formatCompact = (n: number) => {
     if (n === 0) return "0";
@@ -146,11 +223,11 @@ export const ProposalCard = ({
               </span>
             </div>
             <h3
-              className="font-bold text-sm leading-snug truncate"
+              className="font-bold text-sm leading-snug break-words"
               style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
-              title={proposal.description}
+              title={proposalContent.title}
             >
-              {proposal.description}
+              {proposalContent.title}
             </h3>
           </div>
         </div>
@@ -176,6 +253,127 @@ export const ProposalCard = ({
             </div>
           )}
         </div>
+
+        {/* Markdown Description */}
+        {proposalContent.body && (
+          <div
+            className="rounded-md px-3 py-2.5 text-xs leading-relaxed"
+            style={{
+              backgroundColor: "rgba(255,255,255,0.025)",
+              border: "1px solid var(--border-subtle)",
+              color: "var(--text-tertiary)",
+              fontFamily: "var(--font-body)",
+            }}
+          >
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              skipHtml
+              components={{
+                h1: ({ children }) => (
+                  <h4
+                    className="mb-1.5 text-sm font-semibold"
+                    style={{ color: "var(--text-primary)", fontFamily: "var(--font-display)" }}
+                  >
+                    {children}
+                  </h4>
+                ),
+                h2: ({ children }) => (
+                  <h4
+                    className="mb-1.5 text-sm font-semibold"
+                    style={{ color: "var(--text-primary)", fontFamily: "var(--font-display)" }}
+                  >
+                    {children}
+                  </h4>
+                ),
+                h3: ({ children }) => (
+                  <h5
+                    className="mb-1 text-xs font-semibold uppercase tracking-[0.12em]"
+                    style={{ color: "var(--text-secondary)", fontFamily: "var(--font-body)" }}
+                  >
+                    {children}
+                  </h5>
+                ),
+                p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                strong: ({ children }) => (
+                  <strong className="font-semibold" style={{ color: "var(--text-secondary)" }}>
+                    {children}
+                  </strong>
+                ),
+                ul: ({ children }) => <ul className="mb-2 list-disc space-y-1 pl-4 last:mb-0">{children}</ul>,
+                ol: ({ children }) => <ol className="mb-2 list-decimal space-y-1 pl-4 last:mb-0">{children}</ol>,
+                li: ({ children }) => <li className="pl-1">{children}</li>,
+                code: ({ children }) => (
+                  <code
+                    className="rounded px-1 py-0.5 text-[11px]"
+                    style={{
+                      backgroundColor: "rgba(0,0,0,0.28)",
+                      color: "var(--text-secondary)",
+                      fontFamily: "var(--font-mono)",
+                    }}
+                  >
+                    {children}
+                  </code>
+                ),
+                a: ({ href, children }) => (
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline underline-offset-2"
+                    style={{ color: "var(--accent)" }}
+                  >
+                    {children}
+                  </a>
+                ),
+              }}
+            >
+              {proposalContent.body}
+            </ReactMarkdown>
+          </div>
+        )}
+
+        {/* Proposal Details */}
+        {newBaseReward !== undefined && (
+          <div
+            className="grid gap-2 rounded-md px-3 py-2.5 sm:grid-cols-[minmax(0,1fr)_auto]"
+            style={{
+              backgroundColor: "rgba(139, 92, 246, 0.08)",
+              border: "1px solid rgba(139, 92, 246, 0.18)",
+            }}
+          >
+            <div className="flex min-w-0 items-center gap-2">
+              <CurrencyDollarIcon className="h-4 w-4 shrink-0" style={{ color: "var(--accent)" }} />
+              <div className="min-w-0">
+                <p
+                  className="text-[10px] font-bold uppercase tracking-[0.16em]"
+                  style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}
+                >
+                  New Base Reward
+                </p>
+                <p
+                  className="truncate text-sm font-semibold"
+                  style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
+                  title={`${newBaseReward.toString()} wei/sec`}
+                >
+                  {newBaseReward.toString()} wei/sec
+                </p>
+              </div>
+            </div>
+            <div
+              className="rounded-md px-2.5 py-1.5 text-left sm:text-right"
+              style={{
+                backgroundColor: "rgba(0,0,0,0.18)",
+                color: "var(--text-secondary)",
+                fontFamily: "var(--font-body)",
+              }}
+            >
+              <div className="text-[10px] uppercase tracking-[0.14em]" style={{ color: "var(--text-muted)" }}>
+                1x NFT Daily
+              </div>
+              <div className="text-xs font-semibold">{formatRewardRate(newBaseReward)} RWRD</div>
+            </div>
+          </div>
+        )}
 
         {/* Vote Stats */}
         {showVoteStats && (

@@ -4,8 +4,8 @@ export function NoStakedNFTs() {
   return (
     <EmptyState
       title="No Staked NFTs"
-      message="You don't have any staked NFTs yet. Stake your NFTs to start earning rewards!"
-      actionLabel="Go to My NFTs"
+      message="Staking opens after the mint phase ends and the collection is revealed. Once revealed, stake your NFTs to earn RWRD rewards."
+      actionLabel="View Collection"
       actionHref="/my-nfts"
     />
   );
