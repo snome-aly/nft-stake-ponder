@@ -4,7 +4,7 @@
     "buildCommand": "corepack prepare yarn@3.2.3 --activate && corepack yarn install --immutable && corepack yarn ponder:typecheck"
   },
   "deploy": {
-    "startCommand": "corepack prepare yarn@3.2.3 --activate && corepack yarn ponder:start",
+    "startCommand": "corepack prepare yarn@3.2.3 --activate && DATABASE_SCHEMA=${DATABASE_SCHEMA:-public} corepack yarn ponder:start",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }
