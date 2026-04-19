@@ -6,7 +6,7 @@ import { useAccount } from "wagmi";
 import { Address } from "~~/components/scaffold-eth";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
-export function VotingPower() {
+export const VotingPower = () => {
   const { address } = useAccount();
   const [delegatee, setDelegatee] = useState("");
 
@@ -38,61 +38,41 @@ export function VotingPower() {
   };
 
   return (
-    <div className="card p-5" style={{ backgroundColor: "var(--bg-elevated)" }}>
-      <h2
-        className="text-base font-semibold mb-4"
-        style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
-      >
-        Voting Power
-      </h2>
-
-      <div className="grid grid-cols-2 gap-4 mb-4">
-        <div
-          className="p-4 rounded-lg"
-          style={{ backgroundColor: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}
-        >
-          <p className="text-xs mb-1" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
-            Current Votes
-          </p>
-          <p className="text-2xl font-bold" style={{ fontFamily: "var(--font-display)", color: "var(--accent)" }}>
-            {votes ? formatEther(votes) : "0"}
-          </p>
-          <p className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
-            RWRD
-          </p>
-        </div>
-
-        <div
-          className="p-4 rounded-lg"
-          style={{ backgroundColor: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}
-        >
-          <p className="text-xs mb-1" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
-            Delegated To
-          </p>
-          <div className="text-sm font-mono" style={{ fontFamily: "var(--font-mono)", color: "var(--text-primary)" }}>
-            {currentDelegate === address ? "Self" : <Address address={currentDelegate} />}
+    <div className="card glass-medium shadow-xl mb-6">
+      <div className="card-body">
+        <h2 className="card-title">Voting Power</h2>
+        <div className="stats shadow bg-base-100/50 backdrop-blur-sm">
+          <div className="stat">
+            <div className="stat-title font-semibold text-base-content/70">Current Votes</div>
+            <div className="stat-value text-4xl font-black text-gradient-purple tracking-tight">
+              {votes ? formatEther(votes) : "0"}
+            </div>
+            <div className="stat-desc font-bold text-xs opacity-60">RWRD</div>
+          </div>
+          <div className="stat">
+            <div className="stat-title font-semibold text-base-content/70">Delegated To</div>
+            <div className="stat-value text-sm font-mono bg-base-100/30 p-2 rounded-lg border border-white/5">
+              {currentDelegate === address ? "Self" : <Address address={currentDelegate} />}
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="flex gap-2 items-center">
-        <input
-          type="text"
-          placeholder="Delegate to address (blank for self)"
-          className="input flex-grow"
-          style={{
-            fontFamily: "var(--font-mono)",
-            backgroundColor: "var(--bg-card)",
-            border: "1px solid var(--border-subtle)",
-            color: "var(--text-primary)",
-          }}
-          value={delegatee}
-          onChange={e => setDelegatee(e.target.value)}
-        />
-        <button onClick={handleDelegate} className="btn btn-primary">
-          Delegate
-        </button>
+        <div className="flex gap-2 mt-4 items-center">
+          <input
+            type="text"
+            placeholder="Delegate to address (blank for self)"
+            className="input input-bordered flex-grow font-mono bg-base-100/50 focus:bg-base-100 transition-colors rounded-lg"
+            value={delegatee}
+            onChange={e => setDelegatee(e.target.value)}
+          />
+          <button
+            className="btn border-0 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg shadow-purple-500/30 transition-all hover:scale-105 rounded-lg"
+            onClick={handleDelegate}
+          >
+            Delegate
+          </button>
+        </div>
       </div>
     </div>
   );
-}
+};

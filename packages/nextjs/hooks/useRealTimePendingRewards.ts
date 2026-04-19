@@ -4,7 +4,7 @@
  * 从 Ponder 获取质押数据，在前端实时计算 pending rewards
  * 每秒自动更新，无需频繁的链上查询
  */
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { usePublicClient } from "wagmi";
 import { calculatePendingReward, calculateTotalPendingReward } from "~~/utils/rewardCalculator";
 
@@ -26,6 +26,8 @@ function getRewardMultiplier(rarity: number | null): number {
   const multipliers = [10000, 15000, 20000, 30000]; // Common, Rare, Epic, Legendary
   return multipliers[rarity] ?? 0;
 }
+
+const getCurrentUnixTime = () => Math.floor(Date.now() / 1000);
 
 /**
  * Hook: 实时计算质押NFT的pending rewards
@@ -50,77 +52,82 @@ export function useRealTimePendingRewards(
   totalPendingReward: bigint;
   isCalculating: boolean;
 } {
-  const [nftsWithRewards, setNftsWithRewards] = useState<StakedNFTWithReward[]>([]);
-  const [totalPendingReward, setTotalPendingReward] = useState<bigint>(0n);
-  const [blockchainTime, setBlockchainTime] = useState<number>(0);
-  const [baseTime, setBaseTime] = useState<number>(0);
+  const [rewardTime, setRewardTime] = useState<number>(() => getCurrentUnixTime());
+  const [isClockSynced, setIsClockSynced] = useState(false);
 
   const publicClient = usePublicClient();
 
-  // 获取区块链当前时间作为基准
+  // 用最新区块时间校准一次，再用本机时钟持续推进展示时间。
+  // 本地开发链在没有新交易时 block.timestamp 不会自动前进，纯用最新区块时间会导致页面重进后奖励显示从 0 重新开始。
   useEffect(() => {
-    if (!enabled || !publicClient) return;
-
-    const fetchBlockTime = async () => {
-      try {
-        const block = await publicClient.getBlock();
-        const blockTime = Number(block.timestamp);
-        setBlockchainTime(blockTime);
-        setBaseTime(Date.now());
-
-        console.log("[useRealTimePendingRewards] 区块链时间:", {
-          blockTime,
-          blockTimeISO: new Date(blockTime * 1000).toISOString(),
-          systemTime: Math.floor(Date.now() / 1000),
-          systemTimeISO: new Date().toISOString(),
-        });
-      } catch (error) {
-        console.error("[useRealTimePendingRewards] 获取区块时间失败:", error);
-        // 如果获取失败，使用系统时间作为后备
-        setBlockchainTime(Math.floor(Date.now() / 1000));
-        setBaseTime(Date.now());
-      }
-    };
-
-    fetchBlockTime();
-  }, [enabled, publicClient]);
-
-  useEffect(() => {
-    if (!enabled || !stakedNFTs || stakedNFTs.length === 0 || blockchainTime === 0) {
-      setNftsWithRewards([]);
-      setTotalPendingReward(0n);
+    if (!enabled) {
+      setIsClockSynced(false);
       return;
     }
 
-    // 立即计算一次
-    const calculate = () => {
-      // 使用区块链时间 + 经过的秒数
-      const elapsedSeconds = Math.floor((Date.now() - baseTime) / 1000);
-      const now = blockchainTime + elapsedSeconds;
+    let cancelled = false;
 
-      const updated = stakedNFTs.map(nft => ({
-        ...nft,
-        stakedAt: BigInt(nft.stakedAt), // 转换为 bigint
-        lastClaimTime: BigInt(nft.lastClaimTime), // 转换为 bigint
-        pendingReward: calculatePendingReward(nft.lastClaimTime, nft.rarity, now),
-        rewardMultiplier: getRewardMultiplier(nft.rarity),
-      }));
+    const syncRewardClock = async () => {
+      const systemTime = getCurrentUnixTime();
+      try {
+        if (!publicClient) {
+          setRewardTime(systemTime);
+          setIsClockSynced(true);
+          return;
+        }
 
-      setNftsWithRewards(updated);
-      setTotalPendingReward(calculateTotalPendingReward(stakedNFTs, now));
+        const block = await publicClient.getBlock();
+        const blockTime = Number(block.timestamp);
+        if (cancelled) return;
+
+        setRewardTime(Math.max(blockTime, systemTime));
+        setIsClockSynced(true);
+      } catch (error) {
+        console.error("[useRealTimePendingRewards] 获取区块时间失败:", error);
+        if (cancelled) return;
+
+        setRewardTime(systemTime);
+        setIsClockSynced(true);
+      }
     };
 
-    calculate();
+    syncRewardClock();
 
-    // 每秒更新一次
-    const interval = setInterval(calculate, 1000);
+    const interval = setInterval(() => {
+      setRewardTime(previous => Math.max(previous + 1, getCurrentUnixTime()));
+    }, 1000);
 
-    return () => clearInterval(interval);
-  }, [stakedNFTs, enabled, blockchainTime, baseTime]);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [enabled, publicClient]);
+
+  const nftsWithRewards = useMemo(() => {
+    if (!enabled || !stakedNFTs || stakedNFTs.length === 0) {
+      return [];
+    }
+
+    return stakedNFTs.map(nft => ({
+      ...nft,
+      stakedAt: BigInt(nft.stakedAt), // 转换为 bigint
+      lastClaimTime: BigInt(nft.lastClaimTime), // 转换为 bigint
+      pendingReward: calculatePendingReward(nft.lastClaimTime, nft.rarity, rewardTime),
+      rewardMultiplier: getRewardMultiplier(nft.rarity),
+    }));
+  }, [stakedNFTs, enabled, rewardTime]);
+
+  const totalPendingReward = useMemo(() => {
+    if (!enabled || !stakedNFTs || stakedNFTs.length === 0) {
+      return 0n;
+    }
+
+    return calculateTotalPendingReward(stakedNFTs, rewardTime);
+  }, [stakedNFTs, enabled, rewardTime]);
 
   return {
     nftsWithRewards,
     totalPendingReward,
-    isCalculating: blockchainTime === 0,
+    isCalculating: !isClockSynced,
   };
 }
