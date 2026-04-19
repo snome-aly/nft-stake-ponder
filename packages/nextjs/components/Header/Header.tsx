@@ -124,9 +124,11 @@ export const Header = () => {
             style={{
               backgroundColor: "rgba(24, 24, 27, 0.95)",
               borderTop: "1px solid var(--border-subtle)",
+              borderBottom: "1px solid rgba(139, 92, 246, 0.3)",
+              boxShadow: "0 18px 44px rgba(0, 0, 0, 0.42)",
             }}
           >
-            <nav className="container-premium py-4 flex flex-col gap-1">
+            <nav className="container-premium flex flex-col gap-1 pt-4 pb-6">
               {navLinks.map((link, index) => {
                 const isActive = pathname === link.href;
                 return (
@@ -156,8 +158,14 @@ export const Header = () => {
               })}
 
               {/* Mobile Wallet */}
-              <div className="mt-4 pt-4" style={{ borderTop: "1px solid var(--border-subtle)" }}>
-                <div className="px-4">
+              <div className="mt-5 pt-5 pb-2" style={{ borderTop: "1px solid var(--border-subtle)" }}>
+                <div
+                  className="rounded-xl px-4 py-3"
+                  style={{
+                    backgroundColor: "rgba(255, 255, 255, 0.025)",
+                    border: "1px solid var(--border-subtle)",
+                  }}
+                >
                   <CustomConnectButton />
                 </div>
               </div>
