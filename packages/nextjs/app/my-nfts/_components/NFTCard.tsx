@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { type NFTWithStakeStatus } from "~~/hooks/usePonder";
 
@@ -9,6 +10,15 @@ const RARITY_CONFIG = {
   2: { name: "Epic", color: "epic", textColor: "var(--rarity-epic)", bg: "var(--rarity-epic-bg)" },
   3: { name: "Legendary", color: "legendary", textColor: "var(--rarity-legendary)", bg: "var(--rarity-legendary-bg)" },
 } as const;
+
+const RARITY_IMAGES = {
+  0: "https://gateway.pinata.cloud/ipfs/QmY7A1WYkzBxgvYXwDwbY35bntWEeYi6kmph52UcpQTHFp",
+  1: "https://gateway.pinata.cloud/ipfs/QmYbvQvfFrKbxLwr3ZX4pigAZJbTB7zCpykGmuoWoZTf9p",
+  2: "https://gateway.pinata.cloud/ipfs/Qmdg4TcyiPpuxUJpDTsnJSGfEsjLzASekNrtCyWQZqWDW6",
+  3: "https://gateway.pinata.cloud/ipfs/QmZHdmbPR711ujJWi1UL6te2H5QsicuvPPuUcbJNnesjtf",
+};
+
+const BLINDBOX_IMAGE = "https://gateway.pinata.cloud/ipfs/Qmd2SzbuXHQnc5jcL7c2ohTpNsKcU2NJVwcPr2bG7S1cKk";
 
 interface NFTCardProps {
   nft: NFTWithStakeStatus;
@@ -35,45 +45,21 @@ export function NFTCard({ nft, isSelectable = false, isSelected = false, onSelec
       {/* Image Section */}
       <div className="aspect-square relative overflow-hidden" style={{ backgroundColor: "var(--bg-card)" }}>
         {nft.isRevealed && rarityConfig ? (
-          <div
-            className="absolute inset-0 flex items-center justify-center"
-            style={{ backgroundColor: rarityConfig.bg }}
-          >
-            <div className="text-center">
-              <div
-                className="w-16 h-16 rounded-full mx-auto mb-3 flex items-center justify-center"
-                style={{ backgroundColor: "var(--bg-elevated)" }}
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ color: rarityConfig.textColor }}>
-                  <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="1.5" />
-                  <path d="M8 12h8M12 8v8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
-              </div>
-              <span
-                className="text-sm font-semibold"
-                style={{ fontFamily: "var(--font-display)", color: rarityConfig.textColor }}
-              >
-                {rarityConfig.name}
-              </span>
-            </div>
-          </div>
+          <Image
+            src={RARITY_IMAGES[nft.rarity as keyof typeof RARITY_IMAGES]}
+            alt={`${rarityConfig.name} NFT #${nft.tokenId}`}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center">
-              <div
-                className="w-16 h-16 rounded-full mx-auto mb-3 flex items-center justify-center animate-pulse"
-                style={{ backgroundColor: "var(--bg-card)" }}
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-[var(--text-muted)]">
-                  <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="1.5" />
-                  <path d="M9 9l6 6M15 9l-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
-              </div>
-              <span className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
-                Not Revealed
-              </span>
-            </div>
-          </div>
+          <Image
+            src={BLINDBOX_IMAGE}
+            alt={`Blind Box NFT #${nft.tokenId}`}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
         )}
 
         {/* Token ID Badge */}

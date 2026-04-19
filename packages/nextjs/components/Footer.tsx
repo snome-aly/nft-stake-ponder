@@ -17,17 +17,17 @@ export const Footer = () => {
         borderTop: "1px solid var(--border-subtle)",
       }}
     >
-      <div className="container-premium py-12">
+      <div className="container-premium pt-16 pb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 mb-10">
           {/* Brand */}
           <motion.div
-            className="lg:col-span-4"
+            className="lg:col-span-4 pt-8"
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
           >
-            <div className="mb-5">
+            <div>
               <Logo />
             </div>
 
@@ -60,6 +60,7 @@ export const Footer = () => {
           <div className="lg:col-span-8 grid grid-cols-3 gap-8">
             {/* Quick Links */}
             <motion.div
+              className="pt-8"
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.05 }}
@@ -93,6 +94,7 @@ export const Footer = () => {
 
             {/* Project */}
             <motion.div
+              className="pt-8"
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
@@ -125,6 +127,7 @@ export const Footer = () => {
 
             {/* Resources */}
             <motion.div
+              className="pt-8"
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.15 }}
@@ -157,7 +160,7 @@ export const Footer = () => {
 
         {/* Bottom */}
         <div
-          className="pt-6 flex flex-col md:flex-row justify-between items-center gap-4"
+          className="pt-8 flex flex-col md:flex-row justify-between items-center gap-4"
           style={{ borderTop: "1px solid var(--border-subtle)" }}
         >
           <p

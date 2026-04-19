@@ -25,28 +25,33 @@ const getRarityColors = (color: string) => {
 export function RarityInfo() {
   return (
     <FadeInUp>
-      <div className="card p-5" style={{ backgroundColor: "var(--bg-elevated)" }}>
-        <h3
-          className="text-sm font-semibold mb-4 text-center"
-          style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
-        >
-          Rarity Distribution
-        </h3>
+      <div className="card p-3 sm:p-4" style={{ backgroundColor: "var(--bg-elevated)" }}>
+        <div className="mb-2 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+          <h3
+            className="text-sm font-semibold"
+            style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
+          >
+            Rarity Distribution
+          </h3>
+          <p className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
+            Higher rarity = Higher staking rewards
+          </p>
+        </div>
 
-        <div className="grid grid-cols-2 gap-3 mb-4">
+        <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
           {rarityItems.map(rarity => {
             const colors = getRarityColors(rarity.color);
             return (
               <div
                 key={rarity.name}
-                className="p-3 rounded-lg text-center"
+                className="flex min-h-14 flex-col items-center justify-center rounded-lg px-3 py-2 text-center"
                 style={{
                   backgroundColor: colors.bg,
                   border: `1px solid ${colors.border}`,
                 }}
               >
                 <div
-                  className="text-sm font-semibold mb-1"
+                  className="mb-0.5 text-sm font-semibold"
                   style={{ fontFamily: "var(--font-body)", color: colors.text }}
                 >
                   {rarity.name}
@@ -58,10 +63,6 @@ export function RarityInfo() {
             );
           })}
         </div>
-
-        <p className="text-center text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
-          Higher rarity = Higher staking rewards
-        </p>
       </div>
     </FadeInUp>
   );

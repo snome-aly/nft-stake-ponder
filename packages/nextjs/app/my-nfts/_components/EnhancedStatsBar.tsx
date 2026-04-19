@@ -26,75 +26,45 @@ export function EnhancedStatsBar({ nfts }: EnhancedStatsBarProps) {
 
   const stakedCount = nfts.filter(nft => nft.isStaked).length;
   const availableCount = nfts.length - stakedCount;
+  const collectionStats = [
+    { label: "Total", value: nfts.length, color: "var(--text-primary)" },
+    { label: "Available", value: availableCount, color: "var(--accent)" },
+    { label: "Staked", value: stakedCount, color: "var(--success)" },
+  ];
+  const rarityStats = Object.entries(RARITY_CONFIG).map(([rarity, config]) => ({
+    label: config.name,
+    value: rarityCount[Number(rarity)] || 0,
+    color: config.color,
+  }));
+
+  const renderStat = (stat: { label: string; value: number; color: string }) => (
+    <div key={stat.label} className="rounded-lg p-3" style={{ backgroundColor: "var(--bg-card)" }}>
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <span className="truncate text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
+          {stat.label}
+        </span>
+        <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: stat.color }} />
+      </div>
+      <div className="text-2xl font-bold leading-none" style={{ fontFamily: "var(--font-display)", color: stat.color }}>
+        {stat.value}
+      </div>
+    </div>
+  );
 
   return (
-    <div className="flex flex-col lg:flex-row gap-4 mb-8">
-      {/* Left: NFT Counts */}
-      <div
-        className="card p-5 flex items-center justify-around gap-6"
-        style={{ backgroundColor: "var(--bg-elevated)" }}
-      >
-        <div className="text-center">
-          <div
-            className="text-3xl font-bold mb-1"
-            style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
-          >
-            {nfts.length}
-          </div>
-          <div className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
-            Total
-          </div>
+    <div className="mb-8 grid gap-3 lg:grid-cols-[3fr_4fr]">
+      <div className="card p-3" style={{ backgroundColor: "var(--bg-elevated)" }}>
+        <div className="mb-2 px-1 text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
+          Collection
         </div>
-
-        <div className="h-10 w-px" style={{ backgroundColor: "var(--border-subtle)" }} />
-
-        <div className="text-center">
-          <div
-            className="text-3xl font-bold mb-1"
-            style={{ fontFamily: "var(--font-display)", color: "var(--success)" }}
-          >
-            {stakedCount}
-          </div>
-          <div className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
-            Staked
-          </div>
-        </div>
-
-        <div className="h-10 w-px" style={{ backgroundColor: "var(--border-subtle)" }} />
-
-        <div className="text-center">
-          <div
-            className="text-3xl font-bold mb-1"
-            style={{ fontFamily: "var(--font-display)", color: "var(--accent)" }}
-          >
-            {availableCount}
-          </div>
-          <div className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
-            Available
-          </div>
-        </div>
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">{collectionStats.map(renderStat)}</div>
       </div>
 
-      {/* Right: Rarity Distribution */}
-      <div
-        className="card p-5 flex-grow flex items-center justify-around"
-        style={{ backgroundColor: "var(--bg-elevated)" }}
-      >
-        <div className="flex items-center justify-between w-full px-4">
-          {Object.entries(RARITY_CONFIG).map(([rarity, config]) => (
-            <div key={rarity} className="text-center">
-              <div
-                className="text-2xl font-bold mb-1"
-                style={{ fontFamily: "var(--font-display)", color: config.color }}
-              >
-                {rarityCount[Number(rarity)] || 0}
-              </div>
-              <div className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
-                {config.name}
-              </div>
-            </div>
-          ))}
+      <div className="card p-3" style={{ backgroundColor: "var(--bg-elevated)" }}>
+        <div className="mb-2 px-1 text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
+          Rarity Distribution
         </div>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">{rarityStats.map(renderStat)}</div>
       </div>
     </div>
   );

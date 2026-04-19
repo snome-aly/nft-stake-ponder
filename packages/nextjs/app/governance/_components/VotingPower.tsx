@@ -69,9 +69,9 @@ export function VotingPower() {
           <p className="text-xs mb-1" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
             Delegated To
           </p>
-          <p className="text-sm font-mono" style={{ fontFamily: "var(--font-mono)", color: "var(--text-primary)" }}>
+          <div className="text-sm font-mono" style={{ fontFamily: "var(--font-mono)", color: "var(--text-primary)" }}>
             {currentDelegate === address ? "Self" : <Address address={currentDelegate} />}
-          </p>
+          </div>
         </div>
       </div>
 

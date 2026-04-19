@@ -109,32 +109,12 @@ export function MintCard() {
 
   const buttonState = getButtonContent();
 
-  const rarityItems = [
-    { name: "Common", count: 50, percentage: "50%", multiplier: "1.0×", color: "common" },
-    { name: "Rare", count: 30, percentage: "30%", multiplier: "1.5×", color: "rare" },
-    { name: "Epic", count: 15, percentage: "15%", multiplier: "2.0×", color: "epic" },
-    { name: "Legendary", count: 5, percentage: "5%", multiplier: "3.0×", color: "legendary" },
-  ];
-
-  const getRarityColors = (color: string) => {
-    switch (color) {
-      case "rare":
-        return { text: "var(--rarity-rare)", bg: "var(--rarity-rare-bg)", border: "rgba(96,165,250,0.2)" };
-      case "epic":
-        return { text: "var(--rarity-epic)", bg: "var(--rarity-epic-bg)", border: "rgba(167,139,250,0.2)" };
-      case "legendary":
-        return { text: "var(--rarity-legendary)", bg: "var(--rarity-legendary-bg)", border: "rgba(251,191,36,0.2)" };
-      default:
-        return { text: "var(--rarity-common)", bg: "var(--rarity-common-bg)", border: "rgba(113,113,122,0.2)" };
-    }
-  };
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="max-w-md mx-auto"
+      className="relative h-full w-full"
     >
       <AnimatePresence>
         {isMintSuccess && (
@@ -166,7 +146,7 @@ export function MintCard() {
         )}
       </AnimatePresence>
 
-      <div className="card p-6" style={{ backgroundColor: "var(--bg-elevated)" }}>
+      <div className="card h-full p-6" style={{ backgroundColor: "var(--bg-elevated)" }}>
         {/* Header */}
         <motion.div initial={{ y: -10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center mb-6">
           <div
@@ -354,57 +334,6 @@ export function MintCard() {
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* Rarity Distribution */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="mt-6 pt-5"
-          style={{ borderTop: "1px solid var(--border-subtle)" }}
-        >
-          <h3
-            className="text-center mb-4 text-sm font-medium"
-            style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
-          >
-            Rarity Distribution
-          </h3>
-
-          <div className="grid grid-cols-2 gap-2">
-            {rarityItems.map(rarity => {
-              const colors = getRarityColors(rarity.color);
-              return (
-                <motion.div
-                  key={rarity.name}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="p-3 rounded-lg text-center"
-                  style={{
-                    backgroundColor: colors.bg,
-                    border: `1px solid ${colors.border}`,
-                  }}
-                >
-                  <div
-                    className="text-sm font-medium mb-1"
-                    style={{ fontFamily: "var(--font-body)", color: colors.text }}
-                  >
-                    {rarity.name}
-                  </div>
-                  <div className="text-xs" style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)" }}>
-                    {rarity.count} · {rarity.percentage} · {rarity.multiplier}
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-
-          <p
-            className="text-center text-xs mt-4"
-            style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}
-          >
-            Higher rarity = Higher staking rewards
-          </p>
-        </motion.div>
       </div>
     </motion.div>
   );

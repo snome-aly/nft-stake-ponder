@@ -15,19 +15,19 @@ export default function MintPage() {
       <section className="py-8">
         <div className="container-premium">
           {/* Mint Card + NFT Preview */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-5xl mx-auto mb-8">
+          <div className="grid max-w-4xl grid-cols-1 items-stretch gap-6 mx-auto mb-6 lg:grid-cols-2">
             <MintCard />
             <NFTCarousel />
-          </div>
-
-          {/* Progress */}
-          <div className="max-w-4xl mx-auto mb-6">
-            <MintProgress />
           </div>
 
           {/* Rarity Info */}
           <div className="max-w-4xl mx-auto mb-6">
             <RarityInfo />
+          </div>
+
+          {/* Progress */}
+          <div className="max-w-4xl mx-auto mb-6">
+            <MintProgress />
           </div>
 
           {/* Recent Mints */}

@@ -10,7 +10,8 @@ export function MintProgress() {
 
   const maxSupply = 100;
   const currentMinted = totalMinted !== undefined ? Number(totalMinted) : 0;
-  const percentage = (currentMinted / maxSupply) * 100;
+  const percentage = Math.min(Math.max((currentMinted / maxSupply) * 100, 0), 100);
+  const remaining = Math.max(maxSupply - currentMinted, 0);
 
   const milestones = [
     { value: 25, label: "25%" },
@@ -25,23 +26,37 @@ export function MintProgress() {
     return "var(--text-muted)";
   };
 
+  const status =
+    percentage >= 100
+      ? { message: "Sold out. Admin can trigger reveal.", color: "var(--success)" }
+      : percentage >= 75
+        ? { message: `Almost sold out. ${remaining} left.`, color: "var(--warning)" }
+        : percentage >= 50
+          ? { message: `Halfway there. ${remaining} remaining.`, color: "var(--text-tertiary)" }
+          : { message: "Mint to participate. Reveal unlocks after sellout.", color: "var(--text-muted)" };
+
   return (
-    <div className="card p-5" style={{ backgroundColor: "var(--bg-elevated)" }}>
-      <div className="flex items-center justify-between mb-4">
-        <h3
-          className="text-sm font-semibold"
-          style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
-        >
-          Mint Progress
-        </h3>
+    <div className="card p-3 sm:p-4" style={{ backgroundColor: "var(--bg-elevated)" }}>
+      <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <h3
+            className="text-sm font-semibold"
+            style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}
+          >
+            Mint Progress
+          </h3>
+          <p className="text-xs" style={{ fontFamily: "var(--font-body)", color: status.color }}>
+            {status.message}
+          </p>
+        </div>
         <span className="text-lg font-bold" style={{ fontFamily: "var(--font-display)", color: "var(--accent)" }}>
           {currentMinted} / {maxSupply}
         </span>
       </div>
 
       {/* Progress Bar */}
-      <div className="relative mb-4">
-        <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: "var(--bg-card)" }}>
+      <div className="relative mb-2">
+        <div className="h-2 overflow-hidden rounded-full" style={{ backgroundColor: "var(--bg-card)" }}>
           <div
             className="h-full rounded-full transition-all duration-1000"
             style={{ width: `${percentage}%`, backgroundColor: "var(--accent)" }}
@@ -49,7 +64,7 @@ export function MintProgress() {
         </div>
         <div className="absolute inset-0 flex items-center justify-center">
           <span
-            className="text-xs font-semibold"
+            className="text-[11px] font-semibold leading-none"
             style={{ fontFamily: "var(--font-body)", color: "var(--text-primary)" }}
           >
             {percentage.toFixed(1)}%
@@ -58,42 +73,26 @@ export function MintProgress() {
       </div>
 
       {/* Milestones */}
-      <div className="flex justify-between mb-3">
-        {milestones.map(milestone => (
-          <div key={milestone.value} className="flex flex-col items-center">
+      <div className="grid grid-cols-4 gap-2">
+        {milestones.map((milestone, index) => (
+          <div
+            key={milestone.value}
+            className={`flex items-center gap-1 ${
+              index === 0 ? "justify-start" : index === milestones.length - 1 ? "justify-end" : "justify-center"
+            }`}
+          >
             <div
-              className="w-2.5 h-2.5 rounded-full mb-1.5"
+              className="h-1.5 w-1.5 shrink-0 rounded-full"
               style={{ backgroundColor: getMilestoneColor(milestone.value) }}
             />
             <span
-              className="text-xs"
+              className="whitespace-nowrap text-[11px] leading-none"
               style={{ fontFamily: "var(--font-body)", color: getMilestoneColor(milestone.value) }}
             >
               {milestone.label}
             </span>
           </div>
         ))}
-      </div>
-
-      {/* Status Message */}
-      <div className="text-center pt-3" style={{ borderTop: "1px solid var(--border-subtle)" }}>
-        {percentage >= 100 ? (
-          <p className="text-sm" style={{ fontFamily: "var(--font-body)", color: "var(--success)" }}>
-            Sold out! Reveal can be triggered by admin.
-          </p>
-        ) : percentage >= 75 ? (
-          <p className="text-sm" style={{ fontFamily: "var(--font-body)", color: "var(--warning)" }}>
-            Almost sold out! Only {maxSupply - currentMinted} left.
-          </p>
-        ) : percentage >= 50 ? (
-          <p className="text-sm" style={{ fontFamily: "var(--font-body)", color: "var(--text-tertiary)" }}>
-            Halfway there! {maxSupply - currentMinted} remaining.
-          </p>
-        ) : (
-          <p className="text-sm" style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>
-            Mint to participate. All 100 must be minted before reveal.
-          </p>
-        )}
       </div>
     </div>
   );
