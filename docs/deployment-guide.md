@@ -31,6 +31,8 @@ pnpm install
 - **Chainlink Sepolia Faucet**: https://faucets.chain.link/sepolia
 - 或者在 MetaMask 中切换到 Sepolia 网络，去 https://sepoliafaucet.com/ 水龙头领取
 
+---
+
 ## 第一部分：部署合约
 
 ### 1. 配置环境变量
@@ -65,6 +67,7 @@ yarn deploy --network sepolia
 ```
 deploying "NFTStakingPool" (tx: 0x...)...: 0x1234...5678
 deploying "RewardToken" (tx: 0x...)...: 0xabcd...efgh
+deploying "MyGovernor" (tx: 0x...)...: 0x9999...0000
 ```
 
 **重要：记录这些合约地址，后续配置需要用到。**
@@ -75,9 +78,18 @@ deploying "RewardToken" (tx: 0x...)...: 0xabcd...efgh
 yarn hardhat:verify --network sepolia
 ```
 
+---
+
 ## 第二部分：配置 Ponder 索引器
 
-### 1. 配置 Ponder 环境变量
+### 1. 本地测试 Ponder
+
+先在本地确认 Ponder 配置正确：
+
+```bash
+# 配置环境变量
+cp packages/ponder/.env.example packages/ponder/.env
+```
 
 编辑 `packages/ponder/.env`：
 
@@ -86,13 +98,127 @@ yarn hardhat:verify --network sepolia
 PONDER_RPC_URL_11155111=https://eth-sepolia.g.alchemy.com/v2/YOUR_API_KEY
 ```
 
-### 2. 启动 Ponder
+启动 Ponder 开发模式：
 
 ```bash
 yarn ponder:dev
 ```
 
-Ponder 会在 http://localhost:42069 运行，并自动同步合约事件。
+访问 http://localhost:42069/graphql 测试查询。
+
+### 2. 生产环境部署 Ponder
+
+Ponder 需要持久运行，建议部署到 Railway 或 Fly.io。
+
+#### 方式一：Railway 部署 (推荐)
+
+1. **注册 Railway**: https://railway.app
+2. **创建新项目**: New Project → Empty Project
+
+3. **配置变量** (Project → Variables):
+   ```
+   PONDER_RPC_URL_11155111=https://eth-sepolia.g.alchemy.com/v2/YOUR_API_KEY
+   ```
+
+4. **设置构建命令** (Project → Settings → Start Command):
+   ```
+   yarn ponder:start
+   ```
+
+5. **部署**:
+   - 连接 GitHub 仓库
+   - 选择分支
+   - Railway 会自动 `yarn install` → `yarn ponder:build` → `yarn ponder:start`
+
+6. **等待部署完成**，访问 Railway 分配的域名 (如 `xxx.railway.app`)
+
+#### 方式二：Fly.io 部署 (免费)
+
+1. **安装 Fly CLI**:
+   ```bash
+   curl -L https://fly.io/install.sh | sh
+   fly auth login
+   ```
+
+2. **创建 Fly 应用**:
+   ```bash
+   cd packages/ponder
+   fly launch
+   ```
+
+3. **配置 secrets**:
+   ```bash
+   fly secrets set PONDER_RPC_URL_11155111=https://eth-sepolia.g.alchemy.com/v2/YOUR_API_KEY
+   ```
+
+4. **部署**:
+   ```bash
+   fly deploy
+   ```
+
+5. **查看状态**:
+   ```bash
+   fly status
+   fly logs
+   ```
+
+#### 方式三：Docker 部署
+
+1. **构建镜像**:
+   ```bash
+   cd packages/ponder
+   docker build -t my-ponder .
+   ```
+
+2. **运行容器**:
+   ```bash
+   docker run -d \
+     -e PONDER_RPC_URL_11155111=https://eth-sepolia.g.alchemy.com/v2/YOUR_API_KEY \
+     -p 42069:42069 \
+     my-ponder
+   ```
+
+3. **访问** `http://localhost:42069`
+
+#### 方式四：直接部署到 VPS
+
+```bash
+# 安装 Node.js 20 LTS
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# 安装 PM2
+sudo npm install -g pm2
+
+# 克隆并配置
+git clone <repo>
+cd packages/ponder
+npm install
+echo "PONDER_RPC_URL_11155111=https://eth-sepolia.g.alchemy.com/v2/YOUR_API_KEY" > .env
+
+# 使用 PM2 启动
+pm2 start yarn --name ponder -- start
+pm2 save
+pm2 startup
+```
+
+### 3. 验证 Ponder 部署
+
+访问部署的 Ponder URL，确认 GraphQL 可用：
+
+```graphql
+query {
+  proposals(limit: 5) {
+    items {
+      id
+      description
+      state
+    }
+  }
+}
+```
+
+---
 
 ## 第三部分：部署前端
 
@@ -104,136 +230,138 @@ Ponder 会在 http://localhost:42069 运行，并自动同步合约事件。
 # Sepolia RPC
 NEXT_PUBLIC_ALCHEMY_API_KEY=你的 Alchemy API Key
 
-# WalletConnect (如果使用 WalletConnect)
+# WalletConnect (如果使用)
 NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=你的 WalletConnect Project ID
 
-# Ponder API (部署后)
-NEXT_PUBLIC_PONDER_URL=https://your-ponder-app.railway.app (后续填写)
+# Ponder API (你部署的 Ponder 地址)
+NEXT_PUBLIC_PONDER_URL=https://your-ponder-app.railway.app
 ```
 
-### 2. 更新 Scaffold 配置
-
-编辑 `packages/nextjs/scaffold.config.ts`：
-
-```typescript
-const config: ScaffoldConfig = {
-  targetNetworks: [sepolia],  // 确保是 sepolia 而不是 localhost
-  // ...
-};
-```
-
-### 3. 构建前端
-
-```bash
-yarn next:build
-```
-
-### 4. 部署到 Vercel (推荐)
+### 2. 部署到 Vercel
 
 ```bash
 # 全局安装 Vercel CLI
 npm i -g vercel
 
-# 登录 Vercel
+# 登录
 vercel login
 
 # 进入前端目录
 cd packages/nextjs
 
-# 部署到测试网预览
-vercel --env-file .env.production
+# 部署预览
+vercel
 
-# 部署到生产 (测试网)
-vercel --prod --env-file .env.production
+# 部署生产
+vercel --prod
 ```
 
-或者通过 Vercel Dashboard：
+或通过 Vercel Dashboard 导入：
+
 1. 访问 https://vercel.com/dashboard
 2. Import Project
-3. 选择 `packages/nextjs` 目录
-4. 配置环境变量
-5. Deploy
+3. Root Directory: `packages/nextjs`
+4. Build Command: `yarn next:build`
+5. Environment Variables 添加上述变量
+6. Deploy
 
-### 5. 手动部署到 Railway (推荐用于 Ponder)
-
-1. 注册 Railway: https://railway.app
-2. New Project → Deploy from GitHub
-3. 选择仓库
-4. 配置：
-   - **Build Command**: `yarn ponder:start`
-   - **Start Command**: `yarn ponder:start`
-   - **Environment Variables**:
-     - `PONDER_RPC_URL_11155111` = 你的 Sepolia RPC URL
-
-部署成功后，获得 Ponder 的 URL，填入前端的 `NEXT_PUBLIC_PONDER_URL`。
+---
 
 ## 第四部分：更新合约配置
 
 ### 1. 更新前端合约地址
 
-合约部署后，编辑 `packages/nextjs/contracts/deployedContracts.ts`（如果不存在，创建）：
+编辑 `packages/nextjs/contracts/deployedContracts.ts`：
 
 ```typescript
-export const deployedContracts = {
-  11155111: { // Sepolia Chain ID
-    RewardToken: {
-      address: "0x...",
-      abi: [...],
-    },
-    NFTStakingPool: {
-      address: "0x...",
-      abi: [...],
-    },
-    MyGovernor: {
-      address: "0x...",
-      abi: [...],
-    },
+import { sepolia } from "viem/chains";
+import { optimismSepolia } from "wagmi";
+import { NFTStakingPool, RewardToken, MyGovernor } from "~~/contracts/hardhat_contracts";
+
+export default {
+  [sepolia.id]: {
+    ...RewardToken,
+    ...NFTStakingPool,
+    ...MyGovernor,
   },
 };
 ```
 
-### 2. 更新外部合约配置
+### 2. 更新 Ponder 配置
 
-编辑 `packages/nextjs/contracts/externalContracts.ts`：
+编辑 `packages/ponder/ponder.config.ts`：
 
 ```typescript
-export const externalContracts = {
-  sepolia: [
+import { sepolia } from "@ponder  chains";
+
+export default {
+  networks: [sepolia],
+  contracts: [
     {
-      chainId: 11155111,
       name: "RewardToken",
-      address: "0x...",
-      abi: [...],
+      address: "0x...", // 你部署的地址
+      startBlock: 12345678, // 部署交易的区块号
     },
-    // 其他外部合约
+    {
+      name: "NFTStakingPool",
+      address: "0x...",
+      startBlock: 12345678,
+    },
+    {
+      name: "MyGovernor",
+      address: "0x...",
+      startBlock: 12345678,
+    },
   ],
 };
 ```
 
+### 3. 重新构建并部署 Ponder
+
+```bash
+cd packages/ponder
+yarn ponder:build
+# Railway/Fly 会自动重新部署
+```
+
+---
+
 ## 第五部分：验证部署
 
-### 1. 检查前端
+### 检查清单
 
-访问你部署的 Vercel URL，确认：
-- ✅ 页面正常加载
-- ✅ 钱包连接正常
-- ✅ 显示正确的网络 (Sepolia)
-- ✅ 合约数据正常读取
+- [ ] 合约已部署到 Sepolia，地址正确
+- [ ] Ponder 已部署，可访问 GraphQL
+- [ ] 前端已部署到 Vercel
+- [ ] 前端环境变量 `NEXT_PUBLIC_PONDER_URL` 指向正确
+- [ ] 页面加载正常
+- [ ] 钱包连接正常
+- [ ] 显示正确的网络 (Sepolia)
 
-### 2. 检查 Ponder
-
-访问 Ponder GraphQL Playground (通常在 `/graphql`)：
-- 确认提案数据已同步
-- 尝试查询提案列表
-
-### 3. 测试完整流程
+### 完整流程测试
 
 1. 连接钱包 (确保在 Sepolia 网络)
-2. 铸造 NFT
+2. 铸造/购买 NFT
 3. 质押 NFT
 4. 创建治理提案
 5. 投票
-6. 执行提案
+6. 提案通过后执行
+
+---
+
+## 快速检查清单
+
+- [ ] Sepolia 测试 ETH (水龙头领取)
+- [ ] Alchemy API Key (Sepolia RPC)
+- [ ] WalletConnect Project ID (如果需要)
+- [ ] Etherscan API Key (可选)
+- [ ] 合约部署成功，记录地址
+- [ ] Ponder 部署成功，GraphQL 可用
+- [ ] 前端配置 NEXT_PUBLIC_PONDER_URL
+- [ ] Vercel 部署成功
+- [ ] 全流程测试通过
+
+---
 
 ## 常见问题
 
@@ -241,13 +369,16 @@ export const externalContracts = {
 A: 确保钱包有足够的 Sepolia ETH，去水龙头领取。
 
 ### Q: 合约验证失败
-A: 确保 Etherscan API Key 正确，且在 24 小时后可验证。
+A: 确保 Etherscan API Key 正确，部署后 24 小时才可验证。
 
 ### Q: 前端无法读取合约数据
 A: 检查：
-1. `deployedContracts.ts` 地址是否正确
-2. Ponder 是否正常运行
-3. `NEXT_PUBLIC_PONDER_URL` 是否正确配置
+1. Ponder 是否正常运行
+2. `NEXT_PUBLIC_PONDER_URL` 是否正确配置
+3. Ponder GraphQL 是否可访问
+
+### Q: Ponder 同步慢
+A: 首次同步需要从部署区块开始，可能需要几分钟到几小时。可以设置 `startBlock` 减少历史数据量。
 
 ### Q: 交易失败
 A: 检查：
@@ -255,17 +386,7 @@ A: 检查：
 2. 合约方法是否有权限限制
 3. 参数是否正确
 
-## 快速检查清单
-
-- [ ] Sepolia ETH (水龙头领取)
-- [ ] Alchemy API Key (Sepolia RPC)
-- [ ] WalletConnect Project ID (如果需要)
-- [ ] Etherscan API Key (可选，用于验证)
-- [ ] 合约部署成功，记录地址
-- [ ] Ponder 索引正常
-- [ ] 前端环境变量配置
-- [ ] Vercel 部署成功
-- [ ] 全流程测试通过
+---
 
 ## 生产环境部署
 
@@ -275,6 +396,7 @@ A: 检查：
 2. 使用真实的 RPC URL 和 API Key
 3. 确保合约已经过完整审计
 4. 准备足够的 ETH 用于 Gas
+5. Ponder 改为使用主网 RPC
 
 ---
 
