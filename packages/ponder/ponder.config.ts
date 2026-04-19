@@ -68,13 +68,14 @@ const networks = {
 /**
  * 获取当前目标网络的部署信息
  *
- * Ponder 需要从 ABI 字面量推导事件类型，所以这里保留本地部署产物里的 ABI 类型，
- * 运行时地址和部署区块仍然来自 scaffold.config.ts 中的当前目标网络。
+ * Ponder 需要从 ABI 字面量推导事件类型，所以这里保留部署产物里的 ABI 类型，
+ * 运行时地址和部署区块来自 scaffold.config.ts 中的当前目标网络。
  */
-type LocalContracts = (typeof deployedContracts)[31337];
+type DeployedContracts = typeof deployedContracts;
+type DeployedChainId = keyof DeployedContracts;
+type TargetContracts = DeployedContracts[DeployedChainId];
 
-const localContracts = deployedContracts[31337];
-const deployedContractsByChain = deployedContracts as typeof deployedContracts & Partial<Record<number, LocalContracts>>;
+const deployedContractsByChain = deployedContracts as DeployedContracts & Partial<Record<number, TargetContracts>>;
 const targetContracts = deployedContractsByChain[targetNetwork.id];
 
 if (!targetContracts) {
@@ -106,31 +107,31 @@ if (!targetContracts) {
 const contracts = {
   MyGovernor: {
     network: targetNetwork.name,
-    abi: localContracts.MyGovernor.abi,
+    abi: targetContracts.MyGovernor.abi,
     address: targetContracts.MyGovernor.address,
     startBlock: targetContracts.MyGovernor.deployedOnBlock || 0,
   },
   NFTStakingPool: {
     network: targetNetwork.name,
-    abi: localContracts.NFTStakingPool.abi,
+    abi: targetContracts.NFTStakingPool.abi,
     address: targetContracts.NFTStakingPool.address,
     startBlock: targetContracts.NFTStakingPool.deployedOnBlock || 0,
   },
   RewardToken: {
     network: targetNetwork.name,
-    abi: localContracts.RewardToken.abi,
+    abi: targetContracts.RewardToken.abi,
     address: targetContracts.RewardToken.address,
     startBlock: targetContracts.RewardToken.deployedOnBlock || 0,
   },
   StakableNFT: {
     network: targetNetwork.name,
-    abi: localContracts.StakableNFT.abi,
+    abi: targetContracts.StakableNFT.abi,
     address: targetContracts.StakableNFT.address,
     startBlock: targetContracts.StakableNFT.deployedOnBlock || 0,
   },
   Timelock: {
     network: targetNetwork.name,
-    abi: localContracts.Timelock.abi,
+    abi: targetContracts.Timelock.abi,
     address: targetContracts.Timelock.address,
     startBlock: targetContracts.Timelock.deployedOnBlock || 0,
   },

@@ -62,7 +62,7 @@ git checkout -b deploy/sepolia
 ```bash
 cat >> .git/info/exclude <<'EOF'
 packages/hardhat/.env
-packages/ponder/.env
+packages/ponder/.env.local
 packages/nextjs/.env.local
 EOF
 ```
@@ -322,7 +322,7 @@ git status --short
 
 ```text
 packages/hardhat/.env
-packages/ponder/.env
+packages/ponder/.env.local
 packages/nextjs/.env.local
 ```
 
@@ -348,7 +348,7 @@ git push origin deploy/sepolia
 创建本地 Ponder 环境变量：
 
 ```bash
-cat > packages/ponder/.env <<'EOF'
+cat > packages/ponder/.env.local <<'EOF'
 PONDER_RPC_URL_11155111=https://eth-sepolia.g.alchemy.com/v2/YOUR_ALCHEMY_KEY
 EOF
 ```
@@ -431,7 +431,7 @@ cd nft-stake-ponder
 corepack enable
 yarn install
 
-cat > packages/ponder/.env <<'EOF'
+cat > packages/ponder/.env.local <<'EOF'
 PONDER_RPC_URL_11155111=https://eth-sepolia.g.alchemy.com/v2/YOUR_ALCHEMY_KEY
 EOF
 
@@ -703,7 +703,7 @@ packages/hardhat/hardhat.config.ts
 
 ```text
 packages/hardhat/.env
-packages/ponder/.env
+packages/ponder/.env.local
 packages/nextjs/.env.local
 ```
 

@@ -17,6 +17,7 @@ const techStack = [
   { name: "Wagmi", url: "https://wagmi.sh" },
   { name: "Viem", url: "https://viem.sh" },
   { name: "Ponder", url: "https://ponder.sh" },
+  { name: "PostgreSQL", url: "https://postgresql.org" },
   { name: "GraphQL", url: "https://graphql.org" },
   { name: "Vercel", url: "https://vercel.com" },
   { name: "Alchemy", url: "https://alchemy.com" },
