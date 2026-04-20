@@ -1,116 +1,154 @@
-# 🏗 Scaffold-ETH 2
+# NFT Staking Platform
 
-<h4 align="center">
-  <a href="https://docs.scaffoldeth.io">文档</a> |
-  <a href="https://scaffoldeth.io">官网</a>
-</h4>
+A full-stack decentralized NFT staking platform built on Scaffold-ETH 2. Users can mint blind-box NFTs, stake them to earn ERC-20 reward tokens, and participate in on-chain governance — all from a single interface.
 
-🧪 一个开源、紧跟前沿的工具集，用于在以太坊区块链上构建去中心化应用（dapp）。它旨在让开发者更轻松地创建和部署智能合约，并构建与这些合约交互的用户界面。
+## Features
 
-⚙️ 基于 NextJS、RainbowKit、Hardhat、Wagmi、Viem 和 TypeScript 构建。
+- **Blind-Box NFT Minting** — 100 total supply with four rarity tiers (Common / Rare / Epic / Legendary) distributed via a shuffle algorithm. Rarity is revealed after mint using Chainlink VRF for provably fair randomness.
+- **NFT Staking** — Stake your NFTs to earn `RWRD` tokens. Reward multipliers scale with rarity.
+- **Reward Token (RWRD)** — ERC-20 with `ERC20Votes` support, zero initial supply, minted exclusively through staking. Supports gasless approvals via ERC-2612 Permit.
+- **On-Chain Governance** — `MyGovernor` (OpenZeppelin Governor) + `Timelock` controller. RWRD token holders can propose and vote on protocol changes.
+- **Event Indexing** — Ponder indexer tracks staking/unstaking/reward events and exposes a GraphQL API for the frontend.
 
-- ✅ **合约热重载**：在你编辑智能合约时，前端会自动适配最新的合约。
-- 🪝 **[自定义 hooks](https://docs.scaffoldeth.io/hooks/)**：一组基于 [wagmi](https://wagmi.sh/) 的 React hooks 封装，简化与智能合约的交互，并支持 TypeScript 自动补全。
-- 🧱 [**组件库**](https://docs.scaffoldeth.io/components/): 提供常用 web3 组件，帮助你快速搭建前端。
-- 🔥 **Burner 钱包 & 本地水龙头**：可通过临时钱包和本地水龙头快速测试你的应用。
-- 🔐 **钱包服务商集成**：支持连接不同的钱包服务商，与以太坊网络交互。
+## Smart Contracts
 
-![Debug Contracts tab](https://github.com/scaffold-eth/scaffold-eth-2/assets/55535804/b237af0c-5027-4849-a5c1-2e31495cccb1)
+| Contract | Description |
+|---|---|
+| `StakableNFT` | ERC-721 blind-box NFT with Chainlink VRF rarity reveal, role-based access (Admin / Operator / Pauser), batch mint (0.001 ETH each, max 20 per wallet) |
+| `NFTStakingPool` | Staking pool with rarity-weighted reward emission, pause/unpause support |
+| `RewardToken` | ERC-20 governance token minted by the staking pool |
+| `MyGovernor` | OpenZeppelin Governor with 4% quorum, 1-block voting delay, 50-block voting period |
+| `Timelock` | TimelockController for time-delayed execution of governance proposals |
 
-## 环境要求
+## Tech Stack
 
-在开始之前，你需要安装以下工具：
+- **Smart Contracts** — Solidity 0.8.20, Hardhat, OpenZeppelin, Chainlink VRF
+- **Frontend** — Next.js 15 (App Router), RainbowKit, Wagmi, Viem, TypeScript
+- **Indexer** — Ponder (GraphQL API at `localhost:42069`)
+- **Package Manager** — Yarn workspaces (v3)
 
-- [Node (>= v20.18.3)](https://nodejs.org/en/download/)
-- Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) 或 [v2+](https://yarnpkg.com/getting-started/install))
-- [Git](https://git-scm.com/downloads)
+## Prerequisites
 
-## 快速开始
+- Node.js >= 20.18.3
+- Yarn v3
+- Git
 
-要快速体验 Scaffold-ETH 2，请按照以下步骤操作：
+## Quick Start
 
-1. 如果在 CLI 中跳过了依赖安装，请先安装依赖：
+**1. Install dependencies**
 
-```
-cd my-dapp-example
+```bash
 yarn install
 ```
 
-2. 在第一个终端窗口运行本地区块链网络：
+**2. Start a local blockchain**
 
-```
+```bash
 yarn chain
 ```
 
-此命令会使用 Hardhat 启动一个本地以太坊网络。该网络在你的本地机器上运行，可用于测试和开发。你可以在 `packages/hardhat/hardhat.config.ts` 中自定义网络配置。
+**3. Deploy contracts** (new terminal)
 
-3. 在第二个终端窗口部署测试合约：
-
-```
+```bash
 yarn deploy
 ```
 
-此命令会将测试智能合约部署到本地网络。合约位于 `packages/hardhat/contracts`，你可以根据需要进行修改。`yarn deploy` 命令会使用 `packages/hardhat/deploy` 下的部署脚本。你也可以自定义该脚本。
+**4. Start the frontend** (new terminal)
 
-4. 在第三个终端窗口启动 NextJS 应用：
-
-```
+```bash
 yarn start
 ```
 
-访问你的应用：`http://localhost:3000`。你可以在 `Debug Contracts` 页面与智能合约交互。应用配置可在 `packages/nextjs/scaffold.config.ts` 中调整。
+Visit `http://localhost:3000`. Use the **Debug Contracts** page at `/debug` to interact with contracts directly.
 
-运行智能合约测试：`yarn hardhat:test`
+**5. Start the Ponder indexer** (new terminal, optional)
 
-- 在 `packages/hardhat/contracts` 编辑你的智能合约
-- 在 `packages/nextjs/app/page.tsx` 编辑前端首页。有关 [路由](https://nextjs.org/docs/app/building-your-application/routing/defining-routes) 和 [页面/布局](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts) 的更多指导，请查阅 Next.js 官方文档。
-- 在 `packages/hardhat/deploy` 编辑你的部署脚本
+```bash
+yarn ponder:dev
+```
 
-## 🚀 配置 Ponder 扩展
+GraphQL playground available at `http://localhost:42069`.
 
-该扩展允许你在 SE-2 dapp 中使用 Ponder (https://ponder.sh/) 进行事件索引。
+## Pages
 
-Ponder 是一个开源的区块链应用后端框架。通过 Ponder，你可以快速构建和部署 API，从任意 EVM 区块链的智能合约中获取并服务自定义数据。
+| Route | Description |
+|---|---|
+| `/` | Landing page |
+| `/mint` | Mint blind-box NFTs |
+| `/my-nfts` | View your NFT collection and rarity |
+| `/stake` | Stake / unstake NFTs, claim rewards |
+| `/governance` | Browse and vote on governance proposals |
+| `/admin` | Admin panel (operator / pauser roles only) |
+| `/stats` | Protocol-level statistics from the Ponder indexer |
+| `/debug` | Scaffold-ETH auto-generated contract debugger |
 
-### 配置
+## Development Commands
 
-Ponder 的配置文件（```packages/ponder/ponder.config.ts```）会根据已部署的合约和在 ```packages/nextjs/scaffold.config.ts``` 中设置的第一个区块链网络自动生成。
+```bash
+# Hardhat
+yarn hardhat:compile        # Compile contracts
+yarn hardhat:test           # Run tests with gas report
+yarn hardhat:check-types    # TypeScript type check
 
-### 设计数据 schema
+# Next.js
+yarn next:build             # Production build
+yarn next:check-types       # TypeScript type check
+yarn next:lint              # Lint
 
-你可以在 ```packages/ponder/ponder.schema.ts``` 文件中定义你的 Ponder 数据 schema，具体格式请参考 Ponder 官方文档（https://ponder.sh/docs/schema）。
+# Ponder
+yarn ponder:dev             # Dev mode (indexing + GraphQL)
+yarn ponder:codegen         # Generate types from schema
+yarn ponder:typecheck       # TypeScript type check
+```
 
-### 数据索引
+## Environment Variables
 
-你可以通过在 ```packages/ponder/src/``` 目录下添加文件来索引事件（https://ponder.sh/docs/indexing/write-to-the-database）。
+| Variable | Description |
+|---|---|
+| `NEXT_PUBLIC_ALCHEMY_API_KEY` | Alchemy RPC key |
+| `NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID` | WalletConnect project ID |
+| `NEXT_PUBLIC_PONDER_URL` | Deployed Ponder API endpoint (production) |
+| `PONDER_RPC_URL_{CHAIN_ID}` | RPC URL used by the Ponder indexer |
 
-### 启动开发服务器
+## Deployment
 
-运行 ```yarn ponder:dev``` 启动 Ponder 开发服务器，用于事件索引并在 http://localhost:42069 提供 GraphQL API 接口。
+### Contracts
 
-### 查询 GraphQL API
+```bash
+yarn deploy --network sepolia
+yarn hardhat:verify --network sepolia
+```
 
-开发服务器启动后，打开 http://localhost:42069 可使用 GraphiQL 界面。GraphiQL 是一个非常实用的工具，可以在开发期间探索 schema 并测试查询。（https://ponder.sh/docs/query/graphql）
+### Frontend
 
-你可以在页面中通过 ```@tanstack/react-query``` 查询数据。具体示例可参考 ```packages/nextjs/app/greetings/page.ts```，用于获取并展示 greetings 的更新数据。
+```bash
+yarn vercel     # Deploy to Vercel
+yarn ipfs       # Deploy to IPFS
+```
 
-### 部署
+### Ponder Indexer
 
-如需部署 Ponder indexer，请参考官方部署文档：https://ponder.sh/docs/production/deploy
+Set the custom start command to `yarn ponder:start` on your hosting platform, then set `NEXT_PUBLIC_PONDER_URL` in the frontend environment.
 
-在 **Settings** -> **Deploy** 中，需设置 **Custom Start Command** 为 ```yarn ponder:start```。
+## Project Structure
 
-随后，你需要在 SE-2 dapp 中配置环境变量 ```NEXT_PUBLIC_PONDER_URL```，以使用已部署的 ponder indexer。
+```
+packages/
+  hardhat/
+    contracts/        # Solidity contracts
+    deploy/           # Deployment scripts (hardhat-deploy)
+    test/             # Contract tests
+  nextjs/
+    app/              # Next.js App Router pages
+    components/       # Reusable UI components (Scaffold-ETH)
+    hooks/            # Scaffold-ETH contract interaction hooks
+    contracts/        # Auto-generated ABI / address files
+  ponder/
+    ponder.config.ts  # Auto-synced from scaffold.config.ts
+    ponder.schema.ts  # Database schema (onchainTable API)
+    src/              # Event indexing handlers
+```
 
+## Contributing
 
-## 文档
-
-访问我们的[文档](https://docs.scaffoldeth.io)来了解如何使用 Scaffold-ETH 2 开发。
-
-想了解更多功能，请访问我们的[官网](https://scaffoldeth.io)。
-
-## 参与贡献 Scaffold-ETH 2
-
-我们欢迎你为 Scaffold-ETH 2 做出贡献！
-
-请参阅 [CONTRIBUTING.MD](https://github.com/scaffold-eth/scaffold-eth-2/blob/main/CONTRIBUTING.md) 获取更多关于贡献流程和规范的信息。
+PRs and issues are welcome. See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
